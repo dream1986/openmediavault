@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +50,8 @@ try {
 	error_log($e->getMessage());
 	// Print the error message.
 	header("Content-Type: text/html");
+	http_response_code(($e instanceof \OMV\BaseException) ?
+		$e->getHttpStatusCode() : 500);
 	printf("Error #".$e->getCode().":<br/>%s", str_replace("\n", "<br/>",
 	  $e->__toString()));
 }

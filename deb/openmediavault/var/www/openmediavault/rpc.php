@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ try {
 	// Load and initialize the RPC services that are not handled by the
 	// engine daemon.
 	$directory = build_path(DIRECTORY_SEPARATOR, \OMV\Environment::get(
-	  "OMV_DOCUMENTROOT_DIR"), "rpc");
+		"OMV_DOCUMENTROOT_DIR"), "rpc");
 	foreach (listdir($directory, "inc") as $path) {
 		require_once $path;
 	}
@@ -48,13 +48,15 @@ try {
 	if (isset($server))
 		$server->cleanup();
 	header("Content-Type: application/json");
-	print json_encode_safe(array(
+	http_response_code(($e instanceof \OMV\BaseException) ?
+		$e->getHttpStatusCode() : 500);
+	print json_encode_safe([
 		"response" => null,
-		"error" => array(
+		"error" => [
 			"code" => $e->getCode(),
 			"message" => $e->getMessage(),
 			"trace" => $e->__toString()
-		)
-	));
+		]
+	]);
 }
 ?>

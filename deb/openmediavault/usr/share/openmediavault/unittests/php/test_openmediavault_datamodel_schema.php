@@ -5,7 +5,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software => you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ class Schema extends \OMV\DataModel\Schema {
 	}
 }
 
-class test_openmediavault_datamodel_schema extends \PHPUnit_Framework_TestCase {
+class test_openmediavault_datamodel_schema extends \PHPUnit\Framework\TestCase {
 	protected function getSchema() {
 		return new Schema([
 			"type" => "object",
@@ -52,6 +52,9 @@ class test_openmediavault_datamodel_schema extends \PHPUnit_Framework_TestCase {
 		]);
 	}
 
+	/**
+	 * @doesNotPerformAssertions
+	 */
 	public function testCheckFormatFsuuid1() {
 		# EXT2/3/4, JFS, XFS
 		$schema = $this->getSchema();
@@ -59,6 +62,9 @@ class test_openmediavault_datamodel_schema extends \PHPUnit_Framework_TestCase {
 			[ "format" => "fsuuid" ], "field1");
 	}
 
+	/**
+	 * @doesNotPerformAssertions
+	 */
 	public function testCheckFormatFsuuid2() {
 		# FAT
 		$schema = $this->getSchema();
@@ -66,6 +72,9 @@ class test_openmediavault_datamodel_schema extends \PHPUnit_Framework_TestCase {
 			[ "format" => "fsuuid" ], "field1");
 	}
 
+	/**
+	 * @doesNotPerformAssertions
+	 */
 	public function testCheckFormatFsuuid3() {
 		# NTFS
 		$schema = $this->getSchema();
@@ -73,24 +82,36 @@ class test_openmediavault_datamodel_schema extends \PHPUnit_Framework_TestCase {
 			[ "format" => "fsuuid" ], "field1");
 	}
 
+	/**
+	 * @doesNotPerformAssertions
+	 */
 	public function testCheckFormatDevicefile1() {
 		$schema = $this->getSchema();
 		$schema->checkFormat("/dev/sda1",
 			[ "format" => "devicefile" ], "field1");
 	}
 
+	/**
+	 * @doesNotPerformAssertions
+	 */
 	public function testCheckFormatDevicefile2() {
 		$schema = $this->getSchema();
 		$schema->checkFormat("/dev/disk/by-id/wwn-0x5020c298d81c1c3a",
 			[ "format" => "devicefile" ], "field1");
 	}
 
+	/**
+	 * @doesNotPerformAssertions
+	 */
 	public function testCheckFormatDirpath1() {
 		$schema = $this->getSchema();
 		$schema->checkFormat("/media/a/b/c/@data",
 			[ "format" => "dirpath" ], "field1");
 	}
 
+	/**
+	 * @doesNotPerformAssertions
+	 */
 	public function testCheckFormatDirpath2() {
 		$schema = $this->getSchema();
 		$schema->checkFormat("Library/App Support/Logs/",

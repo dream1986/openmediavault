@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,9 @@
  * You should have received a copy of the GNU General Public License
  * along with OpenMediaVault. If not, see <http://www.gnu.org/licenses/>.
  */
-class OMVRpcServiceApt extends \OMV\Rpc\ServiceAbstract {
+namespace Engined\Rpc;
+
+class Apt extends \OMV\Rpc\ServiceAbstract {
 	/**
 	 * Get the RPC service name.
 	 */
@@ -35,6 +37,7 @@ class OMVRpcServiceApt extends \OMV\Rpc\ServiceAbstract {
 		$this->registerMethod("setSettings");
 		$this->registerMethod("enumerateUpgraded");
 		$this->registerMethod("getUpgradedList");
+		$this->registerMethod("install");
 		$this->registerMethod("upgrade");
 		$this->registerMethod("update");
 		$this->registerMethod("upload");
@@ -87,38 +90,23 @@ class OMVRpcServiceApt extends \OMV\Rpc\ServiceAbstract {
 	}
 
 	/**
-	 * Enumerate all packages that are to be upgraded. This list is
-	 * automatically generated via an APT trigger which is executed
-	 * when 'apt-get update' is called. Thus it is not necessary to
-	 * execute the very cost intensive code every RPC call.
+	 * Enumerate all packages that are available to be upgraded.
 	 * @param params The method parameters.
 	 * @param context The context of the caller.
-	 * @return An array of objects containing the fields \em name, \em version,
-	 *   \em oldversion, \em repository, \em architecture, \em package,
-	 *   \em priority, \em section, \em installedsize, \em maintainer,
-	 *   \em filename, \em size, \em md5sum, \em sha1, \em sha256,
-	 *   \em abstract and \em homepage. The following fields are
-	 *   optional: \em description, \em depends, \em replaces and
-	 *   \em conflicts.
+	 * @return array An array of objects containing the fields \em name,
+	 *   \em version, \em oldversion, \em repository, \em architecture,
+	 *   \em package, \em priority, \em section, \em installedsize,
+	 *   \em maintainer, \em filename, \em size, \em md5sum, \em sha1,
+	 *   \em sha256, \em abstract and \em homepage.
+	 *   The following fields are optional: \em description, \em depends,
+	 *   \em replaces and \em conflicts.
 	 */
 	function enumerateUpgraded($params, $context) {
 		// Validate the RPC caller context.
 		$this->validateMethodContext($context, [
 			"role" => OMV_ROLE_ADMINISTRATOR
 		]);
-		// Read the plugin information from the plugin index. This will
-		// be updated automatically via APT trigger.
-		$indexFile = new \OMV\Json\File(\OMV\Environment::get(
-		  "OMV_APT_UPGRADE_INDEX_FILE"));
-		if (!$indexFile->exists()) {
-			throw new \OMV\Exception(
-			  "The index of upgradeable packages does not exist. Please ".
-			  "re-synchronize the package index files from their sources.");
-		}
-		$indexFile->open("r");
-		$objects = $indexFile->read();
-		$indexFile->close();
-		return $objects;
+		return \OMV\System\System::getAptUpgradeList();
 	}
 
 	/**
@@ -154,19 +142,19 @@ class OMVRpcServiceApt extends \OMV\Rpc\ServiceAbstract {
 	}
 
 	/**
-	 * Upgrade the given packages.
+	 * Install the given packages.
 	 * @param params An array containing the following fields:
 	 *   \em packages An array of package names to upgrade.
 	 * @param context The context of the caller.
 	 * @return The name of the background process status file.
 	 */
-	function upgrade($params, $context) {
+	function install($params, $context) {
 		// Validate the RPC caller context.
 		$this->validateMethodContext($context, [
 			"role" => OMV_ROLE_ADMINISTRATOR
 		]);
 		// Validate the parameters of the RPC service method.
-		$this->validateMethodParams($params, "rpc.apt.upgrade");
+		$this->validateMethodParams($params, "rpc.apt.install");
 		// Create the background process.
 		return $this->execBgProc(function($bgStatusFilename, $bgOutputFilename)
 		  use ($params) {
@@ -184,6 +172,43 @@ class OMVRpcServiceApt extends \OMV\Rpc\ServiceAbstract {
 			$cmdArgs[] = "--option DPkg::Options::=\"--force-confold\"";
 			$cmdArgs[] = "install";
 			$cmdArgs = array_merge($cmdArgs, $params['packages']);
+			$cmd = new \OMV\System\Process("apt-get", $cmdArgs);
+			$cmd->setRedirect2to1();
+			$cmd->setEnv("DEBIAN_FRONTEND", "noninteractive");
+			if (0 !== ($exitStatus = $this->exec($cmd->getCommandLine(),
+				$output, $bgOutputFilename))) {
+				throw new \OMV\ExecException($cmd->getCommandLine(), $output,
+					$exitStatus);
+			}
+			return $output;
+		});
+	}
+
+	/**
+	 * Upgrade the given packages.
+	 * @param params The method parameters.
+	 * @param context The context of the caller.
+	 * @return The name of the background process status file.
+	 */
+	function upgrade($params, $context) {
+		// Validate the RPC caller context.
+		$this->validateMethodContext($context, [
+			"role" => OMV_ROLE_ADMINISTRATOR
+		]);
+		// Create the background process.
+		return $this->execBgProc(function($bgStatusFilename, $bgOutputFilename)
+		  use ($params) {
+			$cmdArgs = [];
+			$cmdArgs[] = "--yes";
+			$cmdArgs[] = "--allow-downgrades";
+			$cmdArgs[] = "--allow-change-held-packages";
+			$cmdArgs[] = "--fix-broken"; // Fix broken dependencies in place.
+			$cmdArgs[] = "--fix-missing";
+			$cmdArgs[] = "--auto-remove";
+			$cmdArgs[] = "--allow-unauthenticated";
+			$cmdArgs[] = "--show-upgraded";
+			$cmdArgs[] = "--option DPkg::Options::=\"--force-confold\"";
+			$cmdArgs[] = "upgrade";
 			$cmd = new \OMV\System\Process("apt-get", $cmdArgs);
 			$cmd->setRedirect2to1();
 			$cmd->setEnv("DEBIAN_FRONTEND", "noninteractive");
@@ -240,7 +265,7 @@ class OMVRpcServiceApt extends \OMV\Rpc\ServiceAbstract {
 		// Validate the parameters of the RPC service method.
 		$this->validateMethodParams($params, "rpc.apt.upload");
 		// Check the file type.
-		$finfo = new finfo(FILEINFO_NONE);
+		$finfo = new \finfo(FILEINFO_NONE);
 		$fileType = $finfo->file($params['filepath']);
 		if (0 == preg_match("/^Debian binary package.+$/", $fileType)) {
 			throw new \OMV\Exception(
@@ -343,7 +368,7 @@ class OMVRpcServiceApt extends \OMV\Rpc\ServiceAbstract {
 			}
 			$cmd = sprintf("export LANG=C; dpkg-deb --fsys-tarfile %s | ".
 			  "tar --extract --wildcards --directory=%s ".
-			  "./usr/share/doc/%s/changelog* 2>&1",
+			  "./usr/share/doc/%s/changelog\* 2>&1",
 			  escapeshellarg($packagePath), escapeshellarg($tmpDir),
 			  $packageName);
 			if (0 !== $this->exec($cmd, $output))

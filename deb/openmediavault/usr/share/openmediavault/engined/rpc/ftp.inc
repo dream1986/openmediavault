@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,9 @@
  * You should have received a copy of the GNU General Public License
  * along with OpenMediaVault. If not, see <http://www.gnu.org/licenses/>.
  */
-class OMVRpcServiceFtp extends \OMV\Rpc\ServiceAbstract {
+namespace Engined\Rpc;
+
+class Ftp extends \OMV\Rpc\ServiceAbstract {
 	/**
 	 * Get the RPC service name.
 	 */
@@ -356,7 +358,7 @@ class OMVRpcServiceFtp extends \OMV\Rpc\ServiceAbstract {
 			if (TRUE === $db->exists("conf.service.ftp.modban.rule")) {
 				$stats .= sprintf("\n\n%s\n", gettext("Ban statistics:"));
 				$cmdArgs = [];
-				$cmdArgs[] = "-s /var/run/proftpd/proftpd.sock";
+				$cmdArgs[] = "-s /run/proftpd/proftpd.sock";
 				$cmdArgs[] = "ban info";
 				$cmdArgs[] = "-v";
 				$cmdArgs[] = "-e";

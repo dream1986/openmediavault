@@ -40,12 +40,12 @@
 		<email>
 			<!--
 			<enable>0|1</enable>
-			<tls>0|1</tls>
+			<tls>none|ssl|startssl|auto</tls>
 			-->
 			<enable>0</enable>
 			<server></server>
 			<port>25</port>
-			<tls>0</tls>
+			<tls>none</tls>
 			<sender></sender>
 			<authentication>
 				<!--
@@ -134,7 +134,7 @@
 				<!--
 				<interface>
 					<uuid>xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</uuid>
-					<type>ethernet|bond|vlan|wireless|...</type>
+					<type>ethernet|bond|vlan|wifi|bridge</type>
 					<devicename>xxx</devicename>
 					<method>dhcp|static|manual</method>
 					<address>xxx.xxx.xxx.xxx</address>
@@ -144,16 +144,14 @@
 					<address6>xxxx:xxxx:...:xxxx</address6>
 					<netmask6>0-128</netmask6>
 					<gateway6>xxxx:xxxx:...:xxxx</gateway6>
-					<dnsnameservers></dnsnameservers>
+					<dnsnameservers>xxx yyy zzz</dnsnameservers>
 					<dnssearch></dnssearch>
 					<mtu>0...n</mtu>
 					<wol>0|1</wol>
-					<options></options>
 					<comment>xxx</comment>
 					# Optional arguments by type:
-					# - ethernet
 					# - bond
-					<slaves>((eth|wlan)\d+,)*(eth|wlan)\d+</slaves>
+					<slaves>(((eth|venet|wlan)\d+|(en|veth|wl)\S+),)*((eth|venet|wlan)\d+|(en|veth|wl)\S+)</slaves>
 					<bondprimary>(eth|wlan)\d+</bondprimary>
 					<bondmode>0|1|2|3|4|5|6</bondmode>
 					<bondmiimon>0</bondmiimon>
@@ -161,10 +159,12 @@
 					<bondupdelay>0</bondupdelay>
 					# - vlan
 					<vlanid>1-4095</vlanid>
-					<vlanrawdevice>(eth|wlan|bond)\d+</vlanrawdevice>
-					# - wireless
+					<vlanrawdevice>xxx</vlanrawdevice>
+					# - wifi
 					<wpassid>xxx</wpassid>
 					<wpapsk>xxx</wpapsk>
+					# - bridge
+					<slaves>(((eth|venet|wlan)\d+|(en|veth|wl)\S+),)*((eth|venet|wlan)\d+|(en|veth|wl)\S+)</slaves>
 				</interface>
 				-->
 			</interfaces>
@@ -370,7 +370,6 @@
 		</ssh>
 		<nfs>
 			<enable>0</enable>
-			<numproc>8</numproc>
 			<shares>
 				<!--
 				<share>
@@ -487,7 +486,6 @@
 			<loglevel>0</loglevel>
 			<usesendfile>1</usesendfile>
 			<aio>1</aio>
-			<localmaster>1</localmaster>
 			<timeserver>0</timeserver>
 			<winssupport>0</winssupport>
 			<winsserver></winsserver>
@@ -560,6 +558,7 @@
 					<uuid>xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</uuid>
 					<enable>0|1</enable>
 					<sendemail>0|1<sendemail>
+					<quiet>0</quiet>
 					<comment>xxx</comment>
 					<type>local|remote</type>
 					<src>
@@ -578,17 +577,18 @@
 					<everyndayofmonth>0|1</everyndayofmonth>
 					<month>[01-12|*]</month>
 					<dayofweek>[1-7|*]</dayofweek>
-					<recursive>1</recursive>
-					<times>1</times>
-					<compress>0</compress>
-					<archive>1</archive>
-					<delete>0</delete>
-					<quiet>0</quiet>
-					<perms>1</perms>
-					<acls>1</acls>
-					<xattrs>0</xattrs>
-					<dryrun>0</dryrun>
-					<partial>0</partial>
+					<optionrecursive>1</optionrecursive>
+					<optiontimes>1</optiontimes>
+					<optiongroup>1</optiongroup>
+					<optionowner>1</optionowner>
+					<optioncompress>0</optioncompress>
+					<optionarchive>1</optionarchive>
+					<optiondelete>0</optiondelete>
+					<optionperms>1</optionperms>
+					<optionacls>1</optionacls>
+					<optionxattrs>0</optionxattrs>
+					<optiondryrun>0</optiondryrun>
+					<optionpartial>0</optionpartial>
 					<extraoptions></extraoptions>
 					// remote
 					<mode>push|pull</mode>
@@ -600,53 +600,5 @@
 				-->
 			</jobs>
 		</rsync>
-		<zeroconf>
-			<services>
-				<!--
-				<service>
-					<uuid>xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</uuid>
-					<id>xxx</id>
-					<enable>0|1</enable>
-					<name>xxx</name>
-				</service>
-				-->
-				<service>
-					<uuid>2e04c06e-f4db-11e5-a404-000c2972b176</uuid>
-					<id>webadmin</id>
-					<enable>1</enable>
-					<name>%h - Web control panel</name>
-				</service>
-				<service>
-					<uuid>264c0922-f4db-11e5-a90e-2fe7db1985bc</uuid>
-					<id>ssh</id>
-					<enable>1</enable>
-					<name>%h - SSH</name>
-				</service>
-				<service>
-					<uuid>2a6662c8-f4db-11e5-9683-000c2972b176</uuid>
-					<id>nfs</id>
-					<enable>1</enable>
-					<name>%h - NFS</name>
-				</service>
-				<service>
-					<uuid>22d3d7f2-f4db-11e5-ba24-4fd453d2072e</uuid>
-					<id>ftp</id>
-					<enable>1</enable>
-					<name>%h - FTP</name>
-				</service>
-				<service>
-					<uuid>06e1e0b6-f4db-11e5-98f1-000c2972b176</uuid>
-					<id>smb</id>
-					<enable>1</enable>
-					<name>%h - SMB/CIFS</name>
-				</service>
-				<service>
-					<uuid>1b02274a-f4db-11e5-9317-000c2972b176</uuid>
-					<id>rsync</id>
-					<enable>1</enable>
-					<name>%h - Rsync</name>
-				</service>
-			</services>
-		</zeroconf>
 	</services>
 </config>

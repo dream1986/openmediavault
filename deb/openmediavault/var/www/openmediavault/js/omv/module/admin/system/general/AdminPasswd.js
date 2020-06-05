@@ -3,7 +3,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 Ext.define("OMV.module.admin.system.general.AdminPasswd", {
 	extend: "OMV.workspace.form.Panel",
 	requires: [
-		"OMV.form.field.Password",
+		"OMV.form.field.Password"
 	],
 
 	rpcService: "WebGui",
@@ -39,7 +39,7 @@ Ext.define("OMV.module.admin.system.general.AdminPasswd", {
 		return [{
 			xtype: "passwordfield",
 			name: "password",
-			fieldLabel: _("Password"),
+			fieldLabel: _("New password"),
 			allowBlank: true
 		},{
 			xtype: "passwordfield",

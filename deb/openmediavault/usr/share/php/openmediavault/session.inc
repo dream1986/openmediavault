@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,7 +93,7 @@ class Session {
 	public function isAuthenticated() {
 		if (!isset($_SESSION['authenticated']) || !$_SESSION['authenticated'])
 			return FALSE;
-	 	return TRUE;
+		return TRUE;
 	}
 
 	/**
@@ -103,7 +103,7 @@ class Session {
 	public function getUsername() {
 		if (!isset($_SESSION['username']))
 			return FALSE;
-	 	return $_SESSION['username'];
+		return $_SESSION['username'];
 	}
 
 	/**
@@ -143,8 +143,7 @@ class Session {
 	public function validateAuthentication() {
 		if (!$this->isAuthenticated()) {
 			$this->destroy();
-			throw new \OMV\ErrorMsgException(
-			  \OMV\ErrorMsgException::E_SESSION_NOT_AUTHENTICATED);
+			throw new HttpErrorException(401, _("Session not authenticated."));
 		}
 	}
 
@@ -155,8 +154,7 @@ class Session {
 	public function validateTimeout() {
 		if ($this->isTimeout()) {
 			$this->destroy();
-			throw new \OMV\ErrorMsgException(
-			  \OMV\ErrorMsgException::E_SESSION_TIMEOUT);
+			throw new HttpErrorException(401, _("Session expired."));
 		}
 	}
 
@@ -170,8 +168,7 @@ class Session {
 		$userInfo = posix_getpwnam($_SESSION['username']);
 		if (FALSE === $userInfo) {
 			$this->destroy();
-			$exception = new \OMV\ErrorMsgException(
-			  \OMV\ErrorMsgException::E_SESSION_INVALID_USER);
+			throw new HttpErrorException(401, _("Invalid user."));
 		}
 	}
 
@@ -185,8 +182,7 @@ class Session {
 		if ($_SESSION['ipaddress'] == $_SERVER['REMOTE_ADDR'])
 			return;
 		$this->destroy();
-		throw new \OMV\ErrorMsgException(
-		  \OMV\ErrorMsgException::E_SESSION_INVALID_IPADDRESS);
+		throw new HttpErrorException(401, _("Invalid IP address."));
 	}
 
 	/**
@@ -199,8 +195,7 @@ class Session {
 		if ($_SESSION['useragent'] == $_SERVER['HTTP_USER_AGENT'])
 			return;
 		$this->destroy();
-		throw new \OMV\ErrorMsgException(
-		  \OMV\ErrorMsgException::E_SESSION_INVALID_USERAGENT);
+		throw new HttpErrorException(401, _("Invalid User-Agent."));
 	}
 
 	/**
@@ -220,8 +215,8 @@ class Session {
 	 */
 	public function dump() {
 		$this->debug(var_export([
-			  "id" => session_id(),
-			  "data" => $_SESSION
-		  ], TRUE));
+			"id" => session_id(),
+			"data" => $_SESSION
+		], TRUE));
 	}
 }

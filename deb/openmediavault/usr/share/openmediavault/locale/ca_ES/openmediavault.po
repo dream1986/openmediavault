@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: openmediavault\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-01-21 11:50+0100\n"
-"PO-Revision-Date: 2018-01-21 10:50+0000\n"
+"POT-Creation-Date: 2020-04-15 19:10+0200\n"
+"PO-Revision-Date: 2020-04-15 17:14+0000\n"
 "Last-Translator: Volker <votdev@gmx.de>\n"
 "Language-Team: Catalan (Spain) (http://www.transifex.com/votdev/openmediavault/language/ca_ES/)\n"
 "MIME-Version: 1.0\n"
@@ -261,12 +261,6 @@ msgstr "Afegir carpeta compartida"
 msgid "Add user"
 msgstr "Afegir usuari"
 
-msgid ""
-"Additional device settings, e.g. 'autoneg off speed 100 duplex full'. See <a"
-" href='http://linux.die.net/man/8/ethtool' target='_blank'>manual pages</a> "
-"for more details."
-msgstr "Opcions addicionals dispositiu, p.e.:  'autoneg off speed 100 duplex full'. Per més detalls vegeu <a href='http://linux.die.net/man/8/ethtool' target='_blank'>el manual</a>."
-
 msgid "Address"
 msgstr "Adreça"
 
@@ -321,11 +315,14 @@ msgid ""
 "Allow this server to advertise itself as a time server to Windows clients"
 msgstr "Permetre a aquest servidor anunciar-se a si mateix com un servidor d’hora de Windows"
 
-msgid "Allow this server to try and become a local master browser"
-msgstr "Permetre a aquest servidor identificar-se com \"local master browser\""
-
 msgid "American Samoa"
 msgstr "Samoa"
+
+msgid ""
+"An attempt to send the test email has been made. Please check your mailbox. "
+"If the email does not arrive, check any spam folders and also check there "
+"are no Postfix related errors in the system log."
+msgstr ""
 
 msgid ""
 "An email message with the command output (if any produced) is send to the "
@@ -354,6 +351,9 @@ msgstr "Anònim"
 
 msgid "Anonymous FTP"
 msgstr "FTP Anònim"
+
+msgid "Another user is already authenticated."
+msgstr ""
 
 msgid "Antarctica"
 msgstr "Antàrtida"
@@ -393,9 +393,6 @@ msgstr "E/S asíncrona"
 
 msgid "At reboot"
 msgstr "Al Reiniciar"
-
-msgid "Attribute name"
-msgstr "Nom de l'atribut"
 
 msgid "Attributes"
 msgstr "Atributs"
@@ -694,6 +691,12 @@ msgstr "Auto prova de transferència"
 msgid "Cook Islands"
 msgstr "Illes Cook"
 
+msgid "Copy"
+msgstr ""
+
+msgid "Copy public SSH key"
+msgstr ""
+
 msgid "Copy to clipboard"
 msgstr "Copiar al porta-papers"
 
@@ -871,8 +874,8 @@ msgstr "Carpeta"
 msgid "Disabled"
 msgstr "Deshabilitat"
 
-msgid "Disallow the user to modify his account."
-msgstr "No permetre l’usuari modificar la seva pròpia compta"
+msgid "Disallow the user to modify their account."
+msgstr ""
 
 msgid "Disk usage"
 msgstr "Ús del disc"
@@ -1048,9 +1051,6 @@ msgstr "Editar tasca programada"
 msgid "Edit scheduled test"
 msgstr "Editar prova programada"
 
-msgid "Edit service"
-msgstr "Edita el servei"
-
 msgid "Edit share"
 msgstr "Editar compartit"
 
@@ -1086,6 +1086,9 @@ msgstr "Habilitar SSL/TLS"
 
 msgid "Enable SSL/TLS connections"
 msgstr "Habilitar connexions SSL/TLS"
+
+msgid "Enable Time Machine support for this share."
+msgstr ""
 
 msgid "Enable WINS server"
 msgstr "Habilitar servidor WINS"
@@ -1160,6 +1163,9 @@ msgstr "Habilitar cau (caché) d’escriptura."
 
 msgid "Enabled"
 msgstr "Habilitat"
+
+msgid "Encryption mode"
+msgstr ""
 
 msgid "Enter your password"
 msgstr "Introdueix la teva contrasenya"
@@ -1437,6 +1443,9 @@ msgstr "Guinea-Bissau"
 msgid "Guyana"
 msgstr "República Cooperativa de Guyana"
 
+msgid "HTTP 404 error"
+msgstr ""
+
 msgid "HTTP-Proxy"
 msgstr "HTTP-Proxy"
 
@@ -1651,11 +1660,22 @@ msgstr "Instal·lant Plugins ..."
 msgid "Installing updates ..."
 msgstr "Instal·lant actualitzacions ..."
 
+msgid ""
+"Installs the public SSH key on a remote system as an authorized key. Make "
+"sure password authentication is enabled on that remote system."
+msgstr ""
+
 msgid "Interfaces"
 msgstr "Interfícies"
 
+msgid "Invalid IP address."
+msgstr ""
+
 msgid "Invalid SSH public key (RFC 4716)"
 msgstr "Clau pública SSH invàlida (RFC 4716)"
+
+msgid "Invalid User-Agent."
+msgstr ""
 
 msgid "Invalid domain name"
 msgstr "Nom de domini invàlid"
@@ -1674,6 +1694,9 @@ msgstr "Nom invàlid"
 
 msgid "Invalid user name"
 msgstr "Nom d’usuari invàlid"
+
+msgid "Invalid user."
+msgstr ""
 
 msgid "Iran"
 msgstr "Iran"
@@ -1815,14 +1838,14 @@ msgstr "Carregant. Esperis ..."
 msgid "Local"
 msgstr "Local"
 
-msgid "Local master browser"
-msgstr "Local master browser"
-
 msgid "Location"
 msgstr "Ubicació"
 
 msgid "Log level"
 msgstr "Nivell de Log"
+
+msgid "Logging out, please wait ..."
+msgstr ""
 
 msgid "Login"
 msgstr "Login"
@@ -2200,9 +2223,6 @@ msgstr "Novembre"
 msgid "Num"
 msgstr "Número"
 
-msgid "Number of servers"
-msgstr "Número de servidors"
-
 msgid "OK"
 msgstr "OK"
 
@@ -2290,8 +2310,8 @@ msgstr "Paraguai"
 msgid "Parent Device"
 msgstr "Dispositiu pare"
 
-msgid "Parent interface"
-msgstr "Interfície pare"
+msgid "Parent device"
+msgstr ""
 
 msgid "Passive FTP"
 msgstr "FTP passiu"
@@ -2305,11 +2325,11 @@ msgstr "Autentificació per contrasenya"
 msgid "Passwords don't match"
 msgstr "Les contrasenyes no coincideixen"
 
-msgid "Paste a RSA certificate in X.509 PEM format here."
-msgstr "Enganxa el certificat RSA en format X.509 PEM aquí."
+msgid "Paste a RSA or ECC certificate in X.509 PEM format here."
+msgstr ""
 
-msgid "Paste an private RSA key in X.509 PEM format here."
-msgstr "Enganxa la clau privada RSA en format X.509 PEM aquí."
+msgid "Paste a RSA or ECC private key in X.509 PEM format here."
+msgstr ""
 
 msgid "Path"
 msgstr "Ruta"
@@ -2453,8 +2473,14 @@ msgstr "Mantenir ACLs"
 msgid "Preserve extended attributes"
 msgstr "Mantenir atributs estesos"
 
+msgid "Preserve group"
+msgstr ""
+
 msgid "Preserve modification times"
 msgstr "Mantenir l’hora de modificació"
+
+msgid "Preserve owner"
+msgstr ""
 
 msgid "Preserve permissions"
 msgstr "Conservar permisos"
@@ -2652,9 +2678,9 @@ msgid ""
 msgstr "Avisar si la temperatura ha canviat al menys N graus Celsius des de l’últim informe. 0 deshabilita l’informe"
 
 msgid ""
-"Report if the temperature is greater or equal than N degrees Celsius. Set to"
-" 0 to disable this report."
-msgstr "Avisar si la temperatura supera els N graus Celsius des de l’últim informe. 0 deshabilita l’informe"
+"Report if the temperature is greater than or equal to N degrees Celsius. Set"
+" to 0 to disable this report."
+msgstr ""
 
 msgid "Repository"
 msgstr "Repositori"
@@ -2766,6 +2792,9 @@ msgstr "SSL"
 msgid "SSL/TLS"
 msgstr "SSL/TLS"
 
+msgid "STARTTLS"
+msgstr ""
+
 msgid "Saint Helena"
 msgstr "Santa Helena"
 
@@ -2862,12 +2891,6 @@ msgstr "Seleccioni un nom de grup ..."
 msgid "Select a language ..."
 msgstr "Seleccioni un idioma ..."
 
-msgid "Select a parent interface ..."
-msgstr "Seleccionar una interfície pare ..."
-
-msgid "Select a primary interface ..."
-msgstr "Seleccionar un interfície primari ..."
-
 msgid "Select a protocol ..."
 msgstr "Seleccionar un protocol ..."
 
@@ -2891,6 +2914,11 @@ msgstr "Seleccioni dispositius per eliminar del RAID."
 
 msgid "Select or enter a user name ..."
 msgstr "Seleccioni o escrigui un nom d'usuari ..."
+
+msgid ""
+"Select the devices that will be used to create the RAID device. Devices "
+"connected via USB will not be listed (too unreliable)."
+msgstr ""
 
 msgid "Self-test logs"
 msgstr "Logs d’auto-Prova"
@@ -2931,9 +2959,6 @@ msgstr "Servidor"
 msgid "Service"
 msgstr "Servei"
 
-msgid "Service Discovery"
-msgstr "Descobriment de servei"
-
 msgid "Service disabled"
 msgstr "Servei desactivat"
 
@@ -2958,6 +2983,15 @@ msgstr "Establir només lectura"
 msgid ""
 "Set the destination permissions to be the same as the source permissions"
 msgstr "Establir els permisos del destí com els permisos de l’origen"
+
+msgid ""
+"Set the group of the destination file to be the same as the source file."
+msgstr ""
+
+msgid ""
+"Set the owner of the destination file to be the same as the source file, but"
+" only if the receiving rsync is being run as the super-user."
+msgstr ""
 
 msgid "Set write only"
 msgstr "Establir només escriptura"
@@ -3086,9 +3120,6 @@ msgstr "Espanya"
 
 msgid "Special action flag"
 msgstr "Marca (flag) d’acció especial"
-
-msgid "Specifies how many server threads to create."
-msgstr "Indica quants fils de servidor es crearan."
 
 msgid "Specifies one of the bonding policies."
 msgstr "Especifica una de las polítiques de vinculació."
@@ -3308,6 +3339,9 @@ msgstr "S’ha creat satisfactòriament el sistema d'arxius."
 msgid "The hostname is a label that identifies the system to the network."
 msgstr "El nom de host es una etiqueta que identifica al sistema a la ret."
 
+msgid "The hostname of the remote system."
+msgstr ""
+
 msgid ""
 "The information about available software is out-of-date. You need to reload "
 "the information about available software."
@@ -3353,6 +3387,9 @@ msgid ""
 "single share to be used flexibly by each user."
 msgstr "Els permisos sobre els nous arxius i directoris s’estableixen per la màscara de creació i la màscara de directori, però el paràmetre d’herència de permisos preval. Pot ser útil especialment en sistemes amb molts usuaris per a permetre una utilització d’una mateixa compartició d’una forma flexible per a cada usuari."
 
+msgid "The port on which SSH is running on the remote system."
+msgstr ""
+
 msgid "The private RSA key in X.509 PEM format."
 msgstr "La clau pública RSA en format X.509 PEM."
 
@@ -3364,16 +3401,13 @@ msgid ""
 "packages."
 msgstr "El repositori serà recarregat per a cercar nous, eliminats o millorats paquets de software."
 
+msgid "The requested page was not found."
+msgstr ""
+
 msgid ""
 "The requirement that the SSL session from the control connection is reused "
 "for data connections is not required."
 msgstr "Els requeriments de la sessió SSL no són necessaris per a la connexió de dades"
-
-msgid "The session IP address has been changed."
-msgstr "S'ha canviat l'adreça IP de la sessió."
-
-msgid "The session user no longer exists."
-msgstr "L'usuari de la sessió ja no existeix."
 
 msgid ""
 "The source remote server, e.g. [USER@]HOST:SRC, [USER@]HOST::SRC or "
@@ -3386,11 +3420,11 @@ msgstr "La carpeta compartida origen."
 msgid "The specified quota exceeds the max. possible value of 4TiB."
 msgstr "La quota indicada excedeix el màxim possible de 4Tb."
 
+msgid "The system must be rebooted."
+msgstr ""
+
 msgid "The system will reboot now. This may take some time ..."
 msgstr "El sistema es reiniciarà ara. Pot tardar una mica ..."
-
-msgid "The test email has been sent successfully. Please check your mailbox."
-msgstr "L’email de prova s’ha enviat. Per favor, comprova la teva bustia."
 
 msgid "The volume label for the file system."
 msgstr "Etiqueta del volum per al sistema d'arxius."
@@ -3614,6 +3648,9 @@ msgstr "Que s’ha de fer si el paquet coincideix."
 msgid "This will create a recycle bin on the share."
 msgstr "Crearà una paperera de reciclatge en la compartició."
 
+msgid "Threshold"
+msgstr ""
+
 msgid "Thursday"
 msgstr "Dijous"
 
@@ -3622,6 +3659,9 @@ msgstr "TiB"
 
 msgid "Time"
 msgstr "Hora"
+
+msgid "Time Machine support"
+msgstr ""
 
 msgid "Time interval"
 msgstr "Interval"
@@ -3641,9 +3681,6 @@ msgstr "Zona horària"
 msgid "Timeout"
 msgstr "Temps límit"
 
-msgid "Times"
-msgstr "Cops"
-
 msgid "Togo"
 msgstr "Togo"
 
@@ -3659,14 +3696,16 @@ msgstr "Total"
 msgid "Transfer log"
 msgstr "Log de transferència"
 
+msgid ""
+"Transfer modification times along with the files and update them on the "
+"remote system."
+msgstr ""
+
 msgid "Transfer time"
 msgstr "Temps de transferència"
 
 msgid "Transfer type"
 msgstr "Tipus de transferència"
-
-msgid "Treshold"
-msgstr "Llindar"
 
 msgid "Trial run"
 msgstr "Prova"
@@ -3777,11 +3816,11 @@ msgstr "Actualitzar els atributs estesos del destí amb els locals."
 msgid "Updates"
 msgstr "Actualitzacions"
 
+msgid "Updates available"
+msgstr ""
+
 msgid "Updating ACL settings"
 msgstr "Actualitzant configuració de les ACL"
-
-msgid "Upgrade"
-msgstr "Upgrade"
 
 msgid "Upload"
 msgstr "Carregar"
@@ -3806,9 +3845,6 @@ msgstr "Uruguai"
 
 msgid "Use NTP server"
 msgstr "Usar el servidor NTP"
-
-msgid "Use SSL/TLS secure connection"
-msgstr "Usar connexió SSL/TLS segura"
 
 msgid "Use chroot"
 msgstr "Habilitar chroot."

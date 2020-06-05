@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +19,11 @@
  * You should have received a copy of the GNU General Public License
  * along with OpenMediaVault. If not, see <http://www.gnu.org/licenses/>.
  */
+namespace Engined\Rpc;
+
 require_once("openmediavault/functions.inc");
 
-class OMVRpcServiceDiskMgmt extends \OMV\Rpc\ServiceAbstract {
+class DiskMgmt extends \OMV\Rpc\ServiceAbstract {
 	/**
 	 * Get the RPC service name.
 	 */
@@ -47,9 +49,9 @@ class OMVRpcServiceDiskMgmt extends \OMV\Rpc\ServiceAbstract {
 	 * @param params The method parameters.
 	 * @param context The context of the caller.
 	 * @return An array containing physical disk device objects with the
-	 *   fields \em devicename, \em devicefile, \em devicelinks, \em model,
-	 *   \em size, \em description, \em vendor, \em serialnumber, \em israid,
-	 *   and \em isroot.
+	 *   fields \em devicename, \em canonicaldevicefile, \em devicefile,
+	 *   \em devicelinks, \em model, \em size, \em description, \em vendor,
+	 *   \em serialnumber, \em israid and \em isroot.
 	 * @throw \OMV\Exception
 	 */
 	public function enumerateDevices($params, $context) {
@@ -62,7 +64,7 @@ class OMVRpcServiceDiskMgmt extends \OMV\Rpc\ServiceAbstract {
 		$rootDeviceFile = \OMV\System\System::getRootDeviceFile();
 		// Get all existing devices except software RAID devices.
 		if (FALSE === ($devs = \OMV\System\Storage\StorageDevice::enumerate(
-		  OMV_STORAGE_DEVICE_TYPE_DISK | OMV_STORAGE_DEVICE_TYPE_HBA))) {
+		  OMV_STORAGE_DEVICE_TYPE_DISK))) {
 			throw new \OMV\Exception(
 			  "Failed to get list of hard disks and hardware RAID devices.");
 		}
@@ -78,7 +80,8 @@ class OMVRpcServiceDiskMgmt extends \OMV\Rpc\ServiceAbstract {
 				continue;
 			$objects[] = [
 				"devicename" => $sd->getDeviceName(),
-				"devicefile" => $sd->getPreferredDeviceFile(),
+				"canonicaldevicefile" => $sd->getCanonicalDeviceFile(),
+				"devicefile" => $sd->getPredictableDeviceFile(),
 				"devicelinks" => $sd->getDeviceFileSymlinks(),
 				"model" => $sd->getModel(),
 				"size" => $sd->getSize(),
@@ -180,14 +183,11 @@ class OMVRpcServiceDiskMgmt extends \OMV\Rpc\ServiceAbstract {
 		]);
 		// Validate the parameters of the RPC service method.
 		$this->validateMethodParams($params, "rpc.diskmgmt.sethdparm");
-		// Check if the given device exists.
-		\OMV\System\Storage\StorageDevice::assertStorageDeviceExists(
-		  $params['devicefile']);
-		  // Try to get a /dev/disk/by-id device file.
-  		$sd = \OMV\System\Storage\StorageDevice::getStorageDevice(
-  		  $params['devicefile']);
-  		if (TRUE === $sd->hasDeviceFileById())
-  			$params['devicefile'] = $sd->getDeviceFileById();
+		// Try to get a /dev/disk/by-id device file.
+		$sd = \OMV\System\Storage\StorageDevice::assertGetStorageDevice(
+			$params['devicefile']);
+		if (TRUE === $sd->hasDeviceFileById())
+			$params['devicefile'] = $sd->getDeviceFileById();
 		// Create the configuration object.
 		$object = new \OMV\Config\ConfigObject("conf.system.hdparm");
 		$object->setAssoc($params);
@@ -218,16 +218,19 @@ class OMVRpcServiceDiskMgmt extends \OMV\Rpc\ServiceAbstract {
 		]);
 		// Validate the parameters of the RPC service method.
 		$this->validateMethodParams($params, "rpc.diskmgmt.wipe");
+		// Get the device file and ensure it exists.
+		$bd = new \OMV\System\BlockDevice($params['devicefile']);
+		$bd->assertExists();
 		// Create the background process.
 		return $this->execBgProc(function($bgStatusFilename, $bgOutputFilename)
-		  use ($params) {
+		  use ($bd, $params) {
 			// Wipe the device.
 			if (TRUE === boolvalEx($params['secure'])) {
 				// Secure wipe the device.
 				$cmdArgs = [];
 				$cmdArgs[] = "-v";
 				$cmdArgs[] = "-n 1";
-				$cmdArgs[] = escapeshellarg($params['devicefile']);
+				$cmdArgs[] = escapeshellarg($bd->getDeviceFile());
 				$cmd = new \OMV\System\Process("shred", $cmdArgs);
 				$cmd->setRedirect2to1();
 				if (0 !== ($exitStatus = $this->exec($cmd->getCommandLine(),
@@ -239,7 +242,7 @@ class OMVRpcServiceDiskMgmt extends \OMV\Rpc\ServiceAbstract {
 				// Quick wipe the device (see omv-initfs).
 				$cmdArgs = [];
 				$cmdArgs[] = "--zap-all";
-				$cmdArgs[] = escapeshellarg($params['devicefile']);
+				$cmdArgs[] = escapeshellarg($bd->getDeviceFile());
 				$cmd = new \OMV\System\Process("sgdisk", $cmdArgs);
 				$cmd->setRedirect2to1();
 				if (0 !== ($exitStatus = $this->exec($cmd->getCommandLine(),
@@ -251,9 +254,30 @@ class OMVRpcServiceDiskMgmt extends \OMV\Rpc\ServiceAbstract {
 				$cmdArgs = [];
 				$cmdArgs[] = "if=/dev/zero";
 				$cmdArgs[] = sprintf("of=%s", escapeshellarg(
-				  $params['devicefile']));
+					$bd->getDeviceFile()));
 				$cmdArgs[] = "bs=4M";
 				$cmdArgs[] = "count=1";
+				$cmd = new \OMV\System\Process("dd", $cmdArgs);
+				$cmd->setRedirect2to1();
+				if (0 !== ($exitStatus = $this->exec($cmd->getCommandLine(),
+					$output, $bgOutputFilename))) {
+					throw new \OMV\ExecException($cmd->getCommandLine(),
+						$output, $exitStatus);
+				}
+				// Erase the metadata/signatures at the end of the device.
+				// Note, we still need to support 32bit systems, so use
+				// BC math functions.
+				$sectorSize = $bd->getSectorSize();
+				$sizeInSectors = bcdiv($bd->getSize(), strval($sectorSize), 0);
+				$count = bcdiv("4194304", strval($sectorSize), 0); // 4MiB
+				$seek = bcsub($sizeInSectors, $count, 0);
+				$cmdArgs = [];
+				$cmdArgs[] = "if=/dev/zero";
+				$cmdArgs[] = sprintf("of=%s", escapeshellarg(
+					$bd->getDeviceFile()));
+				$cmdArgs[] = sprintf("bs=%d", $sectorSize);
+				$cmdArgs[] = sprintf("count=%s", $count);
+				$cmdArgs[] = sprintf("seek=%s", $seek);
 				$cmd = new \OMV\System\Process("dd", $cmdArgs);
 				$cmd->setRedirect2to1();
 				if (0 !== ($exitStatus = $this->exec($cmd->getCommandLine(),
@@ -265,7 +289,7 @@ class OMVRpcServiceDiskMgmt extends \OMV\Rpc\ServiceAbstract {
 			// Reread partition table.
 			$cmdArgs = [];
 			$cmdArgs[] = "--rereadpt";
-			$cmdArgs[] = escapeshellarg($params['devicefile']);
+			$cmdArgs[] = escapeshellarg($bd->getDeviceFile());
 			$cmd = new \OMV\System\Process("blockdev", $cmdArgs);
 			$cmd->setRedirect2to1();
 			if (0 !== ($exitStatus = $this->exec($cmd->getCommandLine(),

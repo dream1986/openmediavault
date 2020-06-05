@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -370,7 +370,7 @@ class User {
 		$cmd->setRedirect2to1();
 		$cmd->execute($output);
 		// Parse command output:
-		// proftpd:x:109:65534::/var/run/proftpd:/bin/false
+		// proftpd:x:109:65534::/run/proftpd:/bin/false
 		// ftp:x:110:65534::/home/ftp:/bin/false
 		// openmediavault:x:999:999::/home/openmediavault:/bin/sh
 		// admin:x:998:100:WebGUI administrator:/home/admin:/usr/sbin/nologin

@@ -3,7 +3,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,8 +50,6 @@ Ext.define("OMV.module.admin.system.certificate.ssl.Create", {
 			store: Ext.create("Ext.data.ArrayStore", {
 				fields: [ "value", "text" ],
 				data: [
-					[ 512, "512b" ],
-					[ 1024, "1024b" ],
 					[ 2048, "2048b" ],
 					[ 4096, "4096b" ]
 				]
@@ -469,7 +467,7 @@ Ext.define("OMV.module.admin.system.certificate.ssl.Edit", {
 			flex: 1,
 			plugins: [{
 				ptype: "fieldinfo",
-				text: _("Paste an private RSA key in X.509 PEM format here.")
+				text: _("Paste a RSA or ECC private key in X.509 PEM format here.")
 			}]
 		},{
 			xtype: "textarea",
@@ -484,7 +482,7 @@ Ext.define("OMV.module.admin.system.certificate.ssl.Edit", {
 			flex: 1,
 			plugins: [{
 				ptype: "fieldinfo",
-				text: _("Paste a RSA certificate in X.509 PEM format here.")
+				text: _("Paste a RSA or ECC certificate in X.509 PEM format here.")
 			}]
 		},{
 			xtype: "textfield",
@@ -597,16 +595,21 @@ Ext.define("OMV.module.admin.system.certificate.ssl.Certificates", {
 		Ext.Array.insert(items, 0, [{
 			id: me.getId() + "-add",
 			xtype: "splitbutton",
-			text: _("Add"),
+			text: me.addButtonText,
 			iconCls: "x-fa fa-plus",
 			handler: function() {
 				this.showMenu();
 			},
 			menu: Ext.create("Ext.menu.Menu", {
-				items: [
-					{ text: _("Create"), value: "create" },
-					{ text: _("Import"), value: "import" }
-				],
+				items: [{
+					iconCls: me.addButtonIconCls,
+					text: me.addButtonText,
+					value: "create"
+				},{
+					iconCls: "mdi mdi-import",
+					text: _("Import"),
+					value: "import"
+				}],
 				listeners: {
 					scope: me,
 					click: function(menu, item, e, eOpts) {

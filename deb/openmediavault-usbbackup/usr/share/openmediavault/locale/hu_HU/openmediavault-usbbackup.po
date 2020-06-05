@@ -4,14 +4,16 @@
 # 
 # Translators:
 # Sári Gábor <sari.gabor@gmail.com>, 2017
+# Gyuris Gellért <bubu@ujevangelizacio.hu>, 2019
 # Gyuris Gellért <bubu@ujevangelizacio.hu>, 2017
+# Sári Gábor <sari.gabor@gmail.com>, 2018
 # Grawens <szabolcs.szanyi@gmail.com>, 2014,2017
 msgid ""
 msgstr ""
 "Project-Id-Version: openmediavault\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-11-18 11:05+0100\n"
-"PO-Revision-Date: 2017-11-20 17:56+0000\n"
+"POT-Creation-Date: 2020-01-07 17:31+0100\n"
+"PO-Revision-Date: 2019-10-31 22:01+0000\n"
 "Last-Translator: Gyuris Gellért <bubu@ujevangelizacio.hu>\n"
 "Language-Team: Hungarian (Hungary) (http://www.transifex.com/votdev/openmediavault/language/hu_HU/)\n"
 "MIME-Version: 1.0\n"
@@ -41,7 +43,7 @@ msgid "Compress"
 msgstr "Tömörítés"
 
 msgid "Compress file data during the transfer."
-msgstr "Fájl adat tömörítése az átvitel során."
+msgstr "Fájladatok tömörítése az átvitel során."
 
 msgid "Delete"
 msgstr "Törlés"
@@ -67,7 +69,7 @@ msgstr "Archiváló mód engedélyezése."
 msgid ""
 "Enable this option to keep partially transferred files, otherwise they will "
 "be deleted if the transfer is interrupted."
-msgstr "Engedélyezd ezt az opciót, hogy megmaradjanak a csak részben átküldött fájlok, különben ezek törlésre kerülnek, ha az átvitel megszakad."
+msgstr "Engedélyezze ezt az opciót, hogy megmaradjanak a csak részben átküldött fájlok, különben ezek törlésre kerülnek, ha az átvitel megszakad."
 
 msgid "Enabled"
 msgstr "Engedélyezve"
@@ -96,13 +98,13 @@ msgstr "Mód"
 msgid ""
 "Please check the <a href='http://www.samba.org/ftp/rsync/rsync.html' "
 "target='_blank'>manual page</a> for more details."
-msgstr "Kérlek tekintsd meg a <a href='http://www.samba.org/ftp/rsync/rsync.html' target='_blank'>kézikönyvet</a> a további részletekért."
+msgstr "Tekintse meg a <a href='http://www.samba.org/ftp/rsync/rsync.html' target='_blank'>kézikönyvet</a> további részletekért."
 
 msgid ""
 "Please note that the web interface is blocked until the manually started "
 "backup job has been finished. However the backup job is automatically "
 "executed in the background when the storage device is connected to the host."
-msgstr "Kérlek vedd figyelembe, hogy a webes felület nem lesz elérhető amíg az elkezdett mentési folyamat be nem fejeződik. Ugyanakkor a biztonsági mentés a tárolóeszköz csatlakoztatásakor automatikusan lefut."
+msgstr "Vegye figyelembe, hogy a webes felület nem lesz elérhető amíg az elkezdett mentési folyamat be nem fejeződik. Ugyanakkor a biztonsági mentés a tárolóeszköz csatlakoztatásakor automatikusan lefut."
 
 msgid "Preserve ACLs"
 msgstr "ACL-ek megőrzése"
@@ -110,8 +112,14 @@ msgstr "ACL-ek megőrzése"
 msgid "Preserve extended attributes"
 msgstr "Kiterjesztett attribútumok megőrzése"
 
-msgid "Preserve modification times."
-msgstr "Módosítás idejének megőrzése."
+msgid "Preserve group"
+msgstr "Csoport megőrzése"
+
+msgid "Preserve modification times"
+msgstr "Módosított idő megőrzése"
+
+msgid "Preserve owner"
+msgstr "Tulajdonos megőrzése"
 
 msgid "Preserve permissions"
 msgstr "Jogosultságok megőrzése"
@@ -132,7 +140,7 @@ msgid "Scan"
 msgstr "Keresés"
 
 msgid "Select a device ..."
-msgstr "Válassz ki egy meghajtót ..."
+msgstr "Válasszon ki egy meghajtót..."
 
 msgid "Send command output via email."
 msgstr "Parancs kimenet elküldése emailben."
@@ -143,6 +151,15 @@ msgstr "E-mail küldése"
 msgid ""
 "Set the destination permissions to be the same as the source permissions."
 msgstr "Célállomás jogosultságai egyezzenek meg a forrás jogosultságaival."
+
+msgid ""
+"Set the group of the destination file to be the same as the source file."
+msgstr "A célfájl csoportjának beállítása a forrásfájllal megegyezőre."
+
+msgid ""
+"Set the owner of the destination file to be the same as the source file, but"
+" only if the receiving rsync is being run as the super-user."
+msgstr "A célfájl tulajdonosának beállítása a forrásfájllal megegyezőre abban az esetben ha a fogadó rsync szuperfelhasználóként fut."
 
 msgid "Shared folder"
 msgstr "Megosztott mappa"
@@ -167,8 +184,10 @@ msgid ""
 "connected."
 msgstr "A megosztott mappa szinkronizálása, amikor a külső tárolóeszköz csatlakoztatva van."
 
-msgid "Times"
-msgstr "Idők"
+msgid ""
+"Transfer modification times along with the files and update them on the "
+"remote system."
+msgstr "Módosítási idők áttöltése a fájlokkal és a távoli rendszeren való frissítésük."
 
 msgid "USB Backup"
 msgstr "USB biztonsági mentés"

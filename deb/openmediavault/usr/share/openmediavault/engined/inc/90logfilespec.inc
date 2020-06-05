@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -261,8 +261,7 @@ require_once("openmediavault/functions.inc");
 // Mar 13 23:50:48 vmomv5 smbd_audit[4192]: test|192.168.178.30|pc01|/media/1622d31c-7f5d-4add-be13-20e382a9f5cb/test|download|pwrite|ok|xyz.tar.gz
 \OMV\System\LogFileSpec::registerSpecification("smbdaudit", [
   "command" => "export SYSTEMD_COLORS=0; journalctl --quiet --no-pager ".
-    "--priority='notice' SYSLOG_FACILITY=23 SYSLOG_IDENTIFIER='smbd_audit' ".
-    "--output=short",
+    "--priority='notice' --identifier='smbd_audit' --output=short",
   "filename" => "smbd_audit.log",
   "regex" => "/^(\S+\s+\d+\s+\d{2}:\d{2}:\d{2})\s+(\S+)\ssmbd_audit\[\d+\]:\s+([^\|]+)\|([^\|]+)\|([^\|]+)\|([^\|]+)\|([^\|]+)\|([^\|]+)\|([^\|]+)\|([^\|]+)$/",
   "columns" => [
@@ -284,7 +283,11 @@ require_once("openmediavault/functions.inc");
 	  "servicename" => 7,
 	  "operation" => 8,
 	  "result" => 9,
-	  "filename" => 10
+	  "filepath" => 10,
+	  "filename" => [
+	      "index" => 10,
+	      "func" => function($v) { return basename($v); }
+	  ]
   ]]);
 
 // /var/log/rsync.log

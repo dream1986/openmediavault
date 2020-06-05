@@ -3,13 +3,13 @@
 # This file is distributed under the same license as the openmediavault-nut package.
 # 
 # Translators:
-# Toshihiro Kan <kansuke4649@gmail.com>, 2014
+# Toshihiro Kan <kansuke4649@gmail.com>, 2014,2020
 msgid ""
 msgstr ""
 "Project-Id-Version: openmediavault\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-30 08:41+0200\n"
-"PO-Revision-Date: 2017-09-19 23:32+0000\n"
+"POT-Creation-Date: 2020-04-19 15:47+0200\n"
+"PO-Revision-Date: 2020-04-20 02:48+0000\n"
 "Last-Translator: Toshihiro Kan <kansuke4649@gmail.com>\n"
 "Language-Team: Japanese (Japan) (http://www.transifex.com/votdev/openmediavault/language/ja_JP/)\n"
 "MIME-Version: 1.0\n"
@@ -17,6 +17,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: ja_JP\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid ""
+"'Standalone' for local UPS, 'Netclient' for remote UPS on a NUT server."
+msgstr "ローカルUPSの場合は 'Standalone'、NUTサーバー上のリモートUPSの場合は 'Netclient'。"
 
 msgid "Charge"
 msgstr "充電"
@@ -51,11 +55,29 @@ msgstr "ロード"
 msgid "Message"
 msgstr "メッセージ"
 
+msgid "Mode"
+msgstr "モード"
+
+msgid "Netclient"
+msgstr "Netclient"
+
+msgid "Netclient hostname"
+msgstr "Netclient ホスト名"
+
+msgid "Netclient password"
+msgstr "Netclient パスワード"
+
+msgid "Netclient username"
+msgstr "Netclient ユーザー名"
+
 msgid "PID"
 msgstr "PID"
 
 msgid "Password"
 msgstr "パスワード"
+
+msgid "Powervalue"
+msgstr "Powervalue"
 
 msgid "Program"
 msgstr "プログラム"
@@ -75,11 +97,20 @@ msgstr "シャットダウンモード"
 msgid "Shutdown timer"
 msgstr "シャットダウンタイマー"
 
+msgid "Standalone"
+msgstr "Standalone"
+
 msgid "Temperature"
 msgstr "温度"
 
-msgid "The name used to uniquely identify your UPS on this system."
-msgstr "名前は一意にこのシステム上のUPSを識別するために使用されます。"
+msgid "The name used to uniquely identify your UPS on local or remote system."
+msgstr "ローカルまたはリモートシステムでUPSを一意に識別するために使用される名前です。"
+
+msgid ""
+"The number of power supplies that the UPS feeds on this system (usually 1), "
+"refer to <a href='https://networkupstools.org/docs/man/upsmon.conf.html' "
+"target='_blank'>upsmon.conf(5)</a> for more information."
+msgstr "UPSがこのシステムに供給する電源装置の数（通常は1）。詳細については、<a href='https://networkupstools.org/docs/man/upsmon.conf.html' target='_blank'>upsmon.conf(5)</a>を参照してください。"
 
 msgid ""
 "The time in seconds until shutdown is initiated. If the UPS happens to come "

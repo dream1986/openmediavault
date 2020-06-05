@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,13 +47,15 @@ try {
 	if (isset($server))
 		$server->cleanup();
 	header("Content-Type: text/html");
-	print json_encode_safe(array(
+	http_response_code(($e instanceof \OMV\BaseException) ?
+		$e->getHttpStatusCode() : 500);
+	print json_encode_safe([
 		"success" => false, // required by ExtJS
 		"responseText" => $e->getMessage(), // required by ExtJS
 		"errors" => null, // required by ExtJS
 		"code" => $e->getCode(),
 		"message" => $e->getMessage(),
 		"trace" => $e->__toString()
-	));
+	]);
 }
 ?>

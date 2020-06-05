@@ -3,7 +3,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -133,11 +133,11 @@ Ext.define("OMV.module.admin.system.plugin.Plugins", {
 		width: 340,
 		hidden: true
 	},{
+		xtype: "binaryunitcolumn",
 		text: _("Size"),
 		sortable: true,
 		dataIndex: "size",
 		stateId: "size",
-		renderer: OMV.util.Format.binaryUnitRenderer(),
 		width: 80,
 		hidden: true
 	},{
@@ -406,12 +406,9 @@ Ext.define("OMV.module.admin.system.plugin.Plugins", {
 		Ext.Array.each(records, function(record) {
 			packages.push(record.get("name"));
 		});
-		OMV.MessageBox.show({
-			title: _("Confirmation"),
-			msg: _("Do you really want to install the selected plugin(s)?"),
-			buttons: Ext.Msg.YESNO,
-			defaultFocus: "no",
-			fn: function(answer) {
+		OMV.MessageBox.confirm(null,
+			_("Do you really want to install the selected plugin(s)?"),
+			function(answer) {
 				if (answer !== "yes")
 					return;
 				var wnd = Ext.create("OMV.window.Execute", {
@@ -452,10 +449,7 @@ Ext.define("OMV.module.admin.system.plugin.Plugins", {
 				wnd.setButtonDisabled("close", true);
 				wnd.show();
 				wnd.start();
-			},
-			scope: me,
-			icon: Ext.Msg.QUESTION
-		});
+			}, me);
 	},
 
 	onDeleteButton: function() {
@@ -465,12 +459,9 @@ Ext.define("OMV.module.admin.system.plugin.Plugins", {
 		Ext.Array.each(records, function(record) {
 			packages.push(record.get("name"));
 		});
-		OMV.MessageBox.show({
-			title: _("Confirmation"),
-			msg: _("Do you really want to uninstall the selected plugin(s)?"),
-			buttons: Ext.Msg.YESNO,
-			defaultFocus: "no",
-			fn: function(answer) {
+		OMV.MessageBox.confirm(null,
+			_("Do you really want to uninstall the selected plugin(s)?"),
+			function(answer) {
 				if (answer !== "yes")
 					return;
 				var wnd = Ext.create("OMV.window.Execute", {
@@ -478,7 +469,6 @@ Ext.define("OMV.module.admin.system.plugin.Plugins", {
 					rpcService: "Plugin",
 					rpcMethod: "remove",
 					rpcParams: { "packages": packages },
-					rpcIgnoreErrors: [ OMV.E_ENGINED_CONNECT_SOCKET ],
 					hideStartButton: true,
 					hideStopButton: true,
 					killCmdBeforeDestroy: false,
@@ -511,10 +501,7 @@ Ext.define("OMV.module.admin.system.plugin.Plugins", {
 				wnd.setButtonDisabled("close", true);
 				wnd.show();
 				wnd.start();
-			},
-			scope: me,
-			icon: Ext.Msg.QUESTION
-		});
+			}, me);
 	}
 });
 

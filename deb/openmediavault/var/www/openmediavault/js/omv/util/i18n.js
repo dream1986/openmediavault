@@ -3,7 +3,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,6 +63,13 @@ OMV.util.i18n = function() {
 			// after one year.
 			var expires = Ext.Date.add(new Date(), Ext.Date.YEAR, 1);
 			Ext.util.Cookies.set(cookieName, locale, expires);
+		},
+
+		/**
+		 * Test if locale is right-to-left (RTL).
+		 */
+		isRTL: function() {
+			return ['ar_SA'].includes(this.getLocale());
 		},
 
 		loadDictionary: function(data) {

@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -116,20 +116,6 @@ class Monit {
 	}
 
 	/**
-	 * Create the monit configuration and reinitialize monit.
-	 */
-	public function update() {
-		// Create monit and monitored services configuration files.
-		$cmd = new \OMV\System\Process("omv-mkconf", "monit");
-		$cmd->setRedirect2to1();
-		$cmd->execute();
-		// Reinitialize monit.
-		$cmd = new \OMV\System\Process("monit", "reload");
-		$cmd->setRedirect2to1();
-		$cmd->execute();
-	}
-
-	/**
 	 * Get the status of a monitored process.
 	 * @return The status of the monitored service, e.g. 'running',
 	 *   'does not exist' or 'not monitored'.
@@ -160,7 +146,7 @@ class Monit {
 			$status = trim($matches[2]);
 			break;
 		}
-		return strtolower($status);
+		return mb_strtolower($status);
 	}
 
 	/**

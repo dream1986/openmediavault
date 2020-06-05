@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,12 +48,8 @@ class System {
 		// during the boot process via an udev rule does not work reliable.
 		//if (is_block_device("/dev/root"))
 		//	return realpath("/dev/root");
-		$cmd = new \OMV\System\Process("findmnt", "-f", "-n",
-		  "-o SOURCE", "/");
-		$cmd->setRedirect2to1();
-		$cmd->execute($output);
-		$rootDeviceFile = $output[0];
-		return $rootDeviceFile;
+		$mp = new \OMV\System\MountPoint("/");
+		return $mp->getDeviceFile();
 	}
 
 	/**
@@ -64,12 +60,19 @@ class System {
 	 *   otherwise FALSE.
 	 */
 	public static function isRootDeviceFile($deviceFile, $exact = TRUE) {
+		// '/dev/root' is obsolete, but we still keep it (maybe we will
+		// need it sometime).
 		if ("/dev/root" == $deviceFile)
 			return TRUE;
 		$rootDeviceFile = self::getRootDeviceFile();
-		if (TRUE === $exact)
-			return ($rootDeviceFile == $deviceFile) ? TRUE : FALSE;
-		return (0 === strpos($rootDeviceFile, $deviceFile)) ? TRUE : FALSE;
+		if (TRUE === $exact) {
+			return (($rootDeviceFile == $deviceFile) ||
+				($rootDeviceFile == realpath($deviceFile))) ?
+				TRUE : FALSE;
+		}
+		return ((0 === strpos($rootDeviceFile, $deviceFile)) ||
+			(0 === strpos($rootDeviceFile, realpath($deviceFile)))) ?
+			TRUE : FALSE;
 	}
 
 	/**
@@ -361,5 +364,35 @@ class System {
 			"usage" => (0 == $diffTotal) ? 0 :
 				(($diffTotal - $diffIowait - $diffIdle) / $diffTotal) * 100
 		];
+	}
+
+	/**
+	 * Get a list of Debian packages that are available to be upgraded.
+	 * This list is automatically generated via an APT trigger which is
+	 * executed when 'apt-get update' is called. Thus it is not necessary
+	 * to execute the very cost intensive code every RPC call.
+	 * @return array An array of objects containing the fields \em name,
+	 *   \em version, \em oldversion, \em repository, \em architecture,
+	 *   \em package, \em priority, \em section, \em installedsize,
+	 *   \em maintainer, \em filename, \em size, \em md5sum, \em sha1,
+	 *   \em sha256, \em abstract and \em homepage.
+	 *   The following fields are optional: \em description, \em depends,
+	 *   \em replaces and \em conflicts.
+	 * @throws \OMV\Exception
+	 */
+	public static function getAptUpgradeList() {
+		// Read the information from the package index. This will be
+		// updated automatically via APT trigger.
+		$file = new \OMV\Json\File(\OMV\Environment::get(
+			"OMV_APT_UPGRADE_INDEX_FILE"));
+		if (!$file->exists()) {
+			throw new \OMV\Exception(
+				"The index of upgradeable packages does not exist. Please ".
+				"re-synchronize the package index files from their sources.");
+		}
+		$file->open("r");
+		$result = $file->read();
+		$file->close();
+		return $result;
 	}
 }

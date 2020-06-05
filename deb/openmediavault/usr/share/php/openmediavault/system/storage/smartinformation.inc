@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -144,6 +144,11 @@ class SmartInformation {
 		if ($this->dataCached !== FALSE)
 			return;
 
+		// Deny the parallel execution of the smartctl command for
+		// this device. This is necessary to prevent an increasing
+		// of the ATA error count of the device.
+		$mutex = new \OMV\Mutex(__CLASS__.__METHOD__.$this->getDeviceFile());
+
 		// Get all available S.M.A.R.T. information.
 		$cmdArgs = [];
 		$cmdArgs[] = sprintf("-x %s", escapeshellarg($this->deviceFile));
@@ -213,7 +218,7 @@ class SmartInformation {
 					"flags" => $matches[3],
 					"value" => intval($matches[4]),
 					"worst" => intval($matches[5]),
-					"treshold" => ("---" == $matches[6]) ?
+					"threshold" => ("---" == $matches[6]) ?
 					  0 : intval($matches[6]),
 					"whenfailed" => $matches[7],
 					"rawvalue" => $matches[8],
@@ -239,16 +244,16 @@ class SmartInformation {
 		$attrData['assessment'] = self::SMART_ASSESSMENT_GOOD;
 		// Always-Fail and Always-Passing thresholds are not relevant
 		// for our assessment.
-		if (!(1 <= $attrData['treshold']) && (0xFD >= $attrData['treshold'])) {
+		if (!(1 <= $attrData['threshold']) && (0xFD >= $attrData['threshold'])) {
 			$attrData['assessment'] = self::SMART_ASSESSMENT_BAD_STATUS;
 			return;
 		}
 		// See https://wiki.ubuntuusers.de/Festplattenstatus
-		if ($attrData['value'] <= $attrData['treshold']) {
+		if ($attrData['value'] <= $attrData['threshold']) {
 			$attrData['assessment'] = self::SMART_ASSESSMENT_BAD_ATTRIBUTE_NOW;
 			return;
 		}
-		if ($attrData['worst'] <= $attrData['treshold']) {
+		if ($attrData['worst'] <= $attrData['threshold']) {
 			$attrData['assessment'] = self::SMART_ASSESSMENT_BAD_ATTRIBUTE_IN_THE_PAST;
 			return;
 		}
@@ -317,12 +322,13 @@ class SmartInformation {
 		$this->getData();
 		// Initialize with default values. Note, the result list may
 		// contain additional key/value pairs.
-		$result = array(
+		$result = [
+			"devicefile" => $this->getDeviceFile(),
 			"devicemodel" => "",
 			"serialnumber" => "",
 			"firmwareversion" => "",
 			"usercapacity" => ""
-		);
+		];
 		// INFORMATION SECTION
 		// Parse command output:
 		// === START OF INFORMATION SECTION ===
@@ -362,7 +368,7 @@ class SmartInformation {
 				continue;
 			// Convert the attribute name, e.g. 'Device Model' to
 			// 'devicemodel'.
-			$attrKey = strtolower(str_replace(" ", "", $matches[1]));
+			$attrKey = mb_strtolower(str_replace(" ", "", $matches[1]));
 			// Append key/value to result array.
 			$result[$attrKey] = $matches[2];
 		}
@@ -428,7 +434,6 @@ class SmartInformation {
 		// ...
 		//
 		// Alternative output:
-		//
 		// ...
 		// SCT Status Version:                  3
 		// SCT Version (vendor specific):       256 (0x0100)
@@ -438,10 +443,19 @@ class SmartInformation {
 		// Power Cycle Min/Max Temperature:     23/28 Celsius
 		// Lifetime    Min/Max Temperature:     21/32 Celsius
 		// ...
+		//
+		// Alternative output:
+		// Warning  Comp. Temp. Threshold:     73 Celsius
+		// Critical Comp. Temp. Threshold:     76 Celsius
+		// Temperature:                        30 Celsius
+		// Warning  Comp. Temperature Time:    0
+		// Critical Comp. Temperature Time:    0
+		// Temperature Sensor 1:               30 Celsius
+		// Temperature Sensor 2:               35 Celsius
 		if (FALSE === $found) {
 			foreach ($this->cmdOutput as $cmdOutputk => $cmdOutputv) {
-				$regex = '/^(Current Drive Temperature|Current Temperature):'.
-				  '\s+(\d+)\s+(C|Celsius)$/i';
+				$regex = '/^(Current Drive Temperature|Current Temperature|Temperature):'.
+					'\s+(\d+)\s+(C|Celsius)$/i';
 				if (1 == preg_match($regex, $cmdOutputv, $matches)) {
 					$result = $matches[2];
 					$found = TRUE;

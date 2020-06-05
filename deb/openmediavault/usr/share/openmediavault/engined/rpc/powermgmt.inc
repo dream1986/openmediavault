@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,9 @@
  * You should have received a copy of the GNU General Public License
  * along with OpenMediaVault. If not, see <http://www.gnu.org/licenses/>.
  */
-class OMVRpcServicePowerMgmt extends \OMV\Rpc\ServiceAbstract {
+namespace Engined\Rpc;
+
+class PowerMgmt extends \OMV\Rpc\ServiceAbstract {
 	/**
 	 * Get the RPC service name.
 	 */
@@ -126,13 +128,24 @@ class OMVRpcServicePowerMgmt extends \OMV\Rpc\ServiceAbstract {
 		$params['sendemail'] = FALSE;
 		switch ($params['type']) {
 		case "reboot":
-			$params['command'] = "shutdown -r now";
+			$params['command'] = "systemctl reboot";
 			break;
 		case "shutdown":
-			$params['command'] = "shutdown -h -P now";
+			$params['command'] = "systemctl poweroff";
 			break;
 		case "standby":
-			$params['command'] = "omv-pm-standby";
+		    $pm = new \OMV\System\PowerManagement();
+		    if (TRUE === $pm->isStateSupported(
+		            \OMV\System\PowerManagement::STATE_SUSPENDHYBRID))
+		        $params['command'] = "systemctl hybrid-sleep";
+            else if (TRUE === $pm->isStateSupported(
+                    \OMV\System\PowerManagement::STATE_HIBERNATE))
+                $params['command'] = "systemctl hibernate";
+            else if (TRUE === $pm->isStateSupported(
+                    \OMV\System\PowerManagement::STATE_SUSPEND))
+                $params['command'] = "systemctl suspend";
+            else
+                $params['command'] = "systemctl poweroff";
 			break;
 		}
 		return \OMV\Rpc\Rpc::call("cron", "set", $params, $context);

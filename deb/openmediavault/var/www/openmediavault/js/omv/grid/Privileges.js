@@ -3,7 +3,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,7 +108,7 @@ Ext.define("OMV.grid.Privileges", {
 				}],
 				listeners: {
 					scope: me,
-					load: function(store, records, successful, eOpts) {
+					load: function(store, records, successful, operation, eOpts) {
 						Ext.Array.each(records, function(record) {
 							record.beginEdit();
 							switch(record.get("perms")) {

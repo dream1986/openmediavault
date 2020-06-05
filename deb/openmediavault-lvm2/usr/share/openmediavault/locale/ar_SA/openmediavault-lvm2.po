@@ -1,0 +1,135 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the openmediavault-lvm2 package.
+# 
+# Translators:
+# omv nas <myomv100@gmail.com>, 2020
+msgid ""
+msgstr ""
+"Project-Id-Version: openmediavault\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-01-07 17:31+0100\n"
+"PO-Revision-Date: 2020-01-31 13:32+0000\n"
+"Last-Translator: omv nas <myomv100@gmail.com>\n"
+"Language-Team: Arabic (Saudi Arabia) (http://www.transifex.com/votdev/openmediavault/language/ar_SA/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ar_SA\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
+
+msgid "Active"
+msgstr "نشط"
+
+msgid "Add physical volume"
+msgstr "إضافة وحدة تخزين حقيقية "
+
+msgid ""
+"After the logical volume has been extended you can resize the containing "
+"filesystem."
+msgstr "بعد توسيع وحدة التخزين المنطقية  ، يمكنك تغيير حجم نظام الملفات الموجود داخل هذه الوحدة  "
+
+msgid "Available"
+msgstr "متاح"
+
+msgid "Capacity"
+msgstr "السعة"
+
+msgid "Confirmation"
+msgstr "التأكيد"
+
+msgid "Create logical volume"
+msgstr "إنشاء وحدة تخزين منطقية"
+
+msgid "Create volume group"
+msgstr "إنشاء مجموعة وحدة تخزين"
+
+msgid "Description"
+msgstr "وصف"
+
+msgid "Device"
+msgstr "الجهاز"
+
+msgid "Devices"
+msgstr "الأجهزة"
+
+msgid "Do you really want to create the logical volume?"
+msgstr "هل تريد فعلا إنشاء وحدة التخزين المنطقية ؟"
+
+msgid "Do you really want to create the physical volume?"
+msgstr "هل تريد فعلا إنشاء وحدة التخزين الحقيقية ؟"
+
+msgid "Do you really want to create the volume group?"
+msgstr "هل تريد فعلا إنشاء  مجموعة وحدة تخزين ؟"
+
+msgid "Do you really want to resize the selected physical volume?"
+msgstr "هل تريد فعلا تغيير حجم وحدة التخزين الفعلية المحددة؟"
+
+msgid "Edit logical volume"
+msgstr "تحرير وحدة تخزين منطقية"
+
+msgid "Edit volume group"
+msgstr "تحرير مجموعة وحدة تخزين  "
+
+msgid "Extend"
+msgstr "توسيع"
+
+msgid "Extend logical volume"
+msgstr "توسيع وحدة التخزين المنطقية"
+
+msgid "Extend volume group"
+msgstr "توسيع مجموعة تخزين"
+
+msgid "Free"
+msgstr "إفراغ"
+
+msgid "Invalid name"
+msgstr "اسم غير صالح"
+
+msgid "Logical Volume Management"
+msgstr "إدارة وحدات التخزين المنطقية"
+
+msgid "Logical volumes"
+msgstr "وحدات التخزين المنطقية"
+
+msgid "Name"
+msgstr "الاسم"
+
+msgid "No free space available to create a logical volume."
+msgstr "لا توجد مساحة حرة متوفرة لإنشاء وحدة تخزين منطقية."
+
+msgid "No free space available to extend the logical volume."
+msgstr "لا توجد مساحة حرة متوفرة لتوسيع وحدة تخزين منطقية."
+
+msgid "Physical volumes"
+msgstr "وحدات التخزين الحقيقية  "
+
+msgid "Reduce"
+msgstr "تقليص"
+
+msgid "Reduce volume group"
+msgstr "تقليص مجموعة وحدة التخزين"
+
+msgid "Resize"
+msgstr "تغيير الحجم"
+
+msgid "Select a volume group ..."
+msgstr "اختر مجموعة وحدة تخزين"
+
+msgid "Select an device ..."
+msgstr "تحديد جهاز ..."
+
+msgid "Size"
+msgstr "الحجم"
+
+msgid "Snapshot"
+msgstr "صوره لحظية Snapshot"
+
+msgid "Used"
+msgstr "مستعمل"
+
+msgid "Volume group"
+msgstr " مجموعة وحدة تخزين  "
+
+msgid "Volume groups"
+msgstr " مجموعات وحدة تخزين  "

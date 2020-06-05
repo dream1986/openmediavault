@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,6 +58,9 @@ class DM extends BackendAbstract {
 	}
 
 	function getImpl($args) {
+		$sd = new \OMV\System\Storage\StorageDeviceDM($args);
+		if ("lvm" === $sd->getDeviceMapperSubsystem())
+			return new \OMV\System\Storage\StorageDeviceLvm($args);
 		return new \OMV\System\Storage\StorageDeviceDM($args);
 	}
 

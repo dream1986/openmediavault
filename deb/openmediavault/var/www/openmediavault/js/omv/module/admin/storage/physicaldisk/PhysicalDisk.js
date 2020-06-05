@@ -3,7 +3,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -176,7 +176,7 @@ Ext.define("OMV.module.admin.storage.physicaldisk.Devices", {
 		xtype: "textcolumn",
 		text: _("Device"),
 		sortable: true,
-		dataIndex: "devicefile",
+		dataIndex: "canonicaldevicefile",
 		stateId: "devicefile",
 	},{
 		xtype: "devicefilescolumn",
@@ -219,6 +219,7 @@ Ext.define("OMV.module.admin.storage.physicaldisk.Devices", {
 				model: OMV.data.Model.createImplicit({
 					idProperty: "devicefile",
 					fields: [
+						{ name: "canonicaldevicefile", type: "string" },
 						{ name: "devicefile", type: "string" },
 						{ name: "devicelinks", type: "array" },
 						{ name: "model", type: "string" },
@@ -313,15 +314,10 @@ Ext.define("OMV.module.admin.storage.physicaldisk.Devices", {
 	onWipebutton: function() {
 		var me = this;
 		var record = me.getSelected();
-		OMV.MessageBox.show({
-			title: _("Confirmation"),
-			icon: Ext.Msg.QUESTION,
-			msg: _("Do you really want to wipe the selected device?"),
-			buttons: Ext.Msg.YESNO,
-			defaultFocus: "no",
-			scope: me,
-			fn: function(answer) {
-				if(answer !== "yes")
+		OMV.MessageBox.confirm(null,
+			_("Do you really want to wipe the selected device?"),
+			function(answer) {
+				if (answer !== "yes")
 					return;
 				OMV.MessageBox.show({
 					title: _("Wiping device ..."),
@@ -334,7 +330,7 @@ Ext.define("OMV.module.admin.storage.physicaldisk.Devices", {
 					},
 					scope: this,
 					fn: function(answer) {
-						if(answer == "cancel")
+						if (answer == "cancel")
 							return;
 						var wnd = Ext.create("OMV.window.Execute", {
 							title: _("Wiping device ..."),
@@ -367,8 +363,7 @@ Ext.define("OMV.module.admin.storage.physicaldisk.Devices", {
 						wnd.start();
 					}
 				});
-			}
-		});
+			}, me);
 	},
 
 	onScanButton: function() {

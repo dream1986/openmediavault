@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,6 +93,19 @@ function array_sort_key(array &$array, $key) {
 }
 
 /**
+ * Remove an key from the given array.
+ * @param array $array The array to remove the key from.
+ * @param mixed $key The key to be removed.
+ * @return Returns TRUE on success, otherwise FALSE.
+ */
+function array_remove_key(array &$array, $key) {
+	if (FALSE === array_key_exists($key, $array))
+		return FALSE;
+	unset($array[$key]);
+	return TRUE;
+}
+
+/**
  * Filter an array of by key and values.
  * @ingroup api
  * @param array $array The array to process.
@@ -131,6 +144,7 @@ function array_keys_exists(array $keys, array $search, &$missing = NULL) {
 
 /**
  * Removes duplicate values from an multi-dimensional array.
+ * Note, the first found duplicate will be inserted to the result.
  * @param array $array The array to process.
  * @param string $key The key used as filter criteria.
  * @return Returns the filtered array or FALSE on failure.
@@ -220,11 +234,13 @@ function array_rand_value(array $array, $num = 1) {
  * @ingroup api
  * @param array $array An array with keys.
  * @param string $key The key of the element.
+ * @param string $default The default value returned if not found.
  * @return Returns the boolean value of the given key.
  */
-function array_boolval(array $array, $key) {
-	if (!isset($array[$key]))
-		return false;
+function array_boolval($array, $key, $default = FALSE) {
+	if (!is_array($array) || !array_key_exists($key, $array)) {
+		return $default;
+	}
 	return boolvalEx($array[$key]);
 }
 
@@ -236,9 +252,9 @@ function array_boolval(array $array, $key) {
  * @return Returns the boolean value of the given value.
  */
 function boolvalEx($var) {
-	$result = false;
+	$result = FALSE;
 	// Boolean 'true' => '1'
-	switch (strtolower(strval($var))) {
+	switch (mb_strtolower(strval($var))) {
 		case "1":
 		case "on":
 		case "yes":
@@ -378,18 +394,6 @@ function is_devicefile_by_path($var) {
 /**
  * Tells whether the given file is a block device.
  * @ingroup api
- * @deprecated
- * @param string $filename Path to the file.
- * @param bool $dereference Follow links. Defaults to TRUE.
- * @return Returns TRUE if the file is a block device, FALSE otherwise.
- */
-function is_block($filename, $dereference = TRUE) {
-	return is_block_device($filename, $dereference);
-}
-
-/**
- * Tells whether the given file is a block device.
- * @ingroup api
  * @param string $filename Path to the file.
  * @param bool $dereference Follow links. Defaults to TRUE.
  * @return Returns TRUE if the file is a block device, FALSE otherwise.
@@ -494,17 +498,6 @@ function is_multi_array($var) {
 }
 
 /**
- * Finds out whether a variable is a multidimensional array.
- * @deprecated
- * @ingroup api
- * @param mixed $var The variable being evaluated.
- * @return TRUE if the variable is a multidimensional array, otherwise FALSE.
- */
-function is_multiarray($var) {
-	return is_multi_array($var);
-}
-
-/**
  * Finds out whether a variable is an associative array.
  * @ingroup api
  * @param mixed $var The variable being evaluated.
@@ -515,17 +508,6 @@ function is_assoc_array($var) {
 		return FALSE;
 	$keys = array_keys($var);
 	return array_keys($keys) !== $keys;
-}
-
-/**
- * Finds out whether a variable is an associative array.
- * @deprecated
- * @ingroup api
- * @param mixed $var The variable being evaluated.
- * @return TRUE if the variable is an associative array, otherwise FALSE.
- */
-function is_assoc($var) {
-	return is_assoc_array($var);
 }
 
 /**
@@ -620,7 +602,7 @@ function json_encode_safe($value, $options = 0) {
 *   NULL is returned if the json cannot be decoded or if the encoded data
 *   is deeper than the recursion limit.
 */
-function json_decode_safe($json, $assoc = false, $depth = 512, $options = 0) {
+function json_decode_safe($json, $assoc = FALSE, $depth = 512, $options = 0) {
 	return json_decode(var_utf8_encode($json), $assoc, $depth, $options);
 }
 
@@ -631,24 +613,24 @@ function json_decode_safe($json, $assoc = false, $depth = 512, $options = 0) {
  */
 if (!function_exists('json_last_error_msg')) {
     function json_last_error_msg() {
-        static $errorMsg = array(
-            JSON_ERROR_NONE	=> null,
+        static $errorMsg = [
+			JSON_ERROR_NONE	=> NULL,
 			JSON_ERROR_DEPTH =>	"The maximum stack depth has been exceeded",
 			JSON_ERROR_STATE_MISMATCH => "Invalid or malformed JSON",
 			JSON_ERROR_CTRL_CHAR => "Control character error, possibly incorrectly encoded",
 			JSON_ERROR_SYNTAX => "Syntax error",
 			JSON_ERROR_UTF8 => "Malformed UTF-8 characters, possibly incorrectly encoded"
-        );
+        ];
         $errno = json_last_error();
         return array_key_exists($errno, $errorMsg) ? $errorMsg[$errno] :
-          sprintf("Unknown error (%d)", $errno);
+        	sprintf("Unknown error (%d)", $errno);
     }
 }
 
 /**
  * Convert a number into the highest possible binary unit.
  * @ingroup api
- * @param mixed $value The number to convert (per default this is in Bytes).
+ * @param mixed $number The number to convert (per default this is in Bytes).
  * @param mixed $options An array of additional options. Defaults to NULL.
  * @return The converted string value including the unit or an indexed
  *   array with the fields \em value and \em unit.
@@ -747,17 +729,10 @@ function strpdate($date, $format) {
  * @return A string path built from the given parts.
  */
 function build_path($separator, ...$parts) {
-	// Remove all empty parts.
-	$parts = array_filter($parts, function($v) { return !empty($v); });
-	// Trim the parts.
-	foreach ($parts as $partk => &$partv) {
-		if (0 == $partk) // First element
-			$partv = rtrim($partv, $separator);
-		else // Others
-			$partv = trim($partv, $separator);
-	}
-	// Finally concat the parts.
-	return implode($separator, $parts);
+	$parts = array_filter($parts, "strlen");
+	$path = implode($separator, $parts);
+	$regex = sprintf("/%s+/", preg_quote($separator, "/"));
+	return preg_replace($regex, $separator, $path);
 }
 
 /**
@@ -775,8 +750,8 @@ function listdir($directory, $extension = "", $sortFlags = SORT_NATURAL) {
 			continue;
 		if (!$item->isFile())
 			continue;
-		if (!empty($extension) && ($extension !== strtolower(
-		  $item->getExtension())))
+		if (!empty($extension) && ($extension !== mb_strtolower(
+				$item->getExtension())))
 			continue;
 		$files[] = $item->getPathname();
 	}
@@ -940,4 +915,19 @@ function escape_path($var, $octal = FALSE) {
 function unescape_path($var, $octal = FALSE) {
 	$var = str_replace($octal ? "\\040" : "\\x20", " ", $var);
 	return $var;
+}
+
+/**
+ * Split a string by a string. If the string is empty, then an empty
+ * array is returned.
+ * @param string delimiter The boundary string.
+ * @param string string The input string.
+ * @return Returns an array of strings created by splitting the string
+ *   parameter on boundaries formed by the delimiter.
+ */
+function explode_safe($delimiter, $string) {
+	if (empty($string)) {
+		return [];
+	}
+	return explode($delimiter, $string);
 }

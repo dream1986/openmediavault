@@ -3,7 +3,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,105 @@
 // require("js/omv/data/Store.js")
 // require("js/omv/data/Model.js")
 // require("js/omv/data/proxy/Rpc.js")
+// require("js/omv/form/field/Password.js")
 // require("js/omv/form/field/SshPublicKey.js")
+// require("js/omv/toolbar/Tip.js")
+
+/**
+ * @class OMV.module.admin.system.certificate.ssh.Copy
+ * @derived OMV.workspace.window.Form
+ */
+Ext.define("OMV.module.admin.system.certificate.ssh.Copy", {
+	extend: "OMV.workspace.window.Form",
+	requires: [
+		"OMV.form.field.Password"
+	],
+	uses: [
+		"OMV.Rpc",
+		"OMV.toolbar.Tip"
+	],
+
+	title: _("Copy public SSH key"),
+	okButtonText: _("Copy"),
+	mode: "local",
+
+	initComponent: function() {
+		var me = this;
+		me.callParent(arguments);
+		// Add the tip toolbar to the bottom of the window.
+		me.addDocked({
+			xtype: "tiptoolbar",
+			dock: "bottom",
+			ui: "footer",
+			text: _("Installs the public SSH key on a remote system as an authorized key. Make sure password authentication is enabled on that remote system.")
+		});
+	},
+
+	getFormConfig: function() {
+		return {
+			layout: {
+				type: "vbox",
+				align: "stretch"
+			}
+		};
+	},
+
+	getFormItems: function() {
+		return [{
+			xtype: "textfield",
+			name: "hostname",
+			fieldLabel: _("Hostname"),
+			allowBlank: false,
+			plugins: [{
+				ptype: "fieldinfo",
+				text: _("The hostname of the remote system.")
+			}]
+		},{
+			xtype: "numberfield",
+			name: "port",
+			fieldLabel: _("Port"),
+			vtype: "port",
+			minValue: 1,
+			maxValue: 65535,
+			allowDecimals: false,
+			allowBlank: false,
+			value: 22,
+			plugins: [{
+				ptype: "fieldinfo",
+				text: _("The port on which SSH is running on the remote system.")
+			}]
+		},{
+			xtype: "textfield",
+			name: "username",
+			fieldLabel: _("Username"),
+			allowBlank: false,
+			vtype: "username"
+		},{
+			xtype: "passwordfield",
+			name: "password",
+			fieldLabel: _("Password"),
+			allowBlank: true
+		}];
+	},
+
+	doSubmit: function() {
+		var me = this;
+		var params = me.getValues();
+		Ext.apply(params, { uuid: me.uuid });
+		OMV.Rpc.request({
+			scope: me,
+			callback: function(id, success, response) {
+				me.superclass.doSubmit.call(me);
+			},
+			relayErrors: false,
+			rpcData: {
+				service: "CertificateMgmt",
+				method: "copySshId",
+				params: params
+			}
+		});
+	}
+});
 
 /**
  * @class OMV.module.admin.system.certificate.ssh.Edit
@@ -115,6 +213,7 @@ Ext.define("OMV.module.admin.system.certificate.ssh.Certificates", {
 		"OMV.data.proxy.Rpc"
 	],
 	uses: [
+		"OMV.module.admin.system.certificate.ssh.Copy",
 		"OMV.module.admin.system.certificate.ssh.Edit"
 	],
 
@@ -167,16 +266,21 @@ Ext.define("OMV.module.admin.system.certificate.ssh.Certificates", {
 		Ext.Array.insert(items, 0, [{
 			id: me.getId() + "-add",
 			xtype: "splitbutton",
-			text: _("Add"),
+			text: me.addButtonText,
 			iconCls: "x-fa fa-plus",
 			handler: function() {
 				this.showMenu();
 			},
 			menu: Ext.create("Ext.menu.Menu", {
-				items: [
-					{ text: _("Create"), value: "create" },
-					{ text: _("Import"), value: "import" }
-				],
+				items: [{
+					iconCls: me.addButtonIconCls,
+					text: me.addButtonText,
+					value: "create"
+				},{
+					iconCls: "mdi mdi-import",
+					text: _("Import"),
+					value: "import"
+				}],
 				listeners: {
 					scope: me,
 					click: function(menu, item, e, eOpts) {
@@ -185,12 +289,25 @@ Ext.define("OMV.module.admin.system.certificate.ssh.Certificates", {
 				}
 			})
 		}]);
+		// Add 'Copy' button to top toolbar.
+		Ext.Array.insert(items, 2, [{
+			id: me.getId() + "-copy",
+			xtype: "button",
+			text: _("Copy"),
+			iconCls: "x-fa fa-copy",
+			handler: Ext.Function.bind(me.onCopyButton, me, [ me ]),
+			scope: me,
+			disabled: true,
+			selectionConfig: {
+				minSelections: 1,
+				maxSelections: 1
+			}
+		}]);
 		return items;
 	},
 
 	onAddButton: function(action) {
 		var me = this;
-		var className, title;
 		switch (action) {
 		case "import":
 			Ext.create("OMV.module.admin.system.certificate.ssh.Edit", {
@@ -238,6 +355,14 @@ Ext.define("OMV.module.admin.system.certificate.ssh.Certificates", {
 			}).show();
 			break;
 		}
+	},
+
+	onCopyButton: function() {
+		var me = this;
+		var record = me.getSelected();
+		Ext.create("OMV.module.admin.system.certificate.ssh.Copy", {
+			uuid: record.get("uuid")
+		}).show();
 	},
 
 	onEditButton: function() {

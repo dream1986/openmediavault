@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ class StorageDevice extends \OMV\System\BlockDevice
 	 */
 	public function getModel() {
 		$filename = sprintf("/sys/block/%s/device/model",
-			$this->getDeviceName());
+			$this->getDeviceName(TRUE));
 		if (file_exists($filename))
 			return trim(file_get_contents($filename));
 		return "";
@@ -46,9 +46,9 @@ class StorageDevice extends \OMV\System\BlockDevice
 	 */
 	public function getVendor() {
 		$filename = sprintf("/sys/block/%s/device/vendor",
-			$this->getDeviceName());
+			$this->getDeviceName(TRUE));
 		if (file_exists($filename))
-			$this->_vendor = trim(file_get_contents($filename));
+			return trim(file_get_contents($filename));
 		return "";
 	}
 
@@ -73,9 +73,9 @@ class StorageDevice extends \OMV\System\BlockDevice
 	}
 
 	/**
-	 * Check if the device is of rotational type or non-rotational type.
+	 * Check if the device is of rotational or non-rotational type.
 	 * See https://www.kernel.org/doc/Documentation/block/queue-sysfs.txt
-	 * @return boolean TRUE if device is of rotational type, otherwise FALSE.
+	 * @return boolean TRUE if device is rotational, otherwise FALSE.
 	 */
 	public function isRotational() {
 		// Use udev property.
@@ -96,9 +96,9 @@ class StorageDevice extends \OMV\System\BlockDevice
 		}
 		// Use kernel attribute.
 		$filename = sprintf("/sys/block/%s/queue/rotational",
-		  $this->getDeviceName());
+		  $this->getDeviceName(TRUE));
 		if (file_exists($filename)) {
-			// If file content is non-zero then it is rotational.
+			// 0 => SSD, 1 => HDD
 			return ("0" == trim(file_get_contents($filename))) ? FALSE : TRUE;
 		}
 		// Use heuristic.
@@ -114,7 +114,7 @@ class StorageDevice extends \OMV\System\BlockDevice
 	*/
 	public function isRemovable() {
 		$filename = sprintf("/sys/block/%s/removable",
-		  $this->getDeviceName());
+		  $this->getDeviceName(TRUE));
 		if (!file_exists($filename))
 			return FALSE;
 		return (trim(file_get_contents($filename)) == "1") ? TRUE : FALSE;
@@ -131,7 +131,7 @@ class StorageDevice extends \OMV\System\BlockDevice
 
 	/**
 	 * Check if the given device is an USB device.
-	 * @return boolean TRUE if the device is a connected via USB,
+	 * @return boolean TRUE if the device is connected via USB,
 	 *   otherwise FALSE.
 	 */
 	public function isUsb() {
@@ -360,8 +360,8 @@ class StorageDevice extends \OMV\System\BlockDevice
 	 *   \li /dev/disk/by-path/pci-0000:00:10.0-scsi-0:0:0:0
 	 *   \li /dev/disk/by-uuid/ad3ee177-777c-4ad3-8353-9562f85c0895
 	 *   </ul>
-	 * @return The object of the class implementing the given storage device,
-	 *   otherwise NULL.
+	 * @return object|null The object of the class implementing the given
+	 *   storage device, otherwise NULL.
 	 */
 	public static function getStorageDevice($deviceFile) {
 		$mngr = Backend\Manager::getInstance();
@@ -374,26 +374,17 @@ class StorageDevice extends \OMV\System\BlockDevice
 	}
 
 	/**
-	 * Assert that the object of the class which implements the given storage
-	 * device exists.
-	 * @param string deviceFile Specifies the device file, e.g.
-	 *   <ul>
-	 *   \li /dev/sdb
-	 *   \li /dev/md1
-	 *   \li /dev/cciss/c0d0
-	 *   \li /dev/disk/by-id/scsi-SATA_ST3200XXXX2AS_5XWXXXR6
-	 *   \li /dev/disk/by-label/DATA
-	 *   \li /dev/disk/by-path/pci-0000:00:10.0-scsi-0:0:0:0
-	 *   \li /dev/disk/by-uuid/ad3ee177-777c-4ad3-8353-9562f85c0895
-	 *   </ul>
-	 * @return void
+	 * @see StorageDevice::getStorageDevice()
+	 * @return object The object of the class implementing the given
+	 *   storage device.
 	 * @throw \OMV\AssertException
 	 */
-	public static function assertStorageDeviceExists($deviceFile) {
+	public static function assertGetStorageDevice($deviceFile) {
 		$result = self::getStorageDevice($deviceFile);
 		if (is_null($result) || !$result->exists()) {
 			throw new \OMV\AssertException("Device '%s' not found.",
 				$deviceFile);
 		}
+		return $result;
 	}
 }

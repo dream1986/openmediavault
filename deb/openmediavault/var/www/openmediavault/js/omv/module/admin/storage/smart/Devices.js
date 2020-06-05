@@ -3,7 +3,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,8 +118,7 @@ Ext.define("OMV.module.admin.storage.smart.device.information.Information", {
 			xtype: "textfield",
 			name: "devicefile",
 			fieldLabel: _("Device"),
-			emptyText: _("n/a"),
-			value: me.devicefile
+			emptyText: _("n/a")
 		},{
 			xtype: "textfield",
 			name: "devicemodel",
@@ -162,15 +161,15 @@ Ext.define("OMV.module.admin.storage.smart.device.information.Attributes", {
 		text: _("ID"),
 		dataIndex: "id",
 		stateId: "id",
-		width: 40,
-		resizable: false,
+		width: 60,
 		align: "right"
 	},{
 		xtype: "tooltipcolumn",
-		text: _("Attribute name"),
+		text: _("Name"),
 		dataIndex: "attrname",
 		stateId: "attrname",
 		flex: 1,
+		minWidth: 100,
 		getTooltipText: function(value, record) {
 			return record.get("description");
 		}
@@ -178,29 +177,25 @@ Ext.define("OMV.module.admin.storage.smart.device.information.Attributes", {
 		text: _("Flags"),
 		dataIndex: "flags",
 		stateId: "flags",
-		width: 60,
-		resizable: false,
+		width: 80,
 		align: "center"
 	},{
 		text: _("Value"),
 		dataIndex: "value",
 		stateId: "value",
 		width: 55,
-		resizable: false,
 		align: "center"
 	},{
 		text: _("Worst"),
 		dataIndex: "worst",
 		stateId: "worst",
 		width: 55,
-		resizable: false,
 		align: "center"
 	},{
-		text: _("Treshold"),
-		dataIndex: "treshold",
-		stateId: "treshold",
+		text: _("Threshold"),
+		dataIndex: "threshold",
+		stateId: "threshold",
 		width: 55,
-		resizable: false,
 		align: "center"
 	},{
 		text: _("When failed"),
@@ -227,7 +222,7 @@ Ext.define("OMV.module.admin.storage.smart.device.information.Attributes", {
 		align: "center",
 		resizable: false,
 		width: 80,
-		renderer: function(value, metaData, record) {
+		getFontIconCls: function(value, metaData, record) {
 			var colorCls = Ext.baseCSSPrefix + "color-gray";
 			if (true === record.get("prefailure")) {
 				switch (value) {
@@ -258,7 +253,7 @@ Ext.define("OMV.module.admin.storage.smart.device.information.Attributes", {
 						{ name: "flags", type: "string" },
 						{ name: "value", type: "int" },
 						{ name: "worst", type: "int" },
-						{ name: "treshold", type: "int" },
+						{ name: "threshold", type: "int" },
 						{ name: "whenfailed", type: "string" },
 						{ name: "rawvalue", type: "string" },
 						{ name: "description", type: "string" },
@@ -306,8 +301,7 @@ Ext.define("OMV.module.admin.storage.smart.device.information.SelfTestLogs", {
 		text: _("Num"),
 		dataIndex: "num",
 		stateId: "num",
-		width: 45,
-		resizable: false,
+		width: 60,
 		align: "right"
 	},{
 		xtype: "textcolumn",
@@ -326,7 +320,6 @@ Ext.define("OMV.module.admin.storage.smart.device.information.SelfTestLogs", {
 		dataIndex: "remaining",
 		stateId: "remaining",
 		width: 60,
-		resizable: false,
 		align: "center",
 		renderer: function(value) {
 			return Ext.String.htmlEncode(value) + "%";
@@ -336,14 +329,14 @@ Ext.define("OMV.module.admin.storage.smart.device.information.SelfTestLogs", {
 		text: _("Lifetime"),
 		dataIndex: "lifetime",
 		stateId: "lifetime",
-		width: 55,
-		resizable: false,
+		width: 60,
 		align: "center"
 	},{
 		xtype: "textcolumn",
 		text: _("LBA of first error"),
 		dataIndex: "lbaoffirsterror",
-		stateId: "lbaoffirsterror"
+		stateId: "lbaoffirsterror",
+		width: 100
 	}],
 
 	initComponent: function() {
@@ -475,7 +468,7 @@ Ext.define("OMV.module.admin.storage.smart.device.Devices", {
 	},{
 		text: _("Device"),
 		sortable: true,
-		dataIndex: "devicefile",
+		dataIndex: "canonicaldevicefile",
 		stateId: "devicefile"
 	},{
 		xtype: "devicefilescolumn",
@@ -563,6 +556,7 @@ Ext.define("OMV.module.admin.storage.smart.device.Devices", {
 					idProperty: "devicefile",
 					fields: [
 						{ name: "uuid", type: "string" },
+						{ name: "canonicaldevicefile", type: "string" },
 						{ name: "devicefile", type: "string" },
 						{ name: "devicelinks", type: "array" },
 						{ name: "model", type: "string" },

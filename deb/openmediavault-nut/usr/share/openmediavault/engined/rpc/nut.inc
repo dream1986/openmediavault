@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,8 +93,14 @@ class OMVRpcServiceNetworkUPSTools extends \OMV\Rpc\ServiceAbstract {
 		if (FALSE === $object->get("enable")) {
 			$stats = gettext("Service disabled");
 		} else {
+			$mode = $object->get("mode");
 			$cmdArgs = [];
-			$cmdArgs[] = escapeshellarg($object->get("upsname"));
+			if ("netclient" === $mode) {
+				$remoteUps = $object->get("upsname")."@".$object->get("netclienthostname");
+				$cmdArgs[] = escapeshellarg($remoteUps);
+			} else {
+				$cmdArgs[] = escapeshellarg($object->get("upsname"));
+			}
 			$cmd = new \OMV\System\Process("upsc", $cmdArgs);
 			$cmd->setRedirect2to1();
 			$cmd->execute($output);

@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -172,7 +172,7 @@ class SysVInitScript {
 	 * Invoke init script with parameter 'status'.
 	 * @return One of the following exit status codes:
 	 * 0        program is running or service is OK
-	 * 1        program is dead and /var/run pid file exists
+	 * 1        program is dead and /run pid file exists
 	 * 2        program is dead and /var/lock lock file exists
 	 * 3        program is not running
 	 * 4        program or service status is unknown

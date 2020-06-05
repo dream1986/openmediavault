@@ -4,7 +4,7 @@
 #
 # @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
 # @author    Volker Theile <volker.theile@openmediavault.org>
-# @copyright Copyright (c) 2009-2018 Volker Theile
+# @copyright Copyright (c) 2009-2020 Volker Theile
 #
 # OpenMediaVault is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -38,16 +38,18 @@ set -e
 #           <devicefile>xxx</devicefile>
 #           <sharedfolderref>xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</sharedfolderref>
 #           <usesubdir>0|1</usesubdir>
-#           <recursive>1</recursive>
-#           <times>1</times>
-#           <compress>0</compress>
-#           <archive>1</archive>
-#           <delete>0</delete>
-#           <quiet>0</quiet>
-#           <perms>1</perms>
-#           <acls>1</acls>
-#           <xattrs>0</xattrs>
-#           <partial>0</partial>
+#           <optionrecursive>1</optionrecursive>
+#           <optiontimes>1</optiontimes>
+#           <optiongroup>1</optiongroup>
+#           <optionowner>1</optionowner>
+#           <optioncompress>0</optioncompress>
+#           <optionarchive>1</optionarchive>
+#           <optiondelete>0</optiondelete>
+#           <optionquiet>0</optionquiet>
+#           <optionperms>1</optionperms>
+#           <optionacls>1</optionacls>
+#           <optionxattrs>0</optionxattrs>
+#           <optionpartial>0</optionpartial>
 #           <extraoptions></extraoptions>
 #         </job>
 #       </jobs>

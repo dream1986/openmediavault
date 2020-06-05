@@ -4,7 +4,7 @@
 #
 # @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
 # @author    Volker Theile <volker.theile@openmediavault.org>
-# @copyright Copyright (c) 2009-2018 Volker Theile
+# @copyright Copyright (c) 2009-2020 Volker Theile
 #
 # OpenMediaVault is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,19 +22,22 @@ import sys
 import openmediavault.firstaid
 import openmediavault.subprocess
 
-class Module(openmediavault.firstaid.IModule):
-	@property
-	def description(self):
-		return "Clear web control panel cache"
 
-	def execute(self):
-		print("Clearing the web control panel cache. Please wait ...")
-		openmediavault.subprocess.check_call(
-			". /usr/share/openmediavault/scripts/helper-functions;" \
-			"omv_purge_internal_cache",
-			shell=True)
-		return 0
+class Module(openmediavault.firstaid.IModule):
+    @property
+    def description(self):
+        return "Clear web control panel cache"
+
+    def execute(self):
+        print("Clearing the web control panel cache. Please wait ...")
+        openmediavault.subprocess.check_call(
+            ". /usr/share/openmediavault/scripts/helper-functions;"
+            "omv_purge_internal_cache",
+            shell=True,
+        )
+        return 0
+
 
 if __name__ == "__main__":
-	module = Module();
-	sys.exit(module.execute())
+    module = Module()
+    sys.exit(module.execute())

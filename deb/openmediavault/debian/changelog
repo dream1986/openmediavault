@@ -1,8 +1,732 @@
-openmediavault (5.0) unstable; urgency=low
+openmediavault (5.5.2-1) stable; urgency=low
 
-  *
+  * Various improvements.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Tue, 02 Jun 2020 21:13:04 +0200
+
+openmediavault (5.5.1-1) stable; urgency=low
+
+  * Improve bond network interface creation. Ethernet or WiFi
+    interfaces can be used for bonding immediately after their
+    configuration has been deleted.
+  * Issue #721: Secure PHP session cookie.
+  * Issue #725: Improve calculation of loadavg in monit
+    configuration.
+  * Issue #727: Fix bug in smb.conf. If one share has 'Timemachine'
+    support enabled, then all shares must configure vfs_fruit.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Wed, 27 May 2020 11:54:31 +0200
+
+openmediavault (5.5.0-1) stable; urgency=low
+
+  * Update locales.
+  * Improve PHP network interface code.
+  * Add support to configure bridge interfaces.
+  * Improve network management UI.
+  * Issue #716: Update monit if FTP is enabled/disabled.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Wed, 20 May 2020 20:51:00 +0200
+
+openmediavault (5.4.7-1) stable; urgency=low
+
+  * Update locales.
+  * Various improvements.
+  * Issue #710: Ignore 'autofs' filesystems wherever necessary.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Tue, 12 May 2020 18:39:58 +0200
+
+openmediavault (5.4.6-1) stable; urgency=low
+
+  * Various improvements.
+  * Issue #703: Using OMV_WEBGUI_TITLE breaks Salt rendering.
+  * Issue #704: Fix bug when deleting shared folders in conjunction
+    with OMV_SHAREDFOLDERS_DIR_ENABLED=No.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Sun, 10 May 2020 12:05:24 +0200
+
+openmediavault (5.4.5-1) stable; urgency=low
+
+  * Fix proftpd start/stop problem.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Sat, 09 May 2020 15:34:54 +0200
+
+openmediavault (5.4.4-1) stable; urgency=low
+
+  * Fix issue related to /sharedfolders (if enabled).
+  * Fix bug in netplan.io configuration for WiFi interfaces.
+  * Issue #701: Fix bond WOL problem in netplan.io configuration.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Wed, 06 May 2020 18:11:03 +0200
+
+openmediavault (5.4.3-1) stable; urgency=low
+
+  * Issue #689: Network MTU value doesn't get applied.
+  * Enhance storage host driver detection. This will fix a SMART issue
+    related to HPSA HBA.
+  * Add ability to customize the title of the WebGUI. Override the
+    environment variable 'OMV_WEBGUI_TITLE' to do that. The following
+    placeholder are supported: '{{fqdn}}' and '{{prdname}}'
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Wed, 29 Apr 2020 08:07:24 +0200
+
+openmediavault (5.4.2-1) stable; urgency=low
+
+  * Fix bug in bond network interface configuration when no primary
+    interface is selected.
+  * Cleanup empty systemd-networkd configuration files, otherwise
+    netplan.io will fail because of an udevadm error.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Thu, 23 Apr 2020 22:27:06 +0200
+
+openmediavault (5.4.1-1) stable; urgency=low
+
+  * Update locales.
+  * Raise an error when SMB/CIFS is activated and the DNS hostname
+    is longer than 15 characters.
+  * Remove sysctl settings which have disabled IPv6 by default.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Tue, 21 Apr 2020 19:19:47 +0200
+
+openmediavault (5.4.0-1) stable; urgency=low
+
+  * Update locales.
+  * Modify interface of RPC "rpc.network.setbondiface". Return slaves as
+    an array instead of a comma separated string.
+  * The RPC Network::getVlanCandidates will return only configured
+    network interfaces.
+  * Use netplan.io to deploy the network configuration.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Wed, 15 Apr 2020 17:23:35 +0200
+
+openmediavault (5.3.10-1) stable; urgency=low
+
+  * Fix bug in the Python RPC error handling. This should fix the "got an
+    unexpected keyword argument 'http_status_code'" issue.
+  * Add user 'admin' to the Postfix recipient_canonical configuration.
+  * Issue #670: Bonding interface configuration gets messed by VLAN.
+  * Issue #671: Shared folders with blanks which are used as bind mounts
+    are not formatted correct in /etc/fstab. Nevertheless it is not
+    possible to mount such bind mounts because of an error in SaltStack,
+    see #524, #566 or https://github.com/saltstack/salt/issues/54508.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Thu, 02 Apr 2020 17:55:25 +0200
+
+openmediavault (5.3.9-1) stable; urgency=low
+
+  * Update locales.
+  * Various improvements.
+  * Add support to execute additional SLS files when deploying mdadm.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Tue, 17 Mar 2020 07:23:42 +0100
+
+openmediavault (5.3.8-1) unstable; urgency=low
+
+  * Cleanup package dependencies.
+  * Adapt nginx SSL ciphers to latest intermediate profile according to
+    https://mozilla.github.io/server-side-tls/ssl-config-generator.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Tue, 10 Mar 2020 00:13:14 +0100
+
+openmediavault (5.3.7-1) unstable; urgency=low
+
+  * Raise an error when a filesystem with blanks in its label
+    is mounted via UI.
+  * Fix 'Subject Alternative Name missing' error in self signed
+    SSL certificates.
+  * Set correct config.system.email.tls default value in database.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Thu, 05 Mar 2020 23:53:27 +0100
+
+openmediavault (5.3.6-1) unstable; urgency=low
+
+  * Fix bug in omv.deploy.fstab SLS when a fsname is a UUID instead
+    of a device file.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Wed, 04 Mar 2020 00:18:23 +0100
+
+openmediavault (5.3.5-1) unstable; urgency=low
+
+  * Customize collectd.service unit file. Make sure it is started
+    after the rrdcached service.
+  * Issue #627: Use the unit file smartmontools instead of smartd.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Thu, 27 Feb 2020 17:31:38 +0100
+
+openmediavault (5.3.4-1) unstable; urgency=low
+
+  * Fix the error 'The named service fstrim.timer is not available'
+    during installation.
+  * Adapt code for SaltStack 3000.
+  * Issue #620: Set 'default_server' in nginx configuration.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Sun, 23 Feb 2020 20:21:03 +0100
+
+openmediavault (5.3.3-1) unstable; urgency=low
+
+  * Use /run instead of /var/run and /run/lock instead of /var/lock.
+  * Disable the '/sharedfolder/<xyz>' feature by default on new
+    installations because it makes too much problems.
+    It can be enabled by setting the environment variable to
+    'OMV_SHAREDFOLDERS_DIR_ENABLED="YES"'. Finally run the command
+    'omv-salt stage run prepare' to apply the modified default values
+    and 'omv-salt deploy run systemd' to create the unit files.
+  * Issue #163: Apply hdparm.conf settings at runtime.
+  * Issue #604: Wrong primary slave configuration for bond network
+    interfaces.
+  * Issue #605: Memory usage wrong in Dashboard and system information
+    pages.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Sun, 16 Feb 2020 13:54:00 +0100
+
+openmediavault (5.3.2-1) unstable; urgency=low
+
+  * Update locales.
+  * Fix issue in the S.M.A.R.T. scheduled tests page.
+  * Issue #601: Error listing mount points when using BTRFS subvolumes.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Wed, 12 Feb 2020 13:20:00 +0100
+
+openmediavault (5.3.1-1) unstable; urgency=low
+
+  * Update locales.
+  * Various improvements in the PHP and Python storage device backends.
+  * Issue #597: Disable sorting of the column 'Device(s)' in the
+    filesystem table.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Mon, 10 Feb 2020 14:27:27 +0100
+
+openmediavault (5.3.0-1) unstable; urgency=low
+
+  * Update locales.
+  * Add right-to-left (RTL) support. Thanks to Abo Khalid.
+  * Refactor Python openmediavault.device.* classes. A plugin
+    infrastructure has been established to be able to add
+    support for additional storage backends.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Fri, 07 Feb 2020 00:06:29 +0100
+
+openmediavault (5.2.7-1) unstable; urgency=low
+
+  * Update locales.
+  * Fix issue in systemd-networkd configuration. Remove unknown 'UseDNS'
+    option in 'Network' section.
+  * Fix network bond configuration issue. Relocate PrimarySlave to
+    systemd.network.
+  * Fix \OMV\System\Filesystem\Filesystem::getImplByMountPoint() method.
+  * Issue #579: Add arabic translations.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Wed, 29 Jan 2020 20:48:19 +0100
+
+openmediavault (5.2.6-1) unstable; urgency=low
+
+  * Improve \OMV\System\Filesystem\Filesystem::getImplByMountPoint() method.
+    This should result in less parsing errors of the mount tab.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Tue, 28 Jan 2020 14:26:00 +0100
+
+openmediavault (5.2.5-1) unstable; urgency=low
+
+  * Improve \OMV\System\System::isRootDeviceFile() method.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Sun, 26 Jan 2020 13:58:08 +0100
+
+openmediavault (5.2.4-1) unstable; urgency=low
+
+  * Issue #567: Add storage backend for Areca RAID controllers.
+  * Issue #571: Fix typo in watchdog SLS.
+  * Add OMV_SHAREDFOLDERS_DIR_ENABLED environment variable to disable
+    the creation of /sharedfolders/<XXX> directories.
+  * Make cpufrequtils governor customizable via OMV_CPUFREQUTILS_GOVERNOR.
+  * Fix various issues.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Tue, 14 Jan 2020 08:20:11 +0100
+
+openmediavault (5.2.3-2) unstable; urgency=low
+
+  * Issue #564: Improve openmediavault.fs.Filesystem::get_parent_device_file()
+    to handle BTRFS subvolumes.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Mon, 13 Jan 2020 23:05:01 +0100
+
+openmediavault (5.2.3-1) unstable; urgency=low
+
+  * Issue #564: Improve openmediavault.fs.Filesystem::get_parent_device_file()
+    to handle BTRFS subvolumes.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Sat, 11 Jan 2020 15:57:07 +0100
+
+openmediavault (5.2.2-1) unstable; urgency=low
+
+  * Issue #551: Fix STARTTLS issue in Postfix configuration.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Thu, 02 Jan 2020 23:08:38 +0100
+
+openmediavault (5.2.1-1) unstable; urgency=low
+
+  * Issue #542: Add OMV_WATCHDOG_CONF_WATCHDOG_TIMEOUT to customize
+    the watchdog timeout.
+  * Issue #543: Fix BTRFS mounting issue.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Sun, 22 Dec 2019 22:18:16 +0100
+
+openmediavault (5.2.0-1) unstable; urgency=low
+
+  * Update locales.
+  * Rename RPC Apt::upgrade to Apt::install to install specified packages.
+    Introduce a new RPC Apt::upgrade to execute a normal APT upgrade.
+  * Issue #535: Add storage backend for HP Smart Array RAID controllers
+    using the hpsa driver.
+  * Issue #536: Add ability to configure email encryption mode.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Mon, 16 Dec 2019 12:34:30 +0100
+
+openmediavault (5.1.3-1) unstable; urgency=low
+
+  * Change OMV_SAMBA_FRUIT_MODEL default value to 'TimeCapsule'.
+  * Fix bug in SMB recycle bin cleanup script.
+  * Monitor proftpd to ensure it comes up correctly on system starts.
+  * Issue #490: Don't display canonical filesystem device names.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Tue, 03 Dec 2019 23:18:08 +0100
+
+openmediavault (5.1.2-1) unstable; urgency=low
+
+  * Use periodic filesystem trim instead of online.
+  * Issue #522: SSH private key has incorrect format (missing line
+    breaks).
+  * Issue #523: Modify the content of monit emails.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Wed, 27 Nov 2019 08:37:44 +0100
+
+openmediavault (5.1.1-1) unstable; urgency=low
+
+  * Change OMV_SAMBA_FRUIT_MODEL default value to 'MacSamba'. Change
+    'sys=waMa=0,adVF=0x100' to 'sys=adVF=0x100' like Samba is doing it.
+  * Issue #514: List filesystems inside a LXC Containers.
+  * Issue #516: Reconfigure Avahi/Zeroconf when a SMB share is created,
+    modified or deleted.
+  * Issue #517: Added OMV_WSDD_OPTIONS to customize the wsdd command
+    line arguments.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Fri, 22 Nov 2019 15:06:18 +0100
+
+openmediavault (5.1.0-1) unstable; urgency=low
+
+  * Update locales.
+  * Modify Notification RPCs.
+  * Issue #467: Form fieldsets not showing titles in Safari browser.
+  * Issue #503: Respect OMV_SAMBA_FRUIT_MODEL in Avahi SMB/CIFS service
+    configuration. Defaults to 'MacPro'.
+  * Issue #510: Fix issues in /etc/hosts.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Sun, 10 Nov 2019 22:05:55 +0100
+
+openmediavault (5.0.14-1) unstable; urgency=low
+
+  * Fix bug when copying a SSH pub key to a remote machine.
+  * Issue #492: Remove percentage text in progress bar when user
+    reboots from UI.
+  * Issue #499: IPv6 gateway not being set correctly.
+  * Issue #500: Fix bug in systemd-networkd .link files. Added [Link]
+    settings from /lib/systemd/network/99-default.link.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Tue, 05 Nov 2019 07:25:34 +0100
+
+openmediavault (5.0.13-1) unstable; urgency=low
+
+  * Apply opts when mounting a filesystem in fstab.sls.
+  * Issue #489: Fix error when displaying the changelog of an
+    update package.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Sat, 02 Nov 2019 23:03:51 +0100
+
+openmediavault (5.0.12-1) unstable; urgency=low
+
+  * Update locales.
+  * Fix bug in rsyncd.conf when setting hosts allow/deny in a module.
+  * Issue #442: WOL is not enabled.
+  * Issue #448: Building configuration fails when an omv-engined module
+    defines dependencies that are not marked as dirty.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Wed, 30 Oct 2019 07:40:03 +0100
+
+openmediavault (5.0.11-1) unstable; urgency=low
+
+  * Use the correct deploy target when enabling remote syslog.
+  * Prevent the TTY error "mesg: ttyname failed: Inappropriate ioctl for
+    device".
+  * Fix bug in /srv/salt/omv/deploy/rrdcached/default.sls file which leads
+    into an malformed BASE_OPTIONS variable in /etc/default/rrdcached.
+  * Issue #468: Rrdcached monit config is not removed when collecting
+    performance statistics is disabled.
+  * Issue #480: Cannot to create multiple VLANs.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Mon, 30 Sep 2019 08:30:29 +0200
+
+openmediavault (5.0.10-1) unstable; urgency=low
+
+  * Fix group privileges issue in proftpd.
+  * Fix bugs in NFS configuration file /etc/exports.
+  * Change /etc/fstab creation behaviour. Each *.sls file is responsible
+    for mounting the mount points processed by this file.
+  * Fix /sharedfolders mounting issue.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Tue, 24 Sep 2019 00:35:23 +0200
+
+openmediavault (5.0.9-1) unstable; urgency=low
+
+  * Fix TLS configuration issue in proftpd.
+  * Issue #454: Applying firewall rules fails.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Wed, 18 Sep 2019 20:31:50 +0200
+
+openmediavault (5.0.8-1) unstable; urgency=low
+
+  * Handle filesystem labels containing blanks correctly.
+  * Relocate omv-engined PID file to /run/.
+  * Fix bug in Postfix's catch all recipient configuration.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Mon, 16 Sep 2019 18:45:51 +0200
+
+openmediavault (5.0.7-1) unstable; urgency=low
+
+  * Fix various bugs in Postfix configuration.
+  * Issue #431: Fix bug in monit configuration.
+  * Issue #434: The environment variable OMV_SAMBA_SHARE_VFSOBJECTS was
+    not taken into action when writing smb.conf.
+  * Issue #438: Prevent duplicate VFS objects in smb.conf.
+  * Issue #440: Samba announces itself with multicast DNS services.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Tue, 03 Sep 2019 21:45:53 +0200
+
+openmediavault (5.0.6-1) unstable; urgency=low
+
+  * Fix bug in creating rsync configuration.
+  * Issue #419: Fix bug in NFS configuration file. The fsid was not
+    incremented correctly.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Thu, 22 Aug 2019 13:05:19 +0200
+
+openmediavault (5.0.5-1) unstable; urgency=low
+
+  * Issue #380: Start rpc-statd service when NFS is enabled.
+  * Issue #412: Fix bug in chrony.conf when there are multiple time servers.
+  * Issue #413: Fix bug in Salt module omv_conf.get_sharedfolder_path.
+  * Issue #414: Fix bug in Filesystem::from_mount_point() method. The old
+    implementation was not able to handle Btrfs filesystems.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Sun, 21 Jul 2019 21:23:30 +0200
+
+openmediavault (5.0.4-1) unstable; urgency=low
+
+  * Fix obsolete NFS config setting issue.
+  * Issue #405: Fix file permissions for 5.0.3 migration script.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Fri, 05 Jul 2019 09:34:58 +0200
+
+openmediavault (5.0.3-1) unstable; urgency=low
+
+  * Code cleanup.
+  * Set correct HTTP status codes.
+  * Issue #322: Process Device Mapper devices correctly in method
+    openmediavault.fs.Filesystem::get_parent_device_file().
+  * Disable quota service if not used.
+  * Update Material Design icons to version 3.7.95.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Sun, 19 May 2019 16:21:00 +0200
+
+openmediavault (5.0.2-1) unstable; urgency=low
+
+  * Fix rsyncd issue.
+  * Enable TLS 1.3 in WebGUI.
+  * Prefer X25519 over NIST P-384 and NIST P-256 in nginx's configuration
+    for the WebGUI.
+  * Fix proftpd error raised by erroneous PID file permissions.
+  * Issue #371: Fix issues with PHP version.
+  * Issue #374: Fix iptables issue. Use systemd service instead of ifupdown.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Fri, 10 May 2019 07:50:36 +0200
+
+openmediavault (5.0.1-1) unstable; urgency=low
+
+  * Display 'Updates available' status in dashboard widget.
+  * Fix bug when writing file /etc/mdadm/mdadm.conf.
+  * Issue #340: Fix bug in Avahi NFS SLS file.
+  * Issue #347: Cannot create logical volume.
+  * Issue #352: Fix bug in SSL certificate deployment.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Sat, 20 Apr 2019 10:34:15 +0200
+
+openmediavault (5.0-1) unstable; urgency=low
+
+  * Use Salt to deploy configuration settings. Using 'omv-salt stage run all'
+    will deploy the whole system according to the configuration database.
+  * The omv-salt CLI command superseds omv-mkconf. Note, the command
+    will not only create the configuration files, it will also take care
+    about to start/stop/restart the services.
+  * The omv-initsystem command has been replaced by 'omv-confdbadm populate'.
+    This command discovers the current system settings and synchronizes them
+    into the database.
+  * Default systems settings will now be applied by the Salt orchestration
+    state 'omv.stage.setup'.
+  * Add Time Machine support to SMB/CIFS shares.
+  * Use systemd-logind to handle power button action.
+  * Use systemd to reboot/shutdown/standby the system.
+  * Issue #93: Use chrony instead of ntpd.
+  * Issue #146: Use systemd to configure the network.
+  * Issue #266: Remember size and position of windows.
+  * Issue #281: Display system uptime in RRD graph.
+  * Issue #302: Display reboot notification.
+  * Issue #317: Remove the ability to configure Zeroconf services via UI.
+    They can still be customized via environment variables.
+  * Add options 'Group' and 'Owner' to rsync settings. If the 'Archive' option
+    is enabled and one of its implied option 'Recursive',
+    'Preserve permissions', 'Times', 'Group' or 'Owner' is disabled, then this
+    option will be prefixed with '--no-xxx' in the rsync command line.
+  * Remove 'Local master browser' checkbox in the SMB/CIFS page.
+    If you still need that use the 'Extra Options' field to add it manually.
 
  -- Volker Theile <volker.theile@openmediavault.org>  Tue, 08 May 2018 22:06:11 +0200
+
+openmediavault (4.1.33-1) stable; urgency=low
+
+  * Fix various issues.
+  * Improve \OMV\System\System::isRootDeviceFile() method.
+  * Improve \OMV\System\Filesystem\Filesystem::getImplByMountPoint() method.
+    This should result in less parsing errors of the mount tab.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Sat, 25 Jan 2020 09:54:04 +0100
+
+openmediavault (4.1.32-1) stable; urgency=low
+
+  * Fix various issues.
+  * Issue #559: Rename 'source' to 'source-directory' in
+    /etc/network/interfaces.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Wed, 08 Jan 2020 08:52:11 +0100
+
+openmediavault (4.1.31-1) stable; urgency=low
+
+  * Issue #430: Fix grid column render issue.
+  * Issue #550: Fix bug in detecting BTRFS filesystems.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Wed, 01 Jan 2020 18:20:01 +0100
+
+openmediavault (4.1.30-1) stable; urgency=low
+
+  * Allow to use veth* and venet* network interfaces in bonded
+    interfaces.
+  * Issue #543: Fix BTRFS mounting issue.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Wed, 18 Dec 2019 17:21:52 +0100
+
+openmediavault (4.1.29-1) stable; urgency=low
+
+  * Rename 'source-directory' to 'source' in /etc/network/interfaces.
+  * Issue #528: Set correct permissions on shared folder with multi
+    levels path.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Mon, 09 Dec 2019 07:55:16 +0100
+
+openmediavault (4.1.28-1) stable; urgency=low
+
+  * Use an Unix socket for Monit HTTP interface.
+  * Issue #467: Form fieldsets not showing titles in Safari browser.
+  * Issue #519: Setting MTU on VLAN interface.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Wed, 20 Nov 2019 17:41:55 +0100
+
+openmediavault (4.1.27-1) stable; urgency=low
+
+  * Do not show MTU and WOL fields in VLAN interface dialog.
+  * Fix bug when copying a SSH pub key to a remote machine.
+  * Issue #492: Remove percentage text in progress bar when user
+    reboots from UI.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Tue, 05 Nov 2019 09:46:08 +0100
+
+openmediavault (4.1.26-1) stable; urgency=low
+
+  * The smbd daemon must be restarted when groups are modified in order to
+    take these changes into action, otherwise it is possible that a user
+    still works with privileges that are already obsolete.
+  * Fix /sharedfolders mounting issue.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Fri, 27 Sep 2019 16:44:26 +0200
+
+openmediavault (4.1.25-1) stable; urgency=low
+
+  * Issue #452: SharedFolders do not mount on ZFS File system.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Thu, 19 Sep 2019 08:22:45 +0200
+
+openmediavault (4.1.24-1) stable; urgency=low
+
+  * Fix bug in uploading Debian packages via UI.
+  * Issue #417: Exit omv-firstaid and show an error when no network interfaces
+    are detected.
+  * Issue #437: Fix bug collecting S.M.A.R.T. data from NVMe's.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Tue, 20 Aug 2019 13:41:23 +0200
+
+openmediavault (4.1.23-1) stable; urgency=low
+
+  * Append 'source-directory interfaces.d' to the end of the file
+    /etc/network/interfaces to be able to use already configured
+    interfaces.
+  * Do not write IPv6 /etc/hosts entries if IPv6 is disabled.
+  * Fix 'Reset' button issue in file system quota dialog.
+  * Purge quota configuration when file sytem is deleted.
+  * Issue #370: Remove weak RSA key lengths.
+  * Issue #394: Postfix will resolve SMTP server with IPv6 even if
+    IPv6 is disabled.
+  * Issue #396: Prevent mdadm defines no arrays warning message.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Fri, 10 May 2019 22:51:53 +0200
+
+openmediavault (4.1.22-1) stable; urgency=low
+
+  * Fix bug in user import.
+  * Do not execute mdadm daily cron job if no array is defined.
+  * Issue #349: Wrong button labels for "show/hide details".
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Mon, 08 Apr 2019 09:25:24 +0200
+
+openmediavault (4.1.21-1) stable; urgency=low
+
+  * Improve quick disk wiping. Remove signatures at the end of the device, too.
+  * Fix bug in wsdd configuration.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Sat, 23 Mar 2019 18:52:18 +0100
+
+openmediavault (4.1.20-1) stable; urgency=low
+
+  * Update locales.
+  * Announce SMB/CIFS shares via WSD, so they are listed in Windows 10.
+  * Issue #297: Extract upstream version for comparison.
+  * Issue #324: Fix typo in S.M.A.R.T. attributes data table.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Sat, 16 Feb 2019 18:21:28 +0100
+
+openmediavault (4.1.19-1) stable; urgency=low
+
+  * Add the ability to execute RPC code in parallel.
+  * Parallelize the RPC's to collect the S.M.A.R.T. and filesystem info.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Tue, 05 Feb 2019 22:25:08 +0100
+
+openmediavault (4.1.18-2) stable; urgency=low
+
+  * Fix bug in \OMV\Mutex class.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Mon, 04 Feb 2019 10:43:50 +0100
+
+openmediavault (4.1.18-1) stable; urgency=low
+
+  * Fix bug in omv-firstaid when configuring the network.
+  * Issue #270: Ensure smartctl command is not executed in parallel.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Sat, 19 Jan 2019 15:52:14 +0100
+
+openmediavault (4.1.17-1) stable; urgency=low
+
+  * Update locales.
+  * Issue #256: Get S.M.A.R.T. drive temperature from Samsung NVMe devices.
+  * Issue #260: Make sure the user is allowed to modify his account.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Mon, 31 Dec 2018 16:06:48 +0100
+
+openmediavault (4.1.16-2) stable; urgency=low
+
+  * Fix bug in file system UI.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Mon, 24 Dec 2018 22:33:09 +0100
+
+openmediavault (4.1.16-1) stable; urgency=low
+
+  * Update locales.
+  * Fix some Python code issues.
+  * Fix bug in omv-mkaptidx.
+  * Do not show USB devices in the RAID creation dialog.
+  * Support Thunderbolt network devices.
+  * Update Material Design icons to version 3.2.89.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Fri, 14 Dec 2018 09:26:08 +0100
+
+openmediavault (4.1.15-1) stable; urgency=low
+
+  * Fix bug in PHP class OMV\System\Storage\StorageDevice. Forgot to use
+    canonical device path when asking for the device name.
+  * Issue #228: Disable S.M.A.R.T. for FusionIO devices.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Sat, 24 Nov 2018 21:00:50 +0100
+
+openmediavault (4.1.14-1) stable; urgency=low
+
+  * Update locales.
+  * Issue #139: Remove deprecated smb.conf syslog setting.
+  * Issue #206: Fix cron job to update SMART database.
+  * Issue #208: Fix bug in power button configuration.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Mon, 12 Nov 2018 13:31:00 +0100
+
+openmediavault (4.1.13-1) stable; urgency=low
+
+  * Update locales.
+  * Fix various issues found by the lgtm.com project.
+  * Beatify and lint Python code.
+  * Use /bin/sh as default shell when creating/importing users via WebUI.
+  * Issue #182: Remove percentage text in progress bar when config is
+    applied. It is not possible to display an accurate value here.
+  * Issue #192: Allow to define shell at user import.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Mon, 22 Oct 2018 07:03:44 +0200
+
+openmediavault (4.1.12) stable; urgency=low
+
+  * Fix display bug in S.M.A.R.T. attributes grid.
+  * Improve network interface deletion.
+  * Fix sharedfolders-<NAME>.mount issue.
+  * Add UI to copy public key of a SSH certificate to a remote machine.
+  * Issue #174: omv-mkconf monit script may calculate incorrect number of CPUs.
+  * Issue #178: Improve password/public key handling in rsync jobs.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Thu, 13 Sep 2018 07:59:35 +0200
+
+openmediavault (4.1.11) stable; urgency=low
+
+  * Update locales.
+  * Various CSS improvements.
+  * Use relative URL paths. Thanks to zguithues for showing this problem.
+  * Issue #167: Improve \OMV\System\Process::setEnv() method to allow plugin
+    developers to disable localization when applications are executed. Default
+    is LANG=C.
+  * Improve 'Check RRD database' in omv-firstaid. Handle errors like
+    'ERROR: '.../cpu-0/cpu-nice.rrd' is not an RRD file'.
+  * Issue #169: Make sure cron-apt refrain file does not exist.
+  * Issue #170: Fix locale bug in PHP autoloader.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Wed, 29 Aug 2018 07:43:07 +0200
+
+openmediavault (4.1.10) stable; urgency=low
+
+  * Do not show details button in error dialog if text is empty.
+  * Postfix now listens on localhost instead of loopback-only.
+  * Add S.M.A.R.T. support for NVM devices.
+  * Issue #161: omv_is_ipv6_enabled function raises error with IPv4 only.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Wed, 22 Aug 2018 08:46:58 +0200
+
+openmediavault (4.1.9) stable; urgency=low
+
+  * Update locales.
+  * Issue #128: Fix column widths in S.M.A.R.T. tables.
+  * Issue #129: Fix selection bug in icon panel.
+  * Issue #139: Remove deprecated smb.conf syslog setting.
+  * Update Material Design icons to version 2.4.85.
+  * Ensure a mdadm device name is unique when creating a RAID device.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Mon, 09 Jul 2018 10:58:10 +0200
 
 openmediavault (4.1.8.2-1) stable; urgency=low
 

@@ -3,14 +3,14 @@
 # This file is distributed under the same license as the openmediavault package.
 # 
 # Translators:
-# Serhat SUT <serhat.sut@gmail.com>, 2012-2018
+# Serhat SUT <serhat.sut@gmail.com>, 2012-2018,2020
 msgid ""
 msgstr ""
 "Project-Id-Version: openmediavault\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-01-21 11:50+0100\n"
-"PO-Revision-Date: 2018-01-24 17:56+0000\n"
-"Last-Translator: Serhat SUT <serhat.sut@gmail.com>\n"
+"POT-Creation-Date: 2020-04-15 19:10+0200\n"
+"PO-Revision-Date: 2020-04-15 17:14+0000\n"
+"Last-Translator: Volker <votdev@gmx.de>\n"
 "Language-Team: Turkish (Turkey) (http://www.transifex.com/votdev/openmediavault/language/tr_TR/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -260,12 +260,6 @@ msgstr "Paylaşılmış klasör ekle"
 msgid "Add user"
 msgstr "Kullanıcı ekle"
 
-msgid ""
-"Additional device settings, e.g. 'autoneg off speed 100 duplex full'. See <a"
-" href='http://linux.die.net/man/8/ethtool' target='_blank'>manual pages</a> "
-"for more details."
-msgstr "Ek aygıt ayarları, örn.  'autoneg off speed 100 duplex full'. Daha fazla bilgi için lütfen <a href='http://linux.die.net/man/8/ethtool' target='_blank'>manual pages</a> adresini ziyaret ediniz."
-
 msgid "Address"
 msgstr "Adres"
 
@@ -320,11 +314,14 @@ msgid ""
 "Allow this server to advertise itself as a time server to Windows clients"
 msgstr "Sunucunun Windows kullanıcılarına kendisini bir zaman sunucusu olarak tanıtmasına izin ver"
 
-msgid "Allow this server to try and become a local master browser"
-msgstr "Bu sunucunun yerel birincil tarayıcı olmasına izin ver"
-
 msgid "American Samoa"
 msgstr "Amerikan Samoa"
+
+msgid ""
+"An attempt to send the test email has been made. Please check your mailbox. "
+"If the email does not arrive, check any spam folders and also check there "
+"are no Postfix related errors in the system log."
+msgstr "Test maili gönderme işlemi denedi. Lütfen posta kutunuzu kontrol ediniz. Mail gelmemiş ise spam mail klasörünüzü ve ayrıca sistem kayıtlarında yer alan ve Postfix ile bağlantılı olmayan hata kayıtlarını kontrol ediniz. "
 
 msgid ""
 "An email message with the command output (if any produced) is send to the "
@@ -353,6 +350,9 @@ msgstr "Anonim"
 
 msgid "Anonymous FTP"
 msgstr "Anonim FTP"
+
+msgid "Another user is already authenticated."
+msgstr "Bir başka kullanıcı zaten onaylandı."
 
 msgid "Antarctica"
 msgstr "Antartika"
@@ -392,9 +392,6 @@ msgstr "Asenkron I/O"
 
 msgid "At reboot"
 msgstr "Yeniden başlatma sırasında"
-
-msgid "Attribute name"
-msgstr "Özellik adı"
 
 msgid "Attributes"
 msgstr "Özellikler"
@@ -693,6 +690,12 @@ msgstr "Geri bildirimli iç kontrol"
 msgid "Cook Islands"
 msgstr "Cook Adaları"
 
+msgid "Copy"
+msgstr "Kopya"
+
+msgid "Copy public SSH key"
+msgstr "Açık SSH anahtarını kopyala"
+
 msgid "Copy to clipboard"
 msgstr "Panoya kopyala"
 
@@ -870,8 +873,8 @@ msgstr "Klasör"
 msgid "Disabled"
 msgstr "Kapatılmış"
 
-msgid "Disallow the user to modify his account."
-msgstr "Kullanıcıların bu hesabı değiştirmesini engelle."
+msgid "Disallow the user to modify their account."
+msgstr "Kullanıcının hesabınında değişiklik yapmasını engelle."
 
 msgid "Disk usage"
 msgstr "Disk kullanımı"
@@ -1047,9 +1050,6 @@ msgstr "Zamanlanmış görevi düzenle"
 msgid "Edit scheduled test"
 msgstr "Zamanlanmış test düzenle"
 
-msgid "Edit service"
-msgstr "Servisi düzenle"
-
 msgid "Edit share"
 msgstr "Paylaşım düzenle"
 
@@ -1085,6 +1085,9 @@ msgstr "SSL/TLS aç"
 
 msgid "Enable SSL/TLS connections"
 msgstr "SSL/TLS bağlantılarını aç"
+
+msgid "Enable Time Machine support for this share."
+msgstr "Bu paylaşımda Time Machine desteğini aktive et."
 
 msgid "Enable WINS server"
 msgstr "WINS sunucusu aç"
@@ -1159,6 +1162,9 @@ msgstr "Yazna önbelleğini etkinleştir"
 
 msgid "Enabled"
 msgstr "Aktif"
+
+msgid "Encryption mode"
+msgstr "Şifreleme modu"
 
 msgid "Enter your password"
 msgstr "Şifrenizi giriniz"
@@ -1436,6 +1442,9 @@ msgstr "Gine-Bissau"
 msgid "Guyana"
 msgstr "Guyana"
 
+msgid "HTTP 404 error"
+msgstr "HTTP 404 hatası"
+
 msgid "HTTP-Proxy"
 msgstr "HTTP-Vekil Sunucu"
 
@@ -1650,11 +1659,22 @@ msgstr "Eklentiler kuruluyor ..."
 msgid "Installing updates ..."
 msgstr "Güncellemeler kuruluyor ..."
 
+msgid ""
+"Installs the public SSH key on a remote system as an authorized key. Make "
+"sure password authentication is enabled on that remote system."
+msgstr "Açık SSH anahtarını uzaktan erişilen sisteme onaylanmış anahtar olarak kurar. Uzaktan erişilen sistemde şifre doğrulamasının aktif olduğundan emin olunuz."
+
 msgid "Interfaces"
 msgstr "Arabirim"
 
+msgid "Invalid IP address."
+msgstr "Geçersiz IP adresi."
+
 msgid "Invalid SSH public key (RFC 4716)"
 msgstr "Geçersiz SSH açık anahtarı (RFC 4716)"
+
+msgid "Invalid User-Agent."
+msgstr "Geçersiz kullanıcı aracı."
 
 msgid "Invalid domain name"
 msgstr "Geçersiz alan adı"
@@ -1673,6 +1693,9 @@ msgstr "Geçersiz ad"
 
 msgid "Invalid user name"
 msgstr "Geçersiz kullanıcı adı"
+
+msgid "Invalid user."
+msgstr "Geçersiz kullanıcı."
 
 msgid "Iran"
 msgstr "İran"
@@ -1814,14 +1837,14 @@ msgstr "Yükleniyor, lütfen bekleyiniz ..."
 msgid "Local"
 msgstr "Lokal"
 
-msgid "Local master browser"
-msgstr "Yerel ana tarayıcı"
-
 msgid "Location"
 msgstr "Yerleşim"
 
 msgid "Log level"
 msgstr "Kayıt seviyesi"
+
+msgid "Logging out, please wait ..."
+msgstr ""
 
 msgid "Login"
 msgstr "Giriş"
@@ -2199,9 +2222,6 @@ msgstr "Kasım"
 msgid "Num"
 msgstr "Rakam"
 
-msgid "Number of servers"
-msgstr "Sunucu sayısı"
-
 msgid "OK"
 msgstr "Tamam"
 
@@ -2289,8 +2309,8 @@ msgstr "Paraguay"
 msgid "Parent Device"
 msgstr "Ana Cihaz"
 
-msgid "Parent interface"
-msgstr "Ana arabirim"
+msgid "Parent device"
+msgstr ""
 
 msgid "Passive FTP"
 msgstr "Pasif FTP"
@@ -2304,11 +2324,11 @@ msgstr "Şifre onaylaması"
 msgid "Passwords don't match"
 msgstr "Şifreler uyuşmuyor"
 
-msgid "Paste a RSA certificate in X.509 PEM format here."
-msgstr " X.509 PEM formatındaki RSA sertifikasını buraya yapıştırın."
+msgid "Paste a RSA or ECC certificate in X.509 PEM format here."
+msgstr "RSA ya da ECC sertifikasını X.509 PEM formatında buraya yapıştırınız."
 
-msgid "Paste an private RSA key in X.509 PEM format here."
-msgstr " X.509 PEM formatındaki özel RSA sertifikasını buraya yapıştırın."
+msgid "Paste a RSA or ECC private key in X.509 PEM format here."
+msgstr "RSA ya da ECC özel anahtarını X.509 PEM formatında buraya yapıştırınız."
 
 msgid "Path"
 msgstr "Yol"
@@ -2452,8 +2472,14 @@ msgstr "ACL leri koru"
 msgid "Preserve extended attributes"
 msgstr "Genişletilmiş öznitelikleri koru"
 
+msgid "Preserve group"
+msgstr "Grubu koru"
+
 msgid "Preserve modification times"
 msgstr "Değiştirilme zamanlarını koru"
+
+msgid "Preserve owner"
+msgstr "Sahibi koru"
 
 msgid "Preserve permissions"
 msgstr "Yetkileri koru"
@@ -2651,9 +2677,9 @@ msgid ""
 msgstr "Son raporlamadan bu yana sıcaklık en azından N derece değişmiş ise ropor ver. Bu alana 0 değeri girilmesi raporlamayı kapatır."
 
 msgid ""
-"Report if the temperature is greater or equal than N degrees Celsius. Set to"
-" 0 to disable this report."
-msgstr "Sıcaklık N dereceye ya da üstünde ise rapor ver. Bu alana 0 değeri girilmesi raporlamayı kapatır."
+"Report if the temperature is greater than or equal to N degrees Celsius. Set"
+" to 0 to disable this report."
+msgstr "Sıcaklık N derecesine eşit ya da büyük ise raporla. Bu raporu kapatmak için 0 giriniz."
 
 msgid "Repository"
 msgstr "Depo"
@@ -2765,6 +2791,9 @@ msgstr "SSL"
 msgid "SSL/TLS"
 msgstr "SSL/TLS"
 
+msgid "STARTTLS"
+msgstr "STARTTLS"
+
 msgid "Saint Helena"
 msgstr "Saint Helena"
 
@@ -2861,12 +2890,6 @@ msgstr "Bir grup adı seçiniz..."
 msgid "Select a language ..."
 msgstr "Bir dil seçiniz ..."
 
-msgid "Select a parent interface ..."
-msgstr "Ana arabirimi seç ..."
-
-msgid "Select a primary interface ..."
-msgstr "Birincil arabirimi seç ..."
-
 msgid "Select a protocol ..."
 msgstr "Bir iletişim kuralı seçin ..."
 
@@ -2890,6 +2913,11 @@ msgstr "RAID aygıtından kaldırılacak cihazları seçiniz."
 
 msgid "Select or enter a user name ..."
 msgstr "Bir kullanıcı adı seçiniz ya da giriniz..."
+
+msgid ""
+"Select the devices that will be used to create the RAID device. Devices "
+"connected via USB will not be listed (too unreliable)."
+msgstr "RAID aygıtını oluşturmak için kulalnılacak aygıtları seçiniz. USB arabiriminden bağlanan aygıtlar listelenmeyecektir (oldukça güvensiz)."
 
 msgid "Self-test logs"
 msgstr "İç kontrol kayıtları"
@@ -2930,9 +2958,6 @@ msgstr "Sunucu"
 msgid "Service"
 msgstr "Servis"
 
-msgid "Service Discovery"
-msgstr "Servis Araştırması"
-
 msgid "Service disabled"
 msgstr "Hizmet kapatıldı"
 
@@ -2957,6 +2982,15 @@ msgstr "Sadece okunabilir ayarla"
 msgid ""
 "Set the destination permissions to be the same as the source permissions"
 msgstr "Hedef yetkilerini kaynak yetkileri ile aynı olacak şekilde ayarla"
+
+msgid ""
+"Set the group of the destination file to be the same as the source file."
+msgstr "Hedef dosya grup bilgisini kaynak dosya ile aynı yap."
+
+msgid ""
+"Set the owner of the destination file to be the same as the source file, but"
+" only if the receiving rsync is being run as the super-user."
+msgstr "Sadece super-user tarafından çalıştırılan rsync ile alındığında hedef dosya sahiplik bilgisini kaynak dosya ile aynı olacak şekilde ayarla."
 
 msgid "Set write only"
 msgstr "Sadece yazılabilir ayarla"
@@ -3085,9 +3119,6 @@ msgstr "İspanya"
 
 msgid "Special action flag"
 msgstr "Özel işlem belirteci"
-
-msgid "Specifies how many server threads to create."
-msgstr "Kaç tane sunucu iş parçacığı oluşturulacağını belirler."
 
 msgid "Specifies one of the bonding policies."
 msgstr "Birleştirme kurallarından birini belirler."
@@ -3307,6 +3338,9 @@ msgstr "Dosya sistemi başarıyla oluşturuldu."
 msgid "The hostname is a label that identifies the system to the network."
 msgstr "Sistem adı, ağ üzerindeki bir sistemi belirleyen bir etikettir."
 
+msgid "The hostname of the remote system."
+msgstr "Uzaktan erişilen sistemin adı."
+
 msgid ""
 "The information about available software is out-of-date. You need to reload "
 "the information about available software."
@@ -3352,6 +3386,9 @@ msgid ""
 "single share to be used flexibly by each user."
 msgstr "Yeni dosya ve klasörler üzerindeki yetkiler normalde oluşturma kalıbı ve klasör kalıbı ile düzenlenir fakat aktarılan yetkiler bu parametreleri geçersiz kılar. Bu özellikle çok kullanıcılı sistemlerde her bir kullanıcının tek bir paylaşımı rahatça kullanabilmesine imkan sağlar."
 
+msgid "The port on which SSH is running on the remote system."
+msgstr "Uzaktan erişilen sistemde çalışan SSH servisinin portu."
+
 msgid "The private RSA key in X.509 PEM format."
 msgstr " X.509 PEM biöeminde özel RSA anahtarı."
 
@@ -3363,16 +3400,13 @@ msgid ""
 "packages."
 msgstr "Yazılım deposu yeni, kaldırılmış ve güncellenmiş yazılım paketleri açısından kontrol edilecektir."
 
+msgid "The requested page was not found."
+msgstr "İstek gönderilen sayfa bulunamadı."
+
 msgid ""
 "The requirement that the SSL session from the control connection is reused "
 "for data connections is not required."
 msgstr "Kontrol bağlantılarındaki SSL oturumlarının data bağlantılarında yeniden kullanılması gerekli değildir."
-
-msgid "The session IP address has been changed."
-msgstr "Oturum IP adresi deiğişmiştir."
-
-msgid "The session user no longer exists."
-msgstr "Oturum artık geçerli değildir."
 
 msgid ""
 "The source remote server, e.g. [USER@]HOST:SRC, [USER@]HOST::SRC or "
@@ -3385,11 +3419,11 @@ msgstr "Kaynak paylaşım klasörü."
 msgid "The specified quota exceeds the max. possible value of 4TiB."
 msgstr "Belirlenen kota 4 TiB lık olabilecek en yüksek değere ulaştığında biter."
 
+msgid "The system must be rebooted."
+msgstr "Sistem yeniden başlatılmalıdır."
+
 msgid "The system will reboot now. This may take some time ..."
 msgstr "Sistem yeniden başlatılıyor. Bu işlem vakit alabilir ..."
-
-msgid "The test email has been sent successfully. Please check your mailbox."
-msgstr "Test e-postası başarıyla gönderildi. Lütfen posta kutunuzu kontrol ediniz."
 
 msgid "The volume label for the file system."
 msgstr "Dosya sistemi için birim etiketi."
@@ -3613,6 +3647,9 @@ msgstr "Paketler eşleştiğinde ne yapılacağını belirler."
 msgid "This will create a recycle bin on the share."
 msgstr "Bu seçenek paylaşımda bir geri dönüşüm kutusu yaratır."
 
+msgid "Threshold"
+msgstr "Sınır"
+
 msgid "Thursday"
 msgstr "Perşembe"
 
@@ -3621,6 +3658,9 @@ msgstr "TiB"
 
 msgid "Time"
 msgstr "Zaman"
+
+msgid "Time Machine support"
+msgstr "Tiem Machine desteği"
 
 msgid "Time interval"
 msgstr "Zaman aralığı"
@@ -3640,9 +3680,6 @@ msgstr "Saat dilimi"
 msgid "Timeout"
 msgstr "Zaman aşımı"
 
-msgid "Times"
-msgstr "Kere"
-
 msgid "Togo"
 msgstr "togo"
 
@@ -3658,14 +3695,16 @@ msgstr "Toplam"
 msgid "Transfer log"
 msgstr "Altarım kaydı"
 
+msgid ""
+"Transfer modification times along with the files and update them on the "
+"remote system."
+msgstr "Tüm dosyaların değişiklik zamanını değiştir ve uzak sistemde de güncelle."
+
 msgid "Transfer time"
 msgstr "Aktarım zamanı"
 
 msgid "Transfer type"
 msgstr "Aktarım tipi"
-
-msgid "Treshold"
-msgstr "Eşik değer"
 
 msgid "Trial run"
 msgstr "Deneme çalıştırması"
@@ -3776,11 +3815,11 @@ msgstr "Hedefteki genişletilmiş öznitelikleri yerel olanlarla aynı olacak ş
 msgid "Updates"
 msgstr "Güncellemeler"
 
+msgid "Updates available"
+msgstr "Güncelleştirmeler mevcut"
+
 msgid "Updating ACL settings"
 msgstr "ACL ayarları güncelleniyor"
-
-msgid "Upgrade"
-msgstr "Yükseltme"
 
 msgid "Upload"
 msgstr "Yükle"
@@ -3805,9 +3844,6 @@ msgstr "Uruguay"
 
 msgid "Use NTP server"
 msgstr "NTP sunucusu kullan"
-
-msgid "Use SSL/TLS secure connection"
-msgstr "SSl/TLS güvenli bağlantı kullan"
 
 msgid "Use chroot"
 msgstr "Chroot kullan"

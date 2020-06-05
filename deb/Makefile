@@ -4,7 +4,7 @@
 #
 # @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
 # @author    Volker Theile <volker.theile@openmediavault.org>
-# @copyright Copyright (c) 2009-2018 Volker Theile
+# @copyright Copyright (c) 2009-2020 Volker Theile
 #
 # OpenMediaVault is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,7 +30,9 @@ clean binary omv_tx_pull_po omv_tx_push_pot omv_build_pot:
 		cd $(CURDIR)/$$dir && fakeroot debian/rules $@; \
 	done
 
-install_build_tools:
-	sudo apt-get install debhelper fakeroot gettext
+install:
+	echo "Installing required packages ..."
+	sudo apt-get install debhelper fakeroot gettext python3-pip
+	pip3 install --upgrade black pylint
 
-.PHONY: install_build_tools clean binary omv_tx_pull_po omv_tx_push_pot omv_build_pot
+.PHONY: install clean binary omv_tx_pull_po omv_tx_push_pot omv_build_pot

@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ class Manager {
 
 	/**
 	 * Returns a module manager singleton.
-	 * @return The module manager object.
+	 * @return object|null The module manager object.
 	 */
 	public static function &getInstance() {
 		static $instance = NULL;
@@ -51,20 +51,33 @@ class Manager {
 
 	/**
 	 * Register a module.
-	 * @param module The module class to be registered.
-	 * @return Returns TRUE on success or FALSE on failure.
+	 * @param module The module class instance to be registered.
+	 * @return bool Returns TRUE on success or FALSE on failure.
 	 */
 	private function registerModule(ModuleAbstract $module) {
 		if (!isset($module))
 			return FALSE;
 		$name = $module->getName();
 		// Check if module already exists.
-		if (FALSE !== $this->getModule($name)) {
+		if (!is_null($existingModule = $this->getModule($name))) {
 			throw new \OMV\Exception(
-			  "The module already exists (name=%s, class=%s)",
-			  $name, get_class($module));
+				"Failed to register module '%s' via '%s'. ".
+				"It is already registered by '%s'.",
+				$name, get_class($module), get_class($existingModule));
 		}
-		$this->map[strtolower($name)] = $module;
+		$this->map[mb_strtolower($name)] = $module;
+		// Use optional alias?
+		$alias = $module->getAlias();
+		if (is_string($alias) && !empty($alias)) {
+			// Check if module already exists.
+			if (!is_null($existingModule = $this->getModule($alias))) {
+				throw new \OMV\Exception(
+					"Failed to register alias '%s' via '%s'. ".
+					"It is already registered by '%s'.",
+					$alias, get_class($module), get_class($existingModule));
+			}
+			$this->map[mb_strtolower($alias)] = $module;
+		}
 		ksort($this->map);
 		return TRUE;
 	}
@@ -72,18 +85,19 @@ class Manager {
 	/**
 	 * Get a module.
 	 * @param name The name of the module to get.
-	 * @return The module object or FALSE on failure.
+	 * @return object|null The module instance or FALSE on failure.
 	 */
 	final public function getModule($name) {
-		$name = strtolower($name);
+		$name = mb_strtolower($name);
 		if (!array_key_exists($name, $this->map))
-			return FALSE;
+			return NULL;
 		return $this->map[$name];
 	}
 
 	/**
 	 * Get all registered modules.
-	 * @return An array containing all registered modules.
+	 * @return array An array containing the instances of all
+	 *   registered modules.
 	 */
 	final public function getModules() {
 		return $this->map;
@@ -91,7 +105,7 @@ class Manager {
 
 	/**
 	 * Helper function to get a list of dirty modules.
-	 * @return An array containing the names of the dirty marked modules.
+	 * @return array An array containing the names of the dirty marked modules.
 	 */
 	final public function getDirtyModules() {
 		$jsonFile = new \OMV\Json\File(\OMV\Environment::get(
@@ -107,7 +121,7 @@ class Manager {
 	/**
 	 * Helper function to mark a module as dirty.
 	 * @param name The name of the module.
-	 * @return The list of dirty modules.
+	 * @return array The list of dirty modules.
 	 */
 	final public function setModuleDirty($name) {
 		$jsonFile = new \OMV\Json\File(\OMV\Environment::get(
@@ -122,7 +136,7 @@ class Manager {
 		else
 			$modules = $jsonFile->read();
 		// Append the specified dirty module.
-		$modules[] = strtolower($name);
+		$modules[] = mb_strtolower($name);
 		$modules = array_unique($modules);
 		$jsonFile->write($modules);
 		$jsonFile->close();
@@ -132,11 +146,11 @@ class Manager {
 	/**
 	 * Helper function to check whether a module is marked dirty.
 	 * @param name The name of the module.
-	 * @return TRUE if the module is marked dirty, otherwise FALSE.
+	 * @return bool TRUE if the module is marked dirty, otherwise FALSE.
 	 */
 	final public function isModuleDirty($name) {
 		$modules = $this->getDirtyModules();
-		return in_array(strtolower($name), $modules);
+		return in_array(mb_strtolower($name), $modules);
 	}
 
 	/**

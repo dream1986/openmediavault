@@ -3,7 +3,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,7 +81,7 @@ Ext.apply(Ext.form.field.VTypes, {
 		return valid;
 	},
 	IPListText: "This field should be a list of IP addresses separated by <,> or <;>",
-	IPMask: /[0-9a-f\.:,;]/i,
+	IPListMask: /[0-9a-f\.:,;]/i,
 
 	IPNetCIDR: function(v) {
 		if(Ext.form.field.VTypes.IPv4NetCIDR(v) ||
@@ -834,23 +834,6 @@ Ext.form.field.Text.prototype.afterRender = Ext.Function.createInterceptor(
 	}
 });
 
-Ext.apply(Ext.form.field.Text.prototype, {
-	/**
-	 * @deprecated
-	 */
-	getTriggerButtonEl: function(id) {
-		var me = this, el = null;
-		if (Ext.isNumber(id)) {
-			el = me.triggerEl.item(id);
-		} else if(Ext.isString(id)) {
-			// Search by the given CSS class.
-			var selector = Ext.String.format("[class~={0}][role=presentation]", id);
-			el = me.getEl().query(selector)[0];
-		}
-		return el;
-	}
-});
-
 ////////////////////////////////////////////////////////////////////////////////
 // Ext.form.field.ComboBox
 ////////////////////////////////////////////////////////////////////////////////
@@ -1011,34 +994,6 @@ Ext.apply(Ext.Object, {
 });
 
 ////////////////////////////////////////////////////////////////////////////////
-// Ext.String
-////////////////////////////////////////////////////////////////////////////////
-
-Ext.apply(Ext.String, {
-	/**
-	 * Strip whitespace or other characters from the beginning of a string.
-	 * @param s The original string.
-	 * @param chars The characters to be stripped.
-	 */
-	ltrim: function(s, chars) {
-		chars = chars.replace(/([\[\]\(\)\.\?\/\*\{\}\+\$\^\:])/g,
-			"\\$1") || " \\s";
-		return s.replace(new RegExp("^[" + chars + "]+", "g"), "");
-	},
-
-	/**
-	 * Strip whitespace or other from the end of a string.
-	 * @param s The original string.
-	 * @param chars The characters to be stripped.
-	 */
-	rtrim: function(s, chars) {
-		chars = chars.replace(/([\[\]\(\)\.\?\/\*\{\}\+\$\^\:])/g,
-			"\\$1") || " \\s";
-		return s.replace(new RegExp("[" + chars + "]+$", "g"), "");
-	}
-});
-
-////////////////////////////////////////////////////////////////////////////////
 // Ext.dom.Element
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -1089,6 +1044,78 @@ Ext.define('EXTJS_23846.Gesture', {
 });
 
 ////////////////////////////////////////////////////////////////////////////////
+// Ext.ZIndexManager
+////////////////////////////////////////////////////////////////////////////////
+
+// https://twasink.net/2016/09/20/upgrading-to-extjs-6-2/
+Ext.define('Ext.overrides.ZIndexManager', {
+	override: 'Ext.ZIndexManager',
+	compatibility: '6.2.0.981',
+	requires: [
+		'Ext.ZIndexManager'
+	],
+	privates: {
+		syncModalMask: function(comp) {
+			// ExtJS 6.2.0.981 has a bug where it doesn't look to see if the
+			// mask is rendered before trying to sync it. That's not the best
+			// thing. Here's a tentative fix: do nothing if the mask doesn't
+			// have a target.
+			if (!this.mask || !this.mask.maskTarget) { return; }
+			this.callParent(arguments);
+		}
+	}
+});
+
+////////////////////////////////////////////////////////////////////////////////
+// Ext.window.Window
+////////////////////////////////////////////////////////////////////////////////
+
+// https://github.com/JarvusInnovations/sencha-hotfixes/blob/ext/6/2/0/981/overrides/window/ResizeChildren.js
+// Works around issue where a panel inside a window doesn't get resized
+// correctly after the window is resized.
+Ext.define('Ext.overrides.window.Window', {
+	override: 'Ext.window.Window',
+	compatibility: '6.2.0.981',
+	requires: [
+		'Ext.window.Window'
+	],
+	onShowComplete: function() {
+		var me = this;
+		me.callParent(arguments);
+		if (me.child('container:not(header)')) {
+			me.on('resize', 'doResizeChildrenHotfix', me);
+		}
+	},
+	doClose: function() {
+		this.un('resize', 'doResizeChildrenHotfix', this);
+		this.callParent(arguments);
+	},
+	doResizeChildrenHotfix: function() {
+		this.updateLayout();
+	}
+});
+
+////////////////////////////////////////////////////////////////////////////////
+// Ext.view.Table
+////////////////////////////////////////////////////////////////////////////////
+
+// https://github.com/JarvusInnovations/sencha-hotfixes/blob/ext/6/2/0/981/overrides/view/TableReplaceScroll.js
+// Works around issue where a grid's scroll will jump back to last focused
+// record when a group is expanded/collapsed
+Ext.define('Ext.overrides.view.Table', {
+	override: 'Ext.view.Table',
+	compatibility: '6.2.0.981',
+	requires: [
+		'Ext.view.Table'
+	],
+	onReplace: function() {
+		this.saveScrollState();
+		this.callParent(arguments);
+		this.restoreScrollState();
+	}
+});
+
+////////////////////////////////////////////////////////////////////////////////
 // Additional helper functions
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -1128,14 +1155,6 @@ Ext.applyIf(Ext, {
 		  Ext.isEmpty(value))
 			return false;
 		return /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(value);
-	},
-
-	/**
-	 * Deprecated.
-	 */
-	isUUID: function(value) {
-		Ext.log.warn("Ext.isUUID() is deprecated. Use Ext.isUuid() instead.");
-		return Ext.isUuid(value);
 	},
 
 	/**

@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,6 +79,8 @@ class Json {
 		  $this->params['service']))) {
 			// Session MUST be authenticated at this point.
 			$session->validateAuthentication();
+			// Ensure user exists.
+			$session->validateUser();
 			// If service is not available locally, then we can commit
 			// the session due the fact that the RPC is redirected to
 			// the omv-engined daemon which does not have access to this

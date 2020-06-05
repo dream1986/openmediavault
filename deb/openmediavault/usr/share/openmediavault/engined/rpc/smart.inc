@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,9 @@
  * You should have received a copy of the GNU General Public License
  * along with OpenMediaVault. If not, see <http://www.gnu.org/licenses/>.
  */
-class OMVRpcServiceSmart extends \OMV\Rpc\ServiceAbstract {
+namespace Engined\Rpc;
+
+class Smart extends \OMV\Rpc\ServiceAbstract {
 	/**
 	 * Get the RPC service name.
 	 */
@@ -55,9 +57,10 @@ class OMVRpcServiceSmart extends \OMV\Rpc\ServiceAbstract {
 	 * @param params The method parameters.
 	 * @param context The context of the caller.
 	 * @return An array containing disk device objects with the
-	 *   following fields: \em devicename, \em devicefile, \em devicelinks,
-	 *   \em model, \em size, \em temperature, \em description, \em vendor
-	 *   and \em serialnumber.
+	 *   following fields: \em devicename, \em canonicaldevicefile,
+	 *   \em devicefile, \em devicelinks, \em model, \em size,
+	 *   \em temperature, \em description, \em vendor and
+	 *   \em serialnumber.
 	 * @throw \OMV\Exception
 	 */
 	public function enumerateDevices($params, $context) {
@@ -72,34 +75,40 @@ class OMVRpcServiceSmart extends \OMV\Rpc\ServiceAbstract {
 			throw new \OMV\Exception("Failed to get list of storage devices");
 		}
 		// Prepare result.
-		$objects = [];
+		$procs = [];
 		foreach ($devs as $devk => $devv) {
-			// Get the storage device object.
-			\OMV\System\Storage\StorageDevice::assertStorageDeviceExists($devv);
-			$sd = \OMV\System\Storage\StorageDevice::getStorageDevice($devv);
-			// Skip devices that do not support S.M.A.R.T.
-			if (FALSE === $sd->hasSmartSupport())
-				continue;
-			// Get the S.M.A.R.T. information about the given device.
-			$smartInfo = $sd->getSmartInformation();
-			// Try to get the device temperature via S.M.A.R.T.
-			$temperature = $smartInfo->getTemperature();
-			// Prepare device object
-			$objects[] = [
-				"devicename" => $sd->getDeviceName(),
-				"devicefile" => $sd->getPreferredDeviceFile(),
-				"devicelinks" => $sd->getDeviceFileSymlinks(),
-				"model" => $sd->getModel(),
-				"size" => $sd->getSize(),
-				"temperature" => (FALSE === $temperature) ?
-				  "" : sprintf("%d°C", $temperature),
-				"description" => $sd->getDescription(),
-				"vendor" => $sd->getVendor(),
-				"serialnumber" => $sd->getSerialNumber(),
-				"overallstatus" => $smartInfo->getOverallStatus()
-			];
+			// Collect the device information asynchronous.
+			$procs[] = $this->asyncProc(function() use ($devv) {
+				// Get the storage device object.
+				$sd = \OMV\System\Storage\StorageDevice::assertGetStorageDevice($devv);
+				// Skip devices that do not support S.M.A.R.T.
+				if (FALSE === $sd->hasSmartSupport()) {
+					return FALSE;
+				}
+				// Get the S.M.A.R.T. information about the given device.
+				$smartInfo = $sd->getSmartInformation();
+				// Try to get the device temperature via S.M.A.R.T.
+				$temperature = $smartInfo->getTemperature();
+				// Prepare device object
+				return [
+					"devicename" => $sd->getDeviceName(),
+					"canonicaldevicefile" => $sd->getCanonicalDeviceFile(),
+					"devicefile" => $sd->getPredictableDeviceFile(),
+					"devicelinks" => $sd->getDeviceFileSymlinks(),
+					"model" => $sd->getModel(),
+					"size" => $sd->getSize(),
+					"temperature" => (FALSE === $temperature) ?
+					  "" : sprintf("%d°C", $temperature),
+					"description" => $sd->getDescription(),
+					"vendor" => $sd->getVendor(),
+					"serialnumber" => $sd->getSerialNumber(),
+					"overallstatus" => $smartInfo->getOverallStatus()
+				];
+			});
 		}
-		return $objects;
+		// Remove elements that are no associative arrays (these are devices
+		// without S.M.A.R.T. support).
+		return array_filter($this->waitAsyncProcs($procs), "is_assoc_array");
 	}
 
 	/**
@@ -297,10 +306,8 @@ class OMVRpcServiceSmart extends \OMV\Rpc\ServiceAbstract {
 		// Validate the parameters of the RPC service method.
 		$this->validateMethodParams($params, "rpc.smart.setdevicesettings");
 		// Check if the given device exists and supports S.M.A.R.T.
-		\OMV\System\Storage\StorageDevice::assertStorageDeviceExists(
-		  $params['devicefile']);
-		$sd = \OMV\System\Storage\StorageDevice::getStorageDevice(
-		  $params['devicefile']);
+		$sd = \OMV\System\Storage\StorageDevice::assertGetStorageDevice(
+			$params['devicefile']);
 		// Ensure that the device has S.M.A.R.T. support.
 		$sd->assertHasSmartSupport();
 		// Prepare the configuration data.
@@ -338,10 +345,8 @@ class OMVRpcServiceSmart extends \OMV\Rpc\ServiceAbstract {
 		// Validate the parameters of the RPC service method.
 		$this->validateMethodParams($params, "rpc.common.devicefile");
 		// Get the S.M.A.R.T. information.
-		\OMV\System\Storage\StorageDevice::assertStorageDeviceExists(
-		  $params['devicefile']);
-		$sd = \OMV\System\Storage\StorageDevice::getStorageDevice(
-		  $params['devicefile']);
+		$sd = \OMV\System\Storage\StorageDevice::assertGetStorageDevice(
+			$params['devicefile']);
 		// Ensure that the device has S.M.A.R.T. support.
 		$sd->assertHasSmartSupport();
 		// Get the S.M.A.R.T. information.
@@ -364,10 +369,8 @@ class OMVRpcServiceSmart extends \OMV\Rpc\ServiceAbstract {
 		// Validate the parameters of the RPC service method.
 		$this->validateMethodParams($params, "rpc.common.devicefile");
 		// Get the S.M.A.R.T. information.
-		\OMV\System\Storage\StorageDevice::assertStorageDeviceExists(
-		  $params['devicefile']);
-		$sd = \OMV\System\Storage\StorageDevice::getStorageDevice(
-		  $params['devicefile']);
+		$sd = \OMV\System\Storage\StorageDevice::assertGetStorageDevice(
+			$params['devicefile']);
 		// Ensure that the device has S.M.A.R.T. support.
 		$sd->assertHasSmartSupport();
 		// Get the S.M.A.R.T. information.
@@ -390,10 +393,8 @@ class OMVRpcServiceSmart extends \OMV\Rpc\ServiceAbstract {
 		// Validate the parameters of the RPC service method.
 		$this->validateMethodParams($params, "rpc.common.devicefile");
 		// Get the S.M.A.R.T. information.
-		\OMV\System\Storage\StorageDevice::assertStorageDeviceExists(
-		  $params['devicefile']);
-		$sd = \OMV\System\Storage\StorageDevice::getStorageDevice(
-		  $params['devicefile']);
+		$sd = \OMV\System\Storage\StorageDevice::assertGetStorageDevice(
+			$params['devicefile']);
 		// Ensure that the device has S.M.A.R.T. support.
 		$sd->assertHasSmartSupport();
 		// Get the S.M.A.R.T. information.
@@ -416,10 +417,8 @@ class OMVRpcServiceSmart extends \OMV\Rpc\ServiceAbstract {
 		// Validate the parameters of the RPC service method.
 		$this->validateMethodParams($params, "rpc.common.devicefile");
 		// Get the S.M.A.R.T. information.
-		\OMV\System\Storage\StorageDevice::assertStorageDeviceExists(
-		  $params['devicefile']);
-		$sd = \OMV\System\Storage\StorageDevice::getStorageDevice(
-		  $params['devicefile']);
+		$sd = \OMV\System\Storage\StorageDevice::assertGetStorageDevice(
+			$params['devicefile']);
 		// Ensure that the device has S.M.A.R.T. support.
 		$sd->assertHasSmartSupport();
 		// Get the S.M.A.R.T. information.
@@ -515,17 +514,15 @@ class OMVRpcServiceSmart extends \OMV\Rpc\ServiceAbstract {
 		// Validate the parameters of the RPC service method.
 		$this->validateMethodParams($params, "rpc.smart.setscheduledtest");
 		// Check if the given device exists.
-		\OMV\System\Storage\StorageDevice::assertStorageDeviceExists(
-		  $params['devicefile']);
-		$sd = \OMV\System\Storage\StorageDevice::getStorageDevice(
-		  $params['devicefile']);
+		$sd = \OMV\System\Storage\StorageDevice::assertGetStorageDevice(
+			$params['devicefile']);
 		// Ensure that the device has S.M.A.R.T. support.
 		$sd->assertHasSmartSupport();
 		// Use a predictable device file.
 		$params['devicefile'] = $sd->getPredictableDeviceFile();
 		// Prepare the configuration data.
 		$object = new \OMV\Config\ConfigObject(
-		  "conf.service.smartmontools.job");
+			"conf.service.smartmontools.job");
 		$object->setAssoc($params);
 		// Set the configuration object.
 		$db = \OMV\Config\Database::getInstance();
@@ -574,10 +571,8 @@ class OMVRpcServiceSmart extends \OMV\Rpc\ServiceAbstract {
 		$db = \OMV\Config\Database::getInstance();
 		$object = $db->get("conf.service.smartmontools.job", $params['uuid']);
 		// Check if the given device exists and supports S.M.A.R.T.
-		\OMV\System\Storage\StorageDevice::assertStorageDeviceExists(
-		  $object->get("devicefile"));
-		$sd = \OMV\System\Storage\StorageDevice::getStorageDevice(
-		  $object->get("devicefile"));
+		$sd = \OMV\System\Storage\StorageDevice::assertGetStorageDevice(
+			$object->get("devicefile"));
 		$sd->assertHasSmartSupport();
 		// Create the background process.
 		return $this->execBgProc(function($bgStatusFilename, $bgOutputFilename)
@@ -589,7 +584,7 @@ class OMVRpcServiceSmart extends \OMV\Rpc\ServiceAbstract {
 				"c" => "conveyance",
 				"o" => "offline"
 			];
-			$test = strtolower($object->get("type"));
+			$test = mb_strtolower($object->get("type"));
 			if (TRUE === array_key_exists($test, $testMap))
 				$test = $testMap[$test];
 			$cmdArgs = [];

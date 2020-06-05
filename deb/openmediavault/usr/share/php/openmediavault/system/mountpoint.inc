@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -192,6 +192,81 @@ class MountPoint {
 		$cmd = new \OMV\System\Process("umount", $cmdArgs);
 		$cmd->setRedirect2to1();
 		$cmd->execute();
+	}
+
+	/**
+	 * Get the device file that is mounted on the given directory.
+	 * Note, the device MUST be mounted.
+	 * @return The device file of that is mounted on the given
+	 *   directory, e.g. '/dev/vda1'.
+	 */
+	public function getDeviceFile() {
+		$info = $this->getInfo();
+		return $info['source'];
+	}
+
+	/**
+	 * Get various information about the mount point, e.g. 'target',
+	 * 'source', 'fstype', 'label', 'uuid', 'size', 'avail', 'used',
+	 * 'maj:min' or 'options'.
+	 * @return Returns an object containing the filesystem information.
+	 */
+	public function getInfo() {
+		$cmdArgs = [];
+		$cmdArgs[] = "--output-all";
+		$cmdArgs[] = "--nofsroot";
+		$cmdArgs[] = "--json";
+		// We do not want to process 'autofs' entries for filesystems
+		// that are mounted by systemd via 'x-systemd.automount'.
+		// {
+		//   "filesystems": [
+		//     {
+		//       "target": "/srv/dev-disk-by-id-dm-name-sdb-crypt",
+		//       "source": "systemd-1",
+		//       "fstype": "autofs",
+		//       "options": "rw,relatime,fd=44,pgrp=1,timeout=0,minproto=5,maxproto=5,direct,pipe_ino=12136"
+		//     },
+		//     {
+		//       "target": "/srv/dev-disk-by-id-dm-name-sdb-crypt",
+		//       "source": "/dev/mapper/sdb-crypt",
+		//       "fstype": "ext4",
+		//       "options": "rw,noexec,relatime,jqfmt=vfsv0,usrjquota=aquota.user,grpjquota=aquota.group"
+		//     }
+		//   ]
+		// }
+		$cmdArgs[] = "--types=noautofs";
+		$cmdArgs[] = escapeshellarg($this->getPath());
+		$cmd = new \OMV\System\Process("findmnt", $cmdArgs);
+		$cmd->setRedirect2to1();
+		$cmd->execute($output);
+		$output = json_decode_safe(implode($output, ""), TRUE);
+		// {
+		//   "filesystems": [{
+		//     "source":"/dev/sda",
+		//     "target":"/srv/dev-disk-by-label-alfa",
+		//     "fstype":"btrfs",
+		//     "options":"rw,relatime,space_cache,subvolid=257,subvol=/data",
+		//     "vfs-options":"rw,relatime",
+		//     "fs-options":"rw,space_cache,subvolid=257,subvol=/data",
+		//     "label":"alfa",
+		//     "uuid":"343dab1d-edb7-4d89-813a-b4ad57c51f32",
+		//     "partlabel":null,
+		//     "partuuid":null,
+		//     "maj:min":"0:49",
+		//     "size":"7.3T",
+		//     "avail":"7.2T",
+		//     "used":"34.4G",
+		//     "use%":"0%",
+		//     "fsroot":"/data",
+		//     "tid":27897,
+		//     "id":225,
+		//     "opt-fields":"shared:123",
+		//     "propagation":"shared",
+		//     "freq":null,
+		//     "passno":null
+		//   }]
+		// }
+		return $output['filesystems'][0];
 	}
 
 	/**

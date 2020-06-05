@@ -2,7 +2,7 @@
 #
 # @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
 # @author    Volker Theile <volker.theile@openmediavault.org>
-# @copyright Copyright (c) 2009-2018 Volker Theile
+# @copyright Copyright (c) 2009-2020 Volker Theile
 #
 # OpenMediaVault is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -541,53 +541,6 @@ omv_config_add_node_data() {
 	rm -f -- "${tmpfile}"
 }
 
-# omv_config_add_element <xpath> <namevalue> [<xml>]
-# Add a new element to the configuration.
-# @deprecated
-# @param xpath The XPath to use
-# @param name The name of the element to add
-# @param value The element value. Special XML characters MUST be escaped.
-# @param xml Set to TRUE when the value contains XML data. Defaults to FALSE.
-# @return void
-omv_config_add_element() {
-	local tmpfile xpath name value xml
-
-	tmpfile=$(tempfile)
-	xpath=$1
-	name=$2
-	value=$3
-	xml=${4:-"false"}
-
-	# Display a warning that the function is deprecated.
-	omv_warning "The function 'omv_config_add_element' is deprecated."
-
-	# If value contains XML data it must be handled different.
-	if omv_checkyesno ${xml}; then
-		# Create a unique value that will be inserted instead. It will be
-		# replaced by the real value later.
-		value=$(mktemp --dry-run "XXXXXXXXXXXX")
-	fi
-
-	# !Attention! It is necessary to redirect the modified XML data to another
-	# file because xmlstarlet does not like to use the same file
-	# for input and output in a pipe like xmlstarlet ... file > file
-	xmlstarlet edit -P -s "${xpath}" -t elem -n "${name}" -v "${value}" \
-	  "${OMV_CONFIG_FILE}" | tee "${tmpfile}" >/dev/null
-
-	if omv_checkyesno ${xml}; then
-		# If the value contains XML data then special characters must be
-		# escaped for sed, otherwise they will be misinterpreted.
-		sed -i "s/${value}/$(omv_quotemeta "$3")/" "${tmpfile}"
-	fi
-
-	# Copy temporary file content to config file. Note, the config file
-	# permissions must be kept.
-	cat "${tmpfile}" > "${OMV_CONFIG_FILE}"
-
-	# Remove temporary file.
-	rm -f -- "${tmpfile}"
-}
-
 # omv_config_rename <xpath> <name>
 # Rename the attribute at the given XPath in the configuration file.
 # @param xpath The XPath to use.
@@ -794,7 +747,7 @@ omv_is_gateway4() {
 omv_is_ipaddr6() {
 	local _valid
 #	perl -ne "use Socket qw(AF_INET6 inet_pton); print inet_pton(AF_INET6, '$1');"
-	_valid=$(php7.0 -n -r "filter_var('$1', FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) ? print 0 : print 1;")
+	_valid=$(php7.3 -n -r "filter_var('$1', FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) ? print 0 : print 1;")
 	return ${_valid}
 }
 
@@ -814,7 +767,7 @@ omv_is_netmask6() {
 omv_is_gateway6() {
 	local _valid
 #	perl -ne "use Socket qw(AF_INET6 inet_pton); print inet_pton(AF_INET6, '$1');"
-	_valid=$(php7.0 -n -r "filter_var('$1', FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) ? print 0 : print 1;")
+	_valid=$(php7.3 -n -r "filter_var('$1', FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) ? print 0 : print 1;")
 	return ${_valid}
 }
 
@@ -822,7 +775,7 @@ omv_is_gateway6() {
 # Check if IPv6 is enabled.
 # @return 0 if enabled, otherwise 1.
 omv_is_ipv6_enabled() {
-	[ -e /proc/net/if_inet6 -a $(grep --count --invert-match 'lo$' /proc/net/if_inet6) -gt 0 ] && return 0
+	[ -e /proc/net/if_inet6 ] && [ $(grep --count --invert-match 'lo$' /proc/net/if_inet6) -gt 0 ] && return 0
 	return 1
 }
 
@@ -1006,7 +959,7 @@ omv_kill_children() {
 # Mark the given module as dirty.
 # @param name The name of the module.
 omv_module_set_dirty() {
-	php7.0 -c /etc/openmediavault <<EOF
+	php7.3 -c /etc/openmediavault <<EOF
 <?php
 require_once('openmediavault/autoloader.inc'); \
 \$moduleMngr = \OMV\Engine\Module\Manager::getInstance();
@@ -1019,7 +972,7 @@ EOF
 # Check if any modules are marked as dirty.
 omv_module_is_dirty() {
 	local _dirty
-	_dirty=$(php7.0 -c /etc/openmediavault -r \
+	_dirty=$(php7.3 -c /etc/openmediavault -r \
 	  "require_once('openmediavault/autoloader.inc'); \
 	  \$moduleMngr = \OMV\Engine\Module\Manager::getInstance(); \
 	  \$dirtyModules = \$moduleMngr->getDirtyModules(); \
@@ -1048,7 +1001,7 @@ omv_product_info() {
 # @return Returns 0 if the process is running, otherwise 1.
 omv_is_proc_running() {
 	local pidfile pid
-	pidfile=/var/run/$1.pid
+	pidfile=/run/$1.pid
 	[ ! -f "${pidfile}" ] && return 1
 	pid=$(cat ${pidfile})
 	omv_is_proc_running_pid ${pid} || return 1
@@ -1073,7 +1026,7 @@ omv_is_proc_running_pid() {
 omv_is_device_nonrotational() {
 	local _rc
 	[ -z "$1" ] && return 1
-	_rc=$(php7.0 -c /etc/openmediavault <<EOF
+	_rc=$(php7.3 -c /etc/openmediavault <<EOF
 <?php
 require_once('openmediavault/autoloader.inc'); \
 \$result = TRUE;

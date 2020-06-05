@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +68,7 @@ class StorageDeviceMdadm extends StorageDevice {
 			$keyValue = explode("=", $outputv);
 			if (count($keyValue) != 2)
 				continue;
-			$attributes[strtolower($keyValue[0])] = $keyValue[1];
+			$attributes[mb_strtolower($keyValue[0])] = $keyValue[1];
 		}
 
 		$this->name = $attributes['name'];
@@ -131,7 +131,7 @@ class StorageDeviceMdadm extends StorageDevice {
 			if (empty($parts))
 				continue;
 			$parts = array_map("trim", $parts);
-			switch (strtolower($parts[0])) {
+			switch (mb_strtolower($parts[0])) {
 			case "state":
 				$this->state = $parts[1];
 				break;
@@ -213,7 +213,7 @@ class StorageDeviceMdadm extends StorageDevice {
 	}
 
 	/**
-	 * Get the list of device files used in the array.
+	 * Get the slave devices of this device.
 	 * @return A list of device files used in the array.
 	 */
 	public function getSlaves() {
@@ -248,7 +248,18 @@ class StorageDeviceMdadm extends StorageDevice {
 		//       311296 blocks super 1.2 512k chunks
 		//
 		// unused devices: <none>
-		$regex = sprintf('/^(%s\s*:.*?)^\s*$/ims', $this->getDeviceName());
+		//
+		// Testing:
+		// --------
+		// - Get a degraded array
+		//   # mdadm /dev/md0 -f /dev/sde
+		//   # echo 1 > /sys/block/sde/device/delete
+		// - Get an inactive array
+		//   # echo 1 > /sys/block/sdX/device/delete
+		//   # echo 1 > /sys/block/sdY/device/delete
+		//   Use UI to scan for new devices. The previously removed devices
+		//   should reappear and the array becomes inactive.
+		$regex = sprintf('/^(%s\s*:.*?)^\s*$/ims', $this->getDeviceName(TRUE));
 		if (1 !== preg_match($regex, file_get_contents("/proc/mdstat"),
 		  $matches))
 			return FALSE;
@@ -262,22 +273,22 @@ class StorageDeviceMdadm extends StorageDevice {
 		if ((FALSE !== stristr($state, "resyncing")) ||
 		  (FALSE !== stristr($state, "recovering"))) {
 			if ("PENDING" == $progress) {
-				// The state is already in proper form.
-	  			// # cat /proc/mdstat
-	  			// Personalities : [raid6] [raid5] [raid4]
-	  			// md0 : active (auto-read-only) raid5 sda[0] sdd[3](S) sdc[2] sdb[1]
-	  			//       2095104 blocks super 1.2 level 5, 512k chunk, algorithm 2 [3/3] [UUU]
-	  			//       	resync=PENDING
-	  			//
-	  			// # mdadm --state
-	  			// ...
-	  			// Update Time : Fri Dec  2 15:32:42 2016
-	  			// State : clean, resyncing (PENDING)
-	  			// Active Devices : 3
-	  			// Working Devices : 4
-	  			// Failed Devices : 0
-	  			// Spare Devices : 1
-	  			// ...
+				# The state is already in proper form.
+	  			# # cat /proc/mdstat
+	  			# Personalities : [raid6] [raid5] [raid4]
+	  			# md0 : active (auto-read-only) raid5 sda[0] sdd[3](S) sdc[2] sdb[1]
+	  			#       2095104 blocks super 1.2 level 5, 512k chunk, algorithm 2 [3/3] [UUU]
+	  			#       	resync=PENDING
+	  			#
+	  			# # mdadm --state
+	  			# ...
+	  			# Update Time : Fri Dec  2 15:32:42 2016
+	  			# State : clean, resyncing (PENDING)
+	  			# Active Devices : 3
+	  			# Working Devices : 4
+	  			# Failed Devices : 0
+	  			# Spare Devices : 1
+	  			# ...
 			} else {
 				$state = sprintf("%s (%s)", $state, $progress);
 			}

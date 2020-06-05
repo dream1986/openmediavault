@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +19,11 @@
  * You should have received a copy of the GNU General Public License
  * along with OpenMediaVault. If not, see <http://www.gnu.org/licenses/>.
  */
+namespace Engined\Rpc;
+
 require_once("openmediavault/functions.inc");
 
-class OMVRpcServiceNetwork extends \OMV\Rpc\ServiceAbstract {
+class Network extends \OMV\Rpc\ServiceAbstract {
 	/**
 	 * Get the RPC service name.
 	 */
@@ -54,6 +56,9 @@ class OMVRpcServiceNetwork extends \OMV\Rpc\ServiceAbstract {
 		$this->registerMethod("getWirelessCandidates");
 		$this->registerMethod("getWirelessIface");
 		$this->registerMethod("setWirelessIface");
+		$this->registerMethod("enumerateBridgeSlaves");
+		$this->registerMethod("getBridgeIface");
+		$this->registerMethod("setBridgeIface");
 		$this->registerMethod("getProxy");
 		$this->registerMethod("setProxy");
 	}
@@ -81,7 +86,8 @@ class OMVRpcServiceNetwork extends \OMV\Rpc\ServiceAbstract {
 			"link" => FALSE,
 			"vlan" => FALSE,
 			"vlanid" => -1,
-			"speed" => -1
+			"speed" => -1,
+			"description" => ""
 		];
 		// Get the network interface object.
 		$mngr = \OMV\System\Net\NetworkInterfaceBackend\Manager::getInstance();
@@ -96,6 +102,8 @@ class OMVRpcServiceNetwork extends \OMV\Rpc\ServiceAbstract {
 			$ether = $iface->getMAC();
 			$state = $iface->getState();
 			$speed = $iface->getSpeed();
+			$obj['type'] = $iface->getType();
+			$obj['description'] = $iface->getDescription();
 			$obj['gateway'] = !$gateway ? "" : $gateway;
 			$obj['gateway6'] = !$gateway6 ? "" : $gateway6;
 			$obj['address'] = !$address ? "" : $address;
@@ -108,9 +116,11 @@ class OMVRpcServiceNetwork extends \OMV\Rpc\ServiceAbstract {
 			$obj['mtu'] = $iface->getMTU();
 			$obj['state'] = !$state ? gettext("UNKNOWN") : $state;
 			$obj['link'] = $iface->getLink();
-			$obj['vlan'] = $iface->isVlan();
-			$obj['vlanid'] = $iface->isVlan() ? $iface->getVlanId() : -1;
 			$obj['speed'] = !$speed ? -1 : $speed;
+			if ("vlan" === $obj['type']) {
+				$obj['vlan'] = TRUE;
+				$obj['vlanid'] = $iface->getVlanId();
+			}
 		}
 		return $obj;
 	}
@@ -125,9 +135,9 @@ class OMVRpcServiceNetwork extends \OMV\Rpc\ServiceAbstract {
     private function setInterfaceConfig($params, $ifaceParams) {
 		// Modify various configuration attributes.
 		$params['dnsnameservers'] = preg_replace("/[,;]/", " ",
-		  $params['dnsnameservers']);
+			$params['dnsnameservers']);
 		$params['dnssearch'] = preg_replace("/[,;]/", " ",
-		  $params['dnssearch']);
+			$params['dnssearch']);
 		// Prepare the configuration object.
 		$object = new \OMV\Config\ConfigObject("conf.system.network.interface");
 		$object->setAssoc($params);
@@ -153,7 +163,7 @@ class OMVRpcServiceNetwork extends \OMV\Rpc\ServiceAbstract {
 		$db->set($object);
 		// Return the configuration object.
 		return $object->getAssoc();
-    }
+	}
 
 	/**
 	 * Get general network settings.
@@ -243,19 +253,13 @@ class OMVRpcServiceNetwork extends \OMV\Rpc\ServiceAbstract {
 				  $filter, 1);
 				// Append the configuration attributes.
 				$object = array_merge($object, $cfgObject->getAssoc());
+				$object['slaves'] = explode_safe(",", $object['slaves']);
 				// Is the interface device somewhere referenced?
 				$object['_used'] = $db->isReferenced($cfgObject);
 			}
 			// Get the current network interface information. Note, this will
 			// override various configuration values.
 			$object = array_merge($object, $this->getIfaceInfo($devv));
-			// Categorize the network interface.
-			$typeNames = \OMV\Environment::get(
-			  "OMV_NETWORK_INTERFACE_TYPE_NAMES");
-			if (array_key_exists($nib->getType(), $typeNames))
-				$object['type'] = $typeNames[$nib->getType()];
-			else
-				$object['type'] = "unknown";
 			// Check whether the interface device is used by a bonding
 			// interface.
 			if ($db->exists("conf.system.network.interface", [
@@ -319,7 +323,7 @@ class OMVRpcServiceNetwork extends \OMV\Rpc\ServiceAbstract {
 		$this->validateMethodContext($context, [
 			"role" => OMV_ROLE_ADMINISTRATOR
 		]);
-        // Get all network interface configuration objects.
+		// Get all network interface configuration objects.
 		$db = \OMV\Config\Database::getInstance();
 		$objects = $db->get("conf.system.network.interface");
 		// Now get the network interface configuration objects.
@@ -346,6 +350,7 @@ class OMVRpcServiceNetwork extends \OMV\Rpc\ServiceAbstract {
 				$objectAssoc['_used'] = TRUE;
 				$objectAssoc['_readonly'] = TRUE;
 			}
+			$objectAssoc['slaves'] = explode_safe(",", $objectAssoc['slaves']);
 			$result[] = $objectAssoc;
 		}
 		return $result;
@@ -441,6 +446,7 @@ class OMVRpcServiceNetwork extends \OMV\Rpc\ServiceAbstract {
 		$result['dnsnameservers'] = str_replace(" ", ",",
 		  $result['dnsnameservers']);
 		$result['dnssearch'] = str_replace(" ", ",", $result['dnssearch']);
+		$result['slaves'] = explode_safe(",", $result['slaves']);
 		return $result;
 	}
 
@@ -481,9 +487,9 @@ class OMVRpcServiceNetwork extends \OMV\Rpc\ServiceAbstract {
 		// Get all unused network interface devices, except loopback and
 		// VLAN network interfaces.
 		if (FALSE === ($devs = $mngr->enumerateUnused(
-		  OMV_NETWORK_INTERFACE_TYPE_ETHERNET))) {
+				OMV_NETWORK_INTERFACE_TYPE_ETHERNET))) {
 			throw new \OMV\Exception(
-			  "Failed to get list of unused network interface devices.");
+				"Failed to get list of unused network interface devices.");
 		}
 		// Get the network interface information.
 		$result = [];
@@ -503,8 +509,9 @@ class OMVRpcServiceNetwork extends \OMV\Rpc\ServiceAbstract {
 					"arg0" => "devicename",
 					"arg1" => $devv
 				]
-			]))
+			])) {
 				continue;
+			}
 			$result[] = $this->getIfaceInfo($devv);
 		}
 		return $result;
@@ -545,14 +552,14 @@ class OMVRpcServiceNetwork extends \OMV\Rpc\ServiceAbstract {
 	 * Enumerate all interfaces from a bonded interface object.
 	 * @param params An array containing the following fields:
 	 *   \em uuid The UUID of the bonded interface configuration object.
-	 *   \em unused If TRUE then the ethernet network interfaces that are
+	 *   \em unused If TRUE then the network interfaces that are
 	 *   not configured nor used will be appended to the result list.
 	 *   Defaults to TRUE.
 	 * @param context The context of the caller.
 	 * @return If \em uuid is set to OMV_CONFIGOBJECT_NEW_UUID a list of
-	 *   available ethernet network interfaces (iface class objects) is
-	 *   returned, otherwise the bonded interface slaves plus the unreferenced
-	 *   ethernet network interfaces are returned.
+	 *   available network interfaces (iface class objects) is returned,
+	 *   otherwise the bonded interface slaves and the unreferenced
+	 *   network interfaces are returned.
 	 */
 	public function enumerateBondSlaves($params, $context) {
 		// Validate the RPC caller context.
@@ -564,36 +571,37 @@ class OMVRpcServiceNetwork extends \OMV\Rpc\ServiceAbstract {
 		// Get list of network interfaces.
 		$db = \OMV\Config\Database::getInstance();
 		$result = [];
-		if (array_key_exists("unused", $params) && $params['unused'] === TRUE) {
-			// Get all unused network interface devices, except loopback and
-			// VLAN network interfaces.
+		if (array_value($params, "unused", FALSE) === TRUE) {
+			// Get all existing ethernet and WiFi network interface
+			// devices.
 			$mngr = \OMV\System\Net\NetworkInterfaceBackend\Manager::getInstance();
-			if (FALSE === ($devs = $mngr->enumerateUnused(
-			  OMV_NETWORK_INTERFACE_TYPE_ALL & ~(OMV_NETWORK_INTERFACE_TYPE_VLAN |
-			  OMV_NETWORK_INTERFACE_TYPE_LOOPBACK)))) {
+			if (FALSE === ($devs = $mngr->enumerate(
+					OMV_NETWORK_INTERFACE_TYPE_ETHERNET |
+					OMV_NETWORK_INTERFACE_TYPE_WIFI))) {
 				throw new \OMV\Exception(
-				  "Failed to get list of unused network interface devices.");
+					"Failed to get list of unused network interface devices.");
 			}
-			// Get a list of configured ethernet network interfaces that are
-			// not used by any other config object.
+			// Get a list of ethernet and WiFi network interfaces
+			// that are not used by any other config object.
 			foreach ($devs as $devk => $devv) {
 				// Is network interface device referenced somewhere:
 				// - Check if the interface is already used by a bond
-				//   interface.
+				//   or bridge interface.
 				if ($db->exists("conf.system.network.interface", [
 					"operator" => "and",
 					"arg0" => [
-						"operator" => "stringEquals",
+						"operator" => "stringEnum",
 						"arg0" => "type",
-						"arg1" => "bond"
+						"arg1" => [ "bond", "bridge" ]
 					],
 					"arg1" => [
 						"operator" => "stringContains",
 						"arg0" => "slaves",
 						"arg1" => $devv
 					]
-				]))
+				])) {
 					continue;
+				}
 				// - Check if the interface is already used by a VLAN
 				//   interface.
 				if ($db->exists("conf.system.network.interface", [
@@ -608,24 +616,26 @@ class OMVRpcServiceNetwork extends \OMV\Rpc\ServiceAbstract {
 						"arg0" => "vlanrawdevice",
 						"arg1" => $devv
 					]
-				]))
+				])) {
 					continue;
+				}
 				// - Does a configuration object exists for the given
 				//   network interface device?
 				if ($db->exists("conf.system.network.interface", [
 					"operator" => "and",
 					"arg0" => [
-						"operator" => "stringEquals",
+						"operator" => "stringEnum",
 						"arg0" => "type",
-						"arg1" => "ethernet"
+						"arg1" => [ "ethernet", "wifi" ]
 					],
 					"arg1" => [
 						"operator" => "stringEquals",
 						"arg0" => "devicename",
 						"arg1" => $devv
 					]
-				]))
+				])) {
 					continue;
+				}
 				// Get the network interface information.
 				$result[] = $this->getIfaceInfo($devv);
 			}
@@ -648,12 +658,14 @@ class OMVRpcServiceNetwork extends \OMV\Rpc\ServiceAbstract {
 				]
 			], 1);
 			// Get interface details of the bonding slaves.
-			foreach (explode(",", $object->get("slaves")) as $slavek => $slavev)
+			foreach (explode_safe(",", $object->get("slaves")) as $slavek => $slavev) {
 				$result[] = $this->getIfaceInfo($slavev);
+			}
 			// Remove the bond interface itself from the result list.
 			foreach ($result as $resultk => $resultv) {
-				if ($resultv['devicename'] !== $object->get("devicename"))
+				if ($resultv['devicename'] !== $object->get("devicename")) {
 					continue;
+				}
 				// Remove the item and re-index the array.
 				unset($result[$resultk]);
 				$result = array_values($result);
@@ -701,7 +713,7 @@ class OMVRpcServiceNetwork extends \OMV\Rpc\ServiceAbstract {
 		if ($params['uuid'] == \OMV\Environment::get(
 		  "OMV_CONFIGOBJECT_NEW_UUID")) {
 			// Check if the slaves are already used by another bond interface.
-			foreach (explode(",", $params['slaves']) as $slavek => $slavev) {
+			foreach ($params['slaves'] as $slavek => $slavev) {
 				$db = \OMV\Config\Database::getInstance();
 				if ($db->exists("conf.system.network.interface", [
 					"operator" => "and",
@@ -720,13 +732,14 @@ class OMVRpcServiceNetwork extends \OMV\Rpc\ServiceAbstract {
 					  "already used by a bonding interface.", $slavev));
 				}
 			}
-			// Get the next free device name.
+			// Get the next available device name.
 			$params['devicename'] = \OMV\System\Net\NetworkInterfaceBond::
 				getNextDeviceName();
 		}
 		// Set the configuration object.
+		$params['slaves'] = implode(",", $params['slaves']);
 		return $this->setInterfaceConfig($params, [
-            "type" => "bond",
+			"type" => "bond",
 			"bondprimary" => $params['bondprimary'],
 			"bondmode" => $params['bondmode'],
 			"bondmiimon" => $params['bondmiimon'],
@@ -747,19 +760,21 @@ class OMVRpcServiceNetwork extends \OMV\Rpc\ServiceAbstract {
 		$this->validateMethodContext($context, [
 			"role" => OMV_ROLE_ADMINISTRATOR
 		]);
-		// Get all unused network interface devices, except loopback and
-		// VLAN network interfaces.
-		$mngr = \OMV\System\Net\NetworkInterfaceBackend\Manager::getInstance();
-		if (FALSE === ($devs = $mngr->enumerateUnused(
-		  OMV_NETWORK_INTERFACE_TYPE_ALL & ~(OMV_NETWORK_INTERFACE_TYPE_VLAN |
-		  OMV_NETWORK_INTERFACE_TYPE_LOOPBACK)))) {
-			throw new \OMV\Exception(
-			  "Failed to get list of unused network interface devices.");
-		}
+		// Get all configured network interfaces except VLANs.
+		$db = \OMV\Config\Database::getInstance();
+		$objects = $db->getByFilter("conf.system.network.interface", [
+			"operator" => "not",
+			"arg0" => [
+				"operator" => "stringEquals",
+				"arg0" => "type",
+				"arg1" => "vlan"
+			]
+		]);
 		// Get the network interface information.
 		$result = [];
-		foreach ($devs as $devk => $devv)
-			$result[] = $this->getIfaceInfo($devv);
+		foreach ($objects as $objectk => $objectv) {
+			$result[] = $this->getIfaceInfo($objectv->get("devicename"));
+		}
 		return $result;
 	}
 
@@ -795,7 +810,7 @@ class OMVRpcServiceNetwork extends \OMV\Rpc\ServiceAbstract {
 		]);
 		// Set the configuration object.
 		return $this->setInterfaceConfig($params, [
-            "type" => "vlan",
+			"type" => "vlan",
 			"vlanid" => $params['vlanid'],
 			"vlanrawdevice" => $params['vlanrawdevice']
 		]);
@@ -816,9 +831,9 @@ class OMVRpcServiceNetwork extends \OMV\Rpc\ServiceAbstract {
 		// VLAN network interfaces.
 		$mngr = \OMV\System\Net\NetworkInterfaceBackend\Manager::getInstance();
 		if (FALSE === ($devs = $mngr->enumerateUnused(
-		  OMV_NETWORK_INTERFACE_TYPE_WIRELESS))) {
+				OMV_NETWORK_INTERFACE_TYPE_WIFI))) {
 			throw new \OMV\Exception(
-			  "Failed to get list of unused network interface devices.");
+				"Failed to get list of unused network interface devices.");
 		}
 		// Get the network interface information.
 		$result = [];
@@ -831,15 +846,16 @@ class OMVRpcServiceNetwork extends \OMV\Rpc\ServiceAbstract {
 				"arg0" => [
 					"operator" => "stringEquals",
 					"arg0" => "type",
-					"arg1" => "wireless"
+					"arg1" => "wifi"
 				],
 				"arg1" => [
 					"operator" => "stringEquals",
 					"arg0" => "devicename",
 					"arg1" => $devv
 				]
-			]))
+			])) {
 				continue;
+			}
 			$result[] = $this->getIfaceInfo($devv);
 		}
 		return $result;
@@ -872,11 +888,190 @@ class OMVRpcServiceNetwork extends \OMV\Rpc\ServiceAbstract {
 		$this->validateMethodParams($params, "rpc.network.setwirelessiface");
 		// Set the configuration object.
 		return $this->setInterfaceConfig($params, [
-            "type" => "wireless",
+			"type" => "wifi",
 			"wpassid" => $params['wpassid'],
 			"wpapsk" => $params['wpapsk']
 		]);
     }
+
+	/**
+	 * Enumerate all interfaces from a bridge interface object.
+	 * @param params An array containing the following fields:
+	 *   \em uuid The UUID of the bridge interface configuration object.
+	 *   \em unused If TRUE then the network interfaces that are
+	 *   not configured nor used will be appended to the result list.
+	 *   Defaults to TRUE.
+	 * @param context The context of the caller.
+	 * @return If \em uuid is set to OMV_CONFIGOBJECT_NEW_UUID a list of
+	 *   available network interfaces (iface class objects) is returned,
+	 *   otherwise the bonded interface slaves and the unreferenced
+	 *   network interfaces are returned.
+	 */
+	public function enumerateBridgeSlaves($params, $context) {
+		// Validate the RPC caller context.
+		$this->validateMethodContext($context, [
+			"role" => OMV_ROLE_ADMINISTRATOR
+		]);
+		// Validate the parameters of the RPC service method.
+		$this->validateMethodParams($params, "rpc.network.enumeratebridgeslaves");
+		// Get list of network interfaces.
+		$db = \OMV\Config\Database::getInstance();
+		$result = [];
+		if (array_value($params, "unused", FALSE) === TRUE) {
+			// Get all unused network interface devices, except bridge
+			// and loopback network interfaces.
+			$mngr = \OMV\System\Net\NetworkInterfaceBackend\Manager::getInstance();
+			if (FALSE === ($devs = $mngr->enumerateUnused(
+					OMV_NETWORK_INTERFACE_TYPE_ALL &
+					~(OMV_NETWORK_INTERFACE_TYPE_BRIDGE |
+					OMV_NETWORK_INTERFACE_TYPE_LOOPBACK)))) {
+				throw new \OMV\Exception(
+					"Failed to get list of unused network interface devices.");
+			}
+			// Get a list of configured ethernet network interfaces that are
+			// not used by any other config object.
+			foreach ($devs as $devk => $devv) {
+				// Is network interface device referenced somewhere:
+				// - Check if the interface is already used by a bond
+				//   or bridge interface.
+				if ($db->exists("conf.system.network.interface", [
+					"operator" => "and",
+					"arg0" => [
+						"operator" => "stringEnum",
+						"arg0" => "type",
+						"arg1" => [ "bond", "bridge" ]
+					],
+					"arg1" => [
+						"operator" => "stringContains",
+						"arg0" => "slaves",
+						"arg1" => $devv
+					]
+				])) {
+					continue;
+				}
+				// - Check if the interface is already used by a VLAN
+				//   interface.
+				if ($db->exists("conf.system.network.interface", [
+					"operator" => "and",
+					"arg0" => [
+						"operator" => "stringEquals",
+						"arg0" => "type",
+						"arg1" => "vlan"
+					],
+					"arg1" => [
+						"operator" => "stringContains",
+						"arg0" => "vlanrawdevice",
+						"arg1" => $devv
+					]
+				])) {
+					continue;
+				}
+				// - Does a configuration object exists for the given
+				//   network interface device?
+				if ($db->exists("conf.system.network.interface", [
+					"operator" => "and",
+					"arg0" => [
+						"operator" => "stringEquals",
+						"arg0" => "type",
+						"arg1" => "ethernet"
+					],
+					"arg1" => [
+						"operator" => "stringEquals",
+						"arg0" => "devicename",
+						"arg1" => $devv
+					]
+				])) {
+					continue;
+				}
+				// Get the network interface information.
+				$result[] = $this->getIfaceInfo($devv);
+			}
+		}
+		if ($params['uuid'] !== \OMV\Environment::get(
+		  "OMV_CONFIGOBJECT_NEW_UUID")) {
+			// Get network interfaces already assigned to the bridge
+			// interface device.
+			$object = $db->getByFilter("conf.system.network.interface", [
+				"operator" => "and",
+				"arg0" => [
+					"operator" => "stringEquals",
+					"arg0" => "uuid",
+					"arg1" => $params['uuid']
+				],
+				"arg1" => [
+					"operator" => "stringEquals",
+					"arg0" => "type",
+					"arg1" => "bridge"
+				]
+			], 1);
+			// Get interface details of the bridge slaves.
+			foreach (explode_safe(",", $object->get("slaves")) as $slavek => $slavev) {
+				$result[] = $this->getIfaceInfo($slavev);
+			}
+		}
+		return $result;
+	}
+
+	/**
+	 * Get a bridge interface configuration object.
+	 * @param params An array containing the following fields:
+	 *   \em uuid The UUID of the configuration object.
+	 * @param context The context of the caller.
+	 * @return The requested configuration object.
+	 */
+	function getBridgeIface($params, $context) {
+		return $this->callMethod("getInterface", $params, $context);
+	}
+
+	/**
+	 * Set (add/update) a bridge interface config object.
+	 * @param params The method parameters.
+	 * @param context The context of the caller.
+	 * @return The stored configuration object.
+	 */
+	function setBridgeIface($params, $context) {
+		// Validate the RPC caller context.
+		$this->validateMethodContext($context, [
+			"role" => OMV_ROLE_ADMINISTRATOR
+		]);
+		// Validate the network interface specific parameters of the
+		// RPC service method.
+		$this->validateMethodParams($params, "rpc.network.setbridgeiface");
+		// Do some tests:
+		// - Check usage.
+		if ($params['uuid'] == \OMV\Environment::get(
+		  "OMV_CONFIGOBJECT_NEW_UUID")) {
+			// Check if the slaves are already used by another bridge interface.
+			foreach ($params['slaves'] as $slavek => $slavev) {
+				$db = \OMV\Config\Database::getInstance();
+				if ($db->exists("conf.system.network.interface", [
+					"operator" => "and",
+					"arg0" => [
+						"operator" => "stringEquals",
+						"arg0" => "type",
+						"arg1" => "bridge"
+					],
+					"arg1" => [
+						"operator" => "stringContains",
+						"arg0" => "slaves",
+						"arg1" => $slavev
+					]
+				])) {
+					throw new \OMV\Exception(sprintf("The interface '%s' is ".
+					  "already used by a bridge interface.", $slavev));
+				}
+			}
+			// Get the next available device name.
+			$params['devicename'] = \OMV\System\Net\NetworkInterfaceBridge::
+				getNextDeviceName();
+		}
+		// Set the configuration object.
+		$params['slaves'] = implode(",", $params['slaves']);
+		return $this->setInterfaceConfig($params, [
+			"type" => "bridge",
+			"slaves" => $params['slaves']
+		]);
+	}
 
 	/**
 	 * Get the proxy settings.

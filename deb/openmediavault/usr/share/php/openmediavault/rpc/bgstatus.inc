@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,7 +75,7 @@ class BgStatus {
 	/**
 	 * Check whether the background process output is written to a temporary
 	 * file.
-	 * @return bool Returns TRUE if the background process writes his
+	 * @return bool Returns TRUE if the background process writes its
 	 *   output to a temporary file, otherwise FALSE.
 	 */
 	public function hasOutputFilename(): bool {

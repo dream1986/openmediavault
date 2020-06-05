@@ -3,7 +3,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,7 +64,6 @@ Ext.define("OMV.workspace.node.Node", {
 		buildUri: function(array, separator) {
 			separator = separator || "/";
 			var parts = [];
-			var uri = "";
 			Ext.Array.each(array, function(item) {
 				Ext.Array.push(parts, this.explodeUri(item));
 			}, this);
@@ -335,7 +334,7 @@ Ext.define("OMV.workspace.node.Node", {
 			}
 			// Duplicate primitive node values.
 			var elem = {};
-			for (attr in node.config) {
+			for (var attr in node.config) {
 				if (Ext.isPrimitive(node[attr]))
 					elem[attr] = node.getConfig(attr);
 			}

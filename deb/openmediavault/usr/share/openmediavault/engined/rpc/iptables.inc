@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,9 @@
  * You should have received a copy of the GNU General Public License
  * along with OpenMediaVault. If not, see <http://www.gnu.org/licenses/>.
  */
-class OMVRpcServiceIptables extends \OMV\Rpc\ServiceAbstract {
+namespace Engined\Rpc;
+
+class Iptables extends \OMV\Rpc\ServiceAbstract {
 	/**
 	 * Get the RPC service name.
 	 */
@@ -108,8 +110,9 @@ class OMVRpcServiceIptables extends \OMV\Rpc\ServiceAbstract {
 			"arg1" => $family
 		];
 		$db = \OMV\Config\Database::getInstance();
-		if ($db->exists("conf.system.network.iptables.rule", $filter))
+		if ($db->exists("conf.system.network.iptables.rule", $filter)) {
 			$db->deleteByFilter("conf.system.network.iptables.rule", $filter);
+		}
 		// Append the new iptables rules.
 		$objectsAssoc = [];
 		foreach ($objects as $objectk => $objectv) {
@@ -187,9 +190,15 @@ class OMVRpcServiceIptables extends \OMV\Rpc\ServiceAbstract {
 		]);
 		// Validate the parameters of the RPC service method.
 		$this->validateMethodParams($params, "rpc.iptables.setrule");
+		// Append rule to the end of the existing rules if 'rulenum'
+		// is set to -1.
+		if (-1 == $params['rulenum']) {
+			$objects = $this->getRulesByFamily($params['family']);
+			$params['rulenum'] = count($objects);
+		}
 		// Prepare the configuration object.
 		$object = new \OMV\Config\ConfigObject(
-		  "conf.system.network.iptables.rule");
+			"conf.system.network.iptables.rule");
 		$object->setAssoc($params);
 		// Set the configuration object.
 		$db = \OMV\Config\Database::getInstance();

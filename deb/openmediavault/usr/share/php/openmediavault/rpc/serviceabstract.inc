@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,7 +90,7 @@ abstract class ServiceAbstract {
 		$rpcService->registeredMethodSequences[$method] = [
 			"service" => $this->getName(),
 			"method" => $method2
-	  	];
+		];
 	}
 
 	/**
@@ -116,8 +116,8 @@ abstract class ServiceAbstract {
 		// PHP class methods from within the service class.
 		if (!method_exists($this, $name)) {
 			throw new Exception(
-			  "The method '%s' does not exist for RPC service '%s'.",
-			  $name, $this->getName());
+				"The method '%s' does not exist for RPC service '%s'.",
+				$name, $this->getName());
 		}
 		$result = call_user_func_array(array($this, $name), [
 			$params, $context
@@ -125,9 +125,9 @@ abstract class ServiceAbstract {
 		// Process registered RPC service method hooks.
 		if (array_key_exists($name, $this->registeredMethodSequences)) {
 			foreach ($this->registeredMethodSequences[$name] as
-			  $hookk => $hookv) {
+					$hookk => $hookv) {
 				\OMV\Rpc\Rpc::call($hookv['service'], $hookv['method'],
-				  $params, $context);
+					$params, $context);
 			}
 		}
 		return $result;
@@ -171,11 +171,18 @@ abstract class ServiceAbstract {
 	 */
 	final protected function validateMethodParams($params, $schema) {
 //		$this->debug(var_export(func_get_args(), TRUE));
-		// Convert the given paramaters into JSON. This is necessary because
+		// Convert the given parameters into JSON. This is necessary because
 		// the 'params' variable contains an associative array which can not
 		// be processed by the validator.
-		$validator = new ParamsValidator($schema);
-		$validator->validate(json_encode_safe($params));
+		try {
+			$validator = new ParamsValidator($schema);
+			$validator->validate(json_encode_safe($params));
+		} catch(\Exception $e) {
+			if ($e instanceof \OMV\BaseException) {
+				$e->setHttpStatusCode(400);
+			}
+			throw $e;
+		}
 	}
 
 	/**
@@ -193,15 +200,31 @@ abstract class ServiceAbstract {
 			if (!is_array($required['username']))
 				$required['username'] = [ $required['username'] ];
 			foreach ($required['username'] as $usernamek => $usernamev) {
-				if ($context['username'] !== $usernamev)
-					throw new Exception("Invalid context.");
+				if ($context['username'] !== $usernamev) {
+					throw new \OMV\HttpErrorException(403,
+						"Invalid context username.");
+				}
 			}
 		}
 		// - Check the role
 		if (array_key_exists("role", $required)) {
-			if (!($context['role'] & $required['role']))
-				throw new Exception("Invalid context.");
+			if (!($context['role'] & $required['role'])) {
+				throw new \OMV\HttpErrorException(403,
+					"Invalid context role.");
+			}
 		}
+	}
+
+	/**
+	 * Helper function to check if the context has the specified role.
+	 * @return boolean Returns TRUE if the context has the specified role,
+	 *   otherwise FALSE.
+	 */
+	final protected function hasContextRole($context, $role) {
+		if (array_key_exists("role", $context)) {
+			return !!($context['role'] & $role); // Convert to boolean
+		}
+		return FALSE;
 	}
 
 	/**
@@ -579,6 +602,122 @@ abstract class ServiceAbstract {
 	}
 
 	/**
+	 * Execute the specified anonymous function as an asynchronous process by
+	 * forking the main process.
+	 * @param Closure $child An anonymous function that should return
+	 *   the process output.
+	 * @param int $maxRunTime The maximum time the process should run.
+	 *   Defaults to 300 seconds.
+	 * @return array Returns an array containing process information.
+	 */
+	public function asyncProc(\Closure $child, $maxRunTime = 300) : array {
+		if (FALSE === @socket_create_pair(AF_UNIX, SOCK_STREAM, 0, $sockets)) {
+			throw new Exception("Failed to create socket: %s",
+				socket_strerror(socket_last_error()));
+		}
+		list($parentSocket, $childSocket) = $sockets;
+		$pid = pcntl_fork();
+		if ($pid == -1) {
+			throw new Exception("Failed to fork process.");
+		} else if ($pid > 0) { // Parent process
+			@socket_close($parentSocket);
+			return [
+				"pid" => $pid,
+				"socket" => $childSocket,
+				"startTime" => time(),
+				"maxRunTime" => $maxRunTime
+			];
+		}
+		// Child process
+		@socket_close($childSocket);
+		try {
+			$data = [
+				"result" => $child(),
+				"error" => FALSE
+			];
+		} catch(\Exception $e) {
+			$data = [
+				"result" => NULL,
+				"error" => [
+					"code" => $e->getCode(),
+					"message" => $e->getMessage(),
+					"trace" => $e->__toString(),
+					"http_status_code" =>
+					    ($e instanceof \OMV\BaseException) ?
+					    $e->getHttpStatusCode() : 500
+				]
+			];
+		}
+		@socket_write($parentSocket, serialize($data));
+		@socket_close($parentSocket);
+		exit(0);
+	}
+
+	/**
+	 * Wait until all async processes are finished.
+	 * @param array $procs The array containing the process information.
+	 * @return array Returns an array containing the results returned by
+	 *   the processes.
+	 */
+	public function waitAsyncProcs(array $procs) : array {
+		$result = [];
+		while (count($procs)) {
+			foreach ($procs as $prock => $procv) {
+				$pid = pcntl_waitpid($procv['pid'], $status, WNOHANG | WUNTRACED);
+				if ($pid == $procv['pid']) {
+					unset($procs[$prock]);
+					// Skip child processes without exit status 0.
+					//if (0 !== pcntl_wexitstatus($status)) {
+					//	continue;
+					//}
+					$data = "";
+					// Read data from socket and deserialize it.
+					while (TRUE) {
+						$buf = @socket_read($procv['socket'], 4096, PHP_BINARY_READ);
+						if (FALSE === $buf) {
+							throw new Exception("Failed to read from socket: %s",
+								socket_strerror(socket_last_error()));
+						}
+						if (empty($buf)) {
+							break;
+						}
+						$data .= $buf;
+					}
+					@socket_close($procv['socket']);
+					$data = unserialize($data);
+					// Handle errors that may have occured in the child
+					// process. Rethrow this exception again in this
+					// (the parent) process.
+					if (FALSE !== $data['error']) {
+						$error = $data['error'];
+						$e = new TraceException($error['message'],
+							$error['code'], $error['trace']);
+						$e->setHttpStatusCode($error['http_status_code']);
+						throw $e;
+					}
+					// Finally append the result from the child process.
+					$result[] = $data['result'];
+				} else if ($pid == 0) {
+					if ($procv['startTime'] + $procv['maxRunTime'] < time() ||
+							pcntl_wifstopped($status)) {
+						if (!posix_kill($procv['pid'], SIGKILL)) {
+							throw new Exception("Failed to kill process %d: %s",
+								$procv['pid'],
+								posix_strerror(posix_get_last_error()));
+						}
+						unset($procs[$prock]);
+					}
+				} else {
+					throw new Exception("Failed to manage process %d",
+						$procv['pid']);
+				}
+			}
+			usleep(100000); // Wait 0,1 seconds
+		}
+		return $result;
+	}
+
+	/**
 	 * Helper function to filter the method result using the given
 	 * filter arguments.
 	 * @param array The array of objects to filter.
@@ -598,7 +737,7 @@ abstract class ServiceAbstract {
 		if ($total > 0) {
 			if (!is_null($sortField))
 				array_sort_key($array, $sortField);
-			if (!is_null($sortDir) && $sortDir === "DESC")
+			if (!is_null($sortDir) && strtolower($sortDir) === "desc")
 				$array = array_reverse($array);
 			if (($start >= 0) && ($limit >= 0))
 				$array = array_slice($array, $start, $limit);
@@ -607,41 +746,6 @@ abstract class ServiceAbstract {
 			"total" => $total,
 			"data" => $array
 		];
-	}
-
-	/**
-	 * Helper function to delete an configuration object.
-	 * The notifications OMV_NOTIFY_PREDELETE and OMV_NOTIFY_DELETE
-	 * will be submitted to its subscribers.
-	 * @deprecated
-	 * @param model The data model identifier of the configuration object.
-	 * @param uuid The UUID of the configuration object.
-	 * @param notifyId The notification identifier to be submitted.
-	 * @return The deleted configuration object.
-	 */
-	protected function deleteConfigObjectByUuid($model, $uuid, $notifyId) {
-		// Get the configuration object.
-		$db = \OMV\Config\Database::getInstance();
-		$object = $db->get($model, $uuid);
-		return $this->deleteConfigObjectByObject($object, $notifyId);
-	}
-
-	/**
-	 * Helper function to delete an configuration object.
-	 * The notifications OMV_NOTIFY_PREDELETE and OMV_NOTIFY_DELETE
-	 * will be submitted to its subscribers.
-	 * @deprecated
-	 * @param object The configuration object.
-	 * @param notifyId The notification identifier to be submitted.
-	 * @return The deleted configuration object.
-	 */
-	protected function deleteConfigObjectByObject(
-	  \OMV\Config\ConfigObject $object, $notifyId) {
-		// Delete configuration object.
-		$db = \OMV\Config\Database::getInstance();
-		$db->delete($object);
-		// Return the deleted configuration object.
-		return $object->getAssoc();
 	}
 
 	/**

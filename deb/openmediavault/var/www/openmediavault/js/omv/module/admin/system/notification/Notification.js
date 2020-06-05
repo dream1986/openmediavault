@@ -3,7 +3,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -115,7 +115,7 @@ Ext.define("OMV.module.admin.system.notification.Settings", {
 							OMV.MessageBox.updateProgress(1);
 							OMV.MessageBox.hide();
 							if(success) {
-								OMV.MessageBox.success(null, _("The test email has been sent successfully. Please check your mailbox."));
+								OMV.MessageBox.success(null, _("An attempt to send the test email has been made. Please check your mailbox. If the email does not arrive, check any spam folders and also check there are no Postfix related errors in the system log."));
 							} else {
 								OMV.MessageBox.error(null, response);
 							}
@@ -133,7 +133,6 @@ Ext.define("OMV.module.admin.system.notification.Settings", {
 	},
 
 	getFormItems: function() {
-		var me = this;
 		return [{
 			xtype: "fieldset",
 			title: _("General settings"),
@@ -176,10 +175,18 @@ Ext.define("OMV.module.admin.system.notification.Settings", {
 					text: _("The default SMTP mail server port, e.g. 25 or 587.")
 				}]
 			},{
-				xtype: "checkbox",
+				xtype: "combo",
+				fieldLabel: _("Encryption mode"),
+				queryMode: "local",
+				editable: false,
 				name: "tls",
-				fieldLabel: _("Use SSL/TLS secure connection"),
-				checked: false
+				value: "none",
+				store: [
+					[ "none", _("None") ],
+					[ "ssl", _("SSL/TLS") ],
+					[ "starttls", _("STARTTLS") ],
+					[ "auto", _("Auto") ]
+				]
 			},{
 				xtype: "textfield",
 				name: "sender",
@@ -305,7 +312,7 @@ Ext.define("OMV.module.admin.system.notification.Notifications", {
 					appendSortParams: false,
 					rpcData: {
 						service: "Notification",
-						method: "get"
+						method: "getList"
 					}
 				},
 				sorters: [{
@@ -337,7 +344,7 @@ Ext.define("OMV.module.admin.system.notification.Notifications", {
 			  relayErrors: false,
 			  rpcData: {
 				  service: "Notification",
-				  method: "set",
+				  method: "setList",
 				  params: params
 			  }
 		  });

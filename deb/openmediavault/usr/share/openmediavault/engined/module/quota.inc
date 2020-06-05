@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,22 +19,12 @@
  * You should have received a copy of the GNU General Public License
  * along with OpenMediaVault. If not, see <http://www.gnu.org/licenses/>.
  */
-class OMVModuleQuota extends \OMV\Engine\Module\ServiceAbstract
-  implements \OMV\Engine\Notify\IListener {
-	/**
-	 * Get the module name.
-	 */
+namespace Engined\Module;
+
+class Quota extends \OMV\Engine\Module\ServiceAbstract
+		implements \OMV\Engine\Notify\IListener {
 	public function getName() {
 		return "quota";
-	}
-
-	/**
-	 * Generate the configuration.
-	 */
-	public function applyConfig() {
-		$cmd = new \OMV\System\Process("omv-mkconf", "quota");
-		$cmd->setRedirect2to1();
-		$cmd->execute();
 	}
 
 	/**
@@ -47,29 +37,27 @@ class OMVModuleQuota extends \OMV\Engine\Module\ServiceAbstract
 	public function onDeleteFilesystem($type, $path, $object) {
 		// Does a quota configuration exists for the deleted filesystem?
 		$db = \OMV\Config\Database::getInstance();
-		if (TRUE === $db->exists("conf.system.filesystem.quota", [
+		$confObjects = $db->getByFilter("conf.system.filesystem.quota", [
 			"operator" => "stringEquals",
 			"arg0" => "fsuuid",
 			"arg1" => $object['uuid']
-		])) {
+		]);
+		foreach ($confObjects as $confObjectk => $confObjectv) {
 			// Execute RPC to delete the configuration object.
-			\OMV\Rpc\Rpc::call("Quota", "delete", array(
-			  "uuid" => $qObject['uuid']),
-			  $this->getAdminContext());
+			\OMV\Rpc\Rpc::call("Quota", "delete",
+				["uuid" => $confObjectv->getIdentifier()],
+				$this->getAdminContext());
 		}
 	}
 
-	/**
-	 * Bind listeners.
-	 */
 	function bindListeners(\OMV\Engine\Notify\Dispatcher $dispatcher) {
 		$dispatcher->addListener(
-		  OMV_NOTIFY_DELETE,
-		  "org.openmediavault.conf.system.filesystem",
-		  [ $this, "onDeleteFilesystem" ]);
+			OMV_NOTIFY_DELETE,
+			"org.openmediavault.conf.system.filesystem",
+			[$this, "onDeleteFilesystem"]);
 		$dispatcher->addListener(
-		  OMV_NOTIFY_CREATE | OMV_NOTIFY_MODIFY,
-		  "org.openmediavault.conf.system.filesystem.quota",
-		  [ $this, "setDirty" ]);
+			OMV_NOTIFY_CREATE | OMV_NOTIFY_MODIFY,
+			"org.openmediavault.conf.system.filesystem.quota",
+			[$this, "setDirty"]);
 	}
 }

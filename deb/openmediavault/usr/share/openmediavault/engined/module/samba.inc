@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,54 +19,16 @@
  * You should have received a copy of the GNU General Public License
  * along with OpenMediaVault. If not, see <http://www.gnu.org/licenses/>.
  */
-class OMVModuleSamba extends \OMV\Engine\Module\ServiceAbstract
-  implements \OMV\Engine\Notify\IListener, \OMV\Engine\Module\IServiceStatus,
-  \OMV\Engine\Module\IZeroconf {
-	private $invalidUsers = [ "admin" ];
+namespace Engined\Module;
 
-	/**
-	 * Get the module name.
-	 */
+class Samba extends \OMV\Engine\Module\ServiceAbstract implements
+		\OMV\Engine\Notify\IListener, \OMV\Engine\Module\IServiceStatus {
+	private $invalidUsers = ["admin"];
+
 	public function getName() {
 		return "samba";
 	}
 
-	/**
-	 * Generate the configuration.
-	 */
-	public function applyConfig() {
-		$cmd = new \OMV\System\Process("omv-mkconf", "samba");
-		$cmd->setRedirect2to1();
-		$cmd->execute();
-	}
-
-	/**
-	 * Stop the managed service.
-	 */
-	public function stopService() {
-		$systemCtl = new \OMV\System\SystemCtl("smbd");
-		$systemCtl->disable(TRUE);
-		$systemCtl = new \OMV\System\SystemCtl("nmbd");
-		$systemCtl->disable(TRUE);
-	}
-
-	/**
-	 * Start the managed service.
-	 */
-	public function startService() {
-		$db = \OMV\Config\Database::getInstance();
-		$object = $db->get("conf.service.smb");
-		if (TRUE !== $object->get("enable"))
-			return;
-		$systemCtl = new \OMV\System\SystemCtl("smbd");
-		$systemCtl->enable(TRUE);
-		$systemCtl = new \OMV\System\SystemCtl("nmbd");
-		$systemCtl->enable(TRUE);
-	}
-
-	/**
-	 * Get the status of the managed service.
-	 */
 	public function getStatus() {
 		$db = \OMV\Config\Database::getInstance();
 		$object = $db->get("conf.service.smb");
@@ -83,7 +45,7 @@ class OMVModuleSamba extends \OMV\Engine\Module\ServiceAbstract
 	 * Helper function to check whether the given user exists in the
 	 * SMB/CIFS user database.
 	 * @param username The name of the user.
-	 * @return TRUE if the user exists, otherwise FALSE.
+	 * @return bool TRUE if the user exists, otherwise FALSE.
 	 */
 	final private function existsUser($username) {
 		$cmdLine = sprintf("pdbedit --list | grep '%s:'", $username);
@@ -100,7 +62,6 @@ class OMVModuleSamba extends \OMV\Engine\Module\ServiceAbstract
 	 * @param object The configuration object.
 	 */
 	final public function onAddUser($type, $path, $object) {
-//		$this->debug(var_export(func_get_args(), TRUE));
 		// Skip this notification if the user is listed in the ignore list.
 		if (in_array($object['name'], $this->invalidUsers))
 			return;
@@ -110,22 +71,21 @@ class OMVModuleSamba extends \OMV\Engine\Module\ServiceAbstract
 		// Add the new user into the database.
 		$cmdArgs = [];
 		$cmdArgs[] = sprintf("(echo %s; echo %s)", escapeshellarg(
-		  $object['password']), escapeshellarg($object['password']));
+			$object['password']), escapeshellarg($object['password']));
 		$cmdArgs[] = "|";
 		$cmdArgs[] = "pdbedit";
 		$cmdArgs[] = "--create";
 		$cmdArgs[] = "--verbose";
 		$cmdArgs[] = "--password-from-stdin";
 		$cmdArgs[] = sprintf("--fullname=%s", escapeshellarg($object['name']));
-		if (!empty($object['comment']))
+		if (!empty($object['comment'])) {
 			$cmdArgs[] = sprintf("--account-desc=%s", escapeshellarg(
-			  $object['comment']));
+				$object['comment']));
+		}
 		$cmdArgs[] = escapeshellarg($object['name']);
 		$cmd = implode(" ", $cmdArgs);
 		if (0 !== $this->exec($cmd, $output))
 			throw new \OMV\ExecException($cmd, $output);
-		// Start/Reload service.
-		$this->startService();
 	}
 
 	/**
@@ -135,7 +95,6 @@ class OMVModuleSamba extends \OMV\Engine\Module\ServiceAbstract
 	 * @param object The configuration object.
 	 */
 	final public function onModifyUser($type, $path, $object) {
-//		$this->debug(var_export(func_get_args(), TRUE));
 		// Skip user if it is listed on the ignore list.
 		if (in_array($object['name'], $this->invalidUsers))
 			return;
@@ -150,7 +109,7 @@ class OMVModuleSamba extends \OMV\Engine\Module\ServiceAbstract
 		$cmdArgs[] = sprintf("--fullname=%s", escapeshellarg($object['name']));
 		if (!empty($object['comment'])) {
 			$cmdArgs[] = sprintf("--account-desc=%s", escapeshellarg(
-			  $object['comment']));
+				$object['comment']));
 		}
 		$cmdArgs[] = escapeshellarg($object['name']);
 		$cmd = new \OMV\System\Process("pdbedit", $cmdArgs);
@@ -159,7 +118,7 @@ class OMVModuleSamba extends \OMV\Engine\Module\ServiceAbstract
 		// Update the user password. Check whether the password has been
 		// changed (in this case it is not empty).
 		if (array_key_exists("password", $object) &&
-		  !empty($object['password'])) {
+				!empty($object['password'])) {
 			$cmdArgs = [];
 			$cmdArgs[] = sprintf("(echo %s; echo %s)", escapeshellarg(
 			  $object['password']), escapeshellarg($object['password']));
@@ -171,8 +130,6 @@ class OMVModuleSamba extends \OMV\Engine\Module\ServiceAbstract
 			if (0 !== $this->exec($cmd, $output))
 				throw new \OMV\ExecException($cmd, $output);
 		}
-		// Start/Reload service.
-		$this->startService();
 	}
 
 	/**
@@ -182,7 +139,6 @@ class OMVModuleSamba extends \OMV\Engine\Module\ServiceAbstract
 	 * @param object The configuration object.
 	 */
 	final public function onDeleteUser($type, $path, $object) {
-//		$this->debug(var_export(func_get_args(), TRUE));
 		// Skip user if it is listed on the ignore list.
 		if (in_array($object['name'], $this->invalidUsers))
 			return;
@@ -197,18 +153,6 @@ class OMVModuleSamba extends \OMV\Engine\Module\ServiceAbstract
 		$cmd = new \OMV\System\Process("pdbedit", $cmdArgs);
 		$cmd->setRedirect2to1();
 		$cmd->execute();
-		// Start/Reload service.
-		$this->startService();
-	}
-
-	/**
-	 * Get the Zeroconf service configuration.
-	 */
-	public function getZeroconfConfig() {
-		return [
-			"id" => "smb",
-			"title" => gettext("SMB/CIFS")
-		];
 	}
 
 	/**
@@ -230,42 +174,51 @@ class OMVModuleSamba extends \OMV\Engine\Module\ServiceAbstract
 		}
 	}
 
-	/**
-	 * Bind listeners.
-	 */
 	function bindListeners(\OMV\Engine\Notify\Dispatcher $dispatcher) {
 		$dispatcher->addListener(
-		  OMV_NOTIFY_MODIFY,
-		  "org.openmediavault.conf.service.smb",
-		  [ $this, "setDirty" ]);
+			OMV_NOTIFY_MODIFY,
+			"org.openmediavault.conf.service.smb",
+			[$this, "setDirty"]);
 		$dispatcher->addListener(
-		  OMV_NOTIFY_CREATE | OMV_NOTIFY_MODIFY | OMV_NOTIFY_DELETE,
-		  "org.openmediavault.conf.service.smb.share",
-		  [ $this, "setDirty" ]);
+			OMV_NOTIFY_CREATE | OMV_NOTIFY_MODIFY | OMV_NOTIFY_DELETE,
+			"org.openmediavault.conf.service.smb.share",
+			[$this, "setDirty"]);
 		$dispatcher->addListener(
-		  OMV_NOTIFY_MODIFY,
-		  "org.openmediavault.conf.system.sharedfolder",
-		  [ $this, "onSharedFolder" ]);
+			OMV_NOTIFY_MODIFY,
+			"org.openmediavault.conf.system.sharedfolder",
+			[$this, "onSharedFolder"]);
 		$dispatcher->addListener(
-		  OMV_NOTIFY_MODIFY,
-		  "org.openmediavault.conf.system.sharedfolder.privilege",
-		  [ $this, "onSharedFolder" ]);
+			OMV_NOTIFY_MODIFY,
+			"org.openmediavault.conf.system.sharedfolder.privilege",
+			[$this, "onSharedFolder"]);
 		$dispatcher->addListener(
-		  OMV_NOTIFY_CREATE,
-		  "org.openmediavault.conf.system.usermngmnt.user",
-		  [ $this, "onAddUser" ]);
+			OMV_NOTIFY_CREATE,
+			"org.openmediavault.conf.system.usermngmnt.user",
+			[$this, "onAddUser"]);
 		$dispatcher->addListener(
-		  OMV_NOTIFY_MODIFY,
-		  "org.openmediavault.conf.system.usermngmnt.user",
-		  [ $this, "onModifyUser" ]);
+			OMV_NOTIFY_MODIFY,
+			"org.openmediavault.conf.system.usermngmnt.user",
+			[$this, "onModifyUser"]);
 		$dispatcher->addListener(
-		  OMV_NOTIFY_DELETE,
-		  "org.openmediavault.conf.system.usermngmnt.user",
-		  [ $this, "onDeleteUser" ]);
+			OMV_NOTIFY_DELETE,
+			"org.openmediavault.conf.system.usermngmnt.user",
+			[$this, "onDeleteUser"]);
+		// The smbd daemon must be restarted when groups are modified
+		// in order to take these changes into action, otherwise it is
+		// possible that a user still works with privileges that are
+		// already obsolete.
+		$dispatcher->addListener(
+			OMV_NOTIFY_MODIFY,
+			"org.openmediavault.conf.system.usermngmnt.group",
+			[$this, "setDirty"]);
 		$moduleMngr = \OMV\Engine\Module\Manager::getInstance();
 		$dispatcher->addListener(
-		  OMV_NOTIFY_MODIFY,
-		  "org.openmediavault.conf.service.smb",
-		  [ $moduleMngr->getModule("zeroconf"), "setDirty" ]);
+			OMV_NOTIFY_MODIFY,
+			"org.openmediavault.conf.service.smb",
+			[$moduleMngr->getModule("zeroconf"), "setDirty"]);
+		$dispatcher->addListener(
+			OMV_NOTIFY_CREATE | OMV_NOTIFY_MODIFY | OMV_NOTIFY_DELETE,
+			"org.openmediavault.conf.service.smb.share",
+			[$moduleMngr->getModule("zeroconf"), "setDirty"]);
 	}
 }

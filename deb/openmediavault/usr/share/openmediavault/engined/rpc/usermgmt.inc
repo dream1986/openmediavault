@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +19,11 @@
  * You should have received a copy of the GNU General Public License
  * along with OpenMediaVault. If not, see <http://www.gnu.org/licenses/>.
  */
+namespace Engined\Rpc;
+
 require_once("openmediavault/functions.inc");
 
-class OMVRpcServiceUserMgmt extends \OMV\Rpc\ServiceAbstract {
+class UserMgmt extends \OMV\Rpc\ServiceAbstract {
 	/**
 	 * Get the RPC service name.
 	 */
@@ -72,7 +74,7 @@ class OMVRpcServiceUserMgmt extends \OMV\Rpc\ServiceAbstract {
 			"role" => OMV_ROLE_ADMINISTRATOR
 		]);
 		// Validate the parameters of the RPC service method.
-		$this->validateMethodParams($params, "rpc.usermngmt.authuser");
+		$this->validateMethodParams($params, "rpc.usermgmt.authuser");
 		// Authenticate the user.
 		$authenticated = FALSE;
 		$user = new \OMV\System\User($params['username']);
@@ -378,7 +380,7 @@ finish:
 			"role" => OMV_ROLE_ADMINISTRATOR
 		]);
 		// Validate the parameters of the RPC service method.
-		$this->validateMethodParams($params, "rpc.usermngmt.getuser");
+		$this->validateMethodParams($params, "rpc.usermgmt.getuser");
 		// Ensure the user exists.
 		$user = new \OMV\System\User($params['name']);
 		$user->assertExists();
@@ -449,7 +451,7 @@ finish:
 	 *   \em password The plain password to use.
 	 *   \em email The users email address.
 	 *   \em comment Any text string. This field is optional.
-	 *   \em disallowusermod Set to FALSE to disallow the user to modify his
+	 *   \em disallowusermod Set to FALSE to disallow the user to modify their
 	 *     account.
 	 *   \em sshpubkeys The users SSH public keys.
 	 * @param context The context of the caller.
@@ -461,7 +463,7 @@ finish:
 			"role" => OMV_ROLE_ADMINISTRATOR
 		]);
 		// Validate the parameters of the RPC service method.
-		$this->validateMethodParams($params, "rpc.usermngmt.setuser");
+		$this->validateMethodParams($params, "rpc.usermgmt.setuser");
 		// Check if the given user is a system account. Abort this attempt.
 		$user = new \OMV\System\User($params['name']);
 		if ($user->exists() && $user->isSystemAccount()) {
@@ -506,15 +508,28 @@ finish:
 		$cmdArgs[] = "--gid";
 		$cmdArgs[] = escapeshellarg(\OMV\Environment::get(
 		  "OMV_USERMGMT_DEFAULT_GROUP"));
-		if (array_key_exists("shell", $params)) {
+		if (array_key_exists("shell", $params) &&
+				!empty($params['shell'])) {
+			// Make sure the shell exists.
+			if (!file_exists($params['shell'])) {
+				throw new \OMV\Exception("The shell '%s' does not exist.",
+						$params['shell']);
+			}
 			$cmdArgs[] = "--shell";
 			$cmdArgs[] = escapeshellarg($params['shell']);
 		}
-		if (array_key_exists("comment", $params)) {
+		if (array_key_exists("comment", $params) &&
+				!empty($params['comment'])) {
 			$cmdArgs[] = "--comment";
 			$cmdArgs[] = escapeshellarg($params['comment']);
 		}
-		if (array_key_exists("groups", $params)) {
+		if (array_key_exists("groups", $params) &&
+				!empty($params['groups'])) {
+			// Make sure the specified groups exists.
+			foreach ($params['groups'] as $groupk => $groupv) {
+				$group = new \OMV\System\Group($groupv);
+				$group->assertExists();
+			}
 			$cmdArgs[] = "--groups";
 			$cmdArgs[] = escapeshellarg(implode(",", $params['groups']));
 		}
@@ -584,11 +599,17 @@ finish:
 			"role" => OMV_ROLE_EVERYONE
 		]);
 		// Validate the parameters of the RPC service method.
-		$this->validateMethodParams($params, "rpc.usermngmt.setuserbycontext");
+		$this->validateMethodParams($params, "rpc.usermgmt.setuserbycontext");
 		// Get the user configuration object.
 		$object = $this->callMethod("getUser", [
 			"name" => $context['username']
 		], $this->getAdminContext());
+		// Make sure the user is allowed to modify their account.
+		if (TRUE === $object['disallowusermod']) {
+			throw new \OMV\Exception(
+				"Unauthorized attempt to modify the user account '%s'",
+				$object['name']);
+		}
 		// Update the user configuration.
 		return $this->callMethod("setUser", [
 			"name" => $object['name'],
@@ -616,7 +637,7 @@ finish:
 			"role" => OMV_ROLE_ADMINISTRATOR
 		]);
 		// Validate the parameters of the RPC service method.
-		$this->validateMethodParams($params, "rpc.usermngmt.deleteuser");
+		$this->validateMethodParams($params, "rpc.usermgmt.deleteuser");
 		// Get the user configuration object (required for the notification
 		// event).
 		$object = $this->callMethod("getUser", array(
@@ -661,7 +682,7 @@ finish:
 			"role" => OMV_ROLE_ADMINISTRATOR
 		]);
 		// Validate the parameters of the RPC service method.
-		$this->validateMethodParams($params, "rpc.usermngmt.importuser");
+		$this->validateMethodParams($params, "rpc.usermgmt.importuser");
 		// Create the background process.
 		return $this->execBgProc(function($bgStatusFilename, $bgOutputFilename)
 		  use ($params, $context) {
@@ -674,9 +695,11 @@ finish:
 				if (empty($linev) || ($linev[0] === "#"))
 					continue;
 				# Parse line.
-				if (1 !== preg_match("/^([^;]+);(\d*);([^;]*);([^;]*);([^;]+);".
-				  "([^;]*);(true|1|yes|y|on|false|0|no|n|off)$/i",
-				  $linev, $matches)) {
+				# <name>;<uid>;<comment>;<email>;<password>;<shell>;<group,group,...>;<disallowusermod>
+				if (1 !== preg_match("/^([^;]+);(\d*);([^;]*);".
+						"([^;]*);([^;]*);([^;]*);([^;]*);".
+						"(true|1|yes|y|on|false|0|no|n|off)$/i",
+						$linev, $matches)) {
 					throw new \OMV\Exception("Invalid line: %s", $linev);
 				}
 				$object = [
@@ -684,29 +707,30 @@ finish:
 					"comment" => $matches[3],
 					"email" => $matches[4],
 					"password" => $matches[5],
-					"groups" => explode(",", $matches[6]),
-					"disallowusermod" => boolvalEx($matches[7]),
-					"shell" => "/bin/dash",
+					"groups" => !empty($matches[7]) ?
+						explode(",", $matches[7]) : [],
+					"disallowusermod" => boolvalEx($matches[8]),
+					"shell" => !empty($matches[6]) ?
+						$matches[6] : "/bin/sh",
 					"sshpubkeys" => []
 				];
 				if (!empty($matches[2]) && is_numeric($matches[2]))
 					$object['uid'] = intval($matches[2]);
-				$objects[] = $object;
-			}
-			// Check if the users does not exist until now.
-			foreach ($objects as $objectk => $objectv) {
-				// Check if an user with the given name already exists.
-				$user = new \OMV\System\User($objectv['name']);
+				// Do some checks:
+				// - Check if an user with the given name already exists.
+				$user = new \OMV\System\User($object['name']);
 				$user->assertNotExists();
-				// Check if an user with the given UID already exists.
+				// - Check if an user with the given UID already exists.
 				if (array_key_exists("uid", $object)) {
-					$user = new \OMV\System\User($objectv['uid']);
+					$user = new \OMV\System\User($object['uid']);
 					$user->assertNotExists();
 				}
+				$objects[] = $object;
 			}
 			// Finally create the users.
-			foreach ($objects as $objectk => $objectv)
+			foreach ($objects as $objectk => $objectv) {
 				$this->callMethod("setUser", $objectv, $context);
+			}
 			return "";
 		});
 	}
@@ -767,7 +791,7 @@ finish:
 			"role" => OMV_ROLE_ADMINISTRATOR
 		]);
 		// Validate the parameters of the RPC service method.
-		$this->validateMethodParams($params, "rpc.usermngmt.getgroup");
+		$this->validateMethodParams($params, "rpc.usermgmt.getgroup");
 		// Get the group information.
 		$group = new \OMV\System\Group($params['name']);
 		$group->assertExists();
@@ -806,7 +830,7 @@ finish:
 			"role" => OMV_ROLE_ADMINISTRATOR
 		]);
 		// Validate the parameters of the RPC service method.
-		$this->validateMethodParams($params, "rpc.usermngmt.setgroup");
+		$this->validateMethodParams($params, "rpc.usermgmt.setgroup");
 		// Check if the given group is a system account. Abort this attempt.
 		$group = new \OMV\System\Group($params['name']);
 		if ($group->exists() && $group->isSystemAccount()) {
@@ -894,7 +918,7 @@ finish:
 			"role" => OMV_ROLE_ADMINISTRATOR
 		]);
 		// Validate the parameters of the RPC service method.
-		$this->validateMethodParams($params, "rpc.usermngmt.deletegroup");
+		$this->validateMethodParams($params, "rpc.usermgmt.deletegroup");
 		// Get the group configuration object (required for the notification
 		// event).
 		$object = $this->callMethod("getGroup", [
@@ -938,7 +962,7 @@ finish:
 			"role" => OMV_ROLE_ADMINISTRATOR
 		]);
 		// Validate the parameters of the RPC service method.
-		$this->validateMethodParams($params, "rpc.usermngmt.importgroup");
+		$this->validateMethodParams($params, "rpc.usermgmt.importgroup");
 		// Create the background process.
 		return $this->execBgProc(function($bgStatusFilename, $bgOutputFilename)
 		  use ($params, $context) {
@@ -1010,7 +1034,7 @@ finish:
 			"role" => OMV_ROLE_ADMINISTRATOR
 		]);
 		// Validate the parameters of the RPC service method.
-		$this->validateMethodParams($params, "rpc.usermngmt.setsettings");
+		$this->validateMethodParams($params, "rpc.usermgmt.setsettings");
 		// Prepare the configuration object.
 		$object = new \OMV\Config\ConfigObject(
 		  "conf.system.usermngmnt.homedir");
@@ -1029,6 +1053,11 @@ finish:
 		// Update the non-system user.
 		$users = $this->enumerateUsersByType("normal");
 		foreach ($users as $userk => $userv) {
+			// Only process users that are in group 'users'.
+			$defaultGroup = \OMV\Environment::get(
+				"OMV_USERMGMT_DEFAULT_GROUP", "users");
+			if (!in_array($defaultGroup, $userv['groups']))
+				continue;
 			$cmdArgs = [];
 			if (!empty($sfPath)) {
 				$homeDirPath = build_path(DIRECTORY_SEPARATOR, $sfPath,

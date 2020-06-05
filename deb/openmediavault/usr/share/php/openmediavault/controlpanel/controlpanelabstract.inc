@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,7 +82,7 @@ abstract class ControlPanelAbstract {
 			if ($item->isDot())
 				continue;
 			if ($item->isFile()) {
-				if ("js" !== strtolower($item->getExtension()))
+				if ("js" !== mb_strtolower($item->getExtension()))
 					continue;
 				$this->scanFiles($item->getPathname(), $incList);
 			}
@@ -90,6 +90,17 @@ abstract class ControlPanelAbstract {
 				$this->scanDir($item->getPathname(), $incList, $recursive);
 			}
 		}
+	}
+
+	/**
+	 * Detect if locale is right-to-left (RTL).
+	 */
+ 	public function isLocaleRTL() {
+		$name = "X-OPENMEDIAVAULT-LOCALE";
+		if (isset($_COOKIE[$name])) {
+			return in_array($_COOKIE[$name], ['ar_SA']);
+		}
+		return FALSE;
 	}
 
 	/**
@@ -114,12 +125,20 @@ abstract class ControlPanelAbstract {
 EOF;
 
 		// Set core CSS files.
-		$cssList = [
-			"/extjs6/classic/theme-triton/resources/theme-triton-all.css",
-			"css/theme-all.min.css",
-			"css/theme-triton.min.css",
-			"css/materialdesignicons.min.css"
-		];
+		if ($this->isLocaleRTL()) {
+			$cssList = [
+				"extjs6/classic/theme-triton/resources/theme-triton-all-rtl.css",
+				"css/theme-all.min.css",
+				"css/theme-all-rtl.min.css"
+			];
+		} else {
+			$cssList = [
+				"extjs6/classic/theme-triton/resources/theme-triton-all.css",
+				"css/theme-all.min.css"
+			];
+		}
+		$cssList[] = "css/theme-triton.min.css";
+		$cssList[] = "css/materialdesignicons.min.css";
 		// Add additional CSS files.
 		$cssList = array_merge($cssList, array_values(array_unique(
 		  $this->getCssIncludes())));
@@ -136,17 +155,24 @@ EOF;
 			"js/omv/util/i18nDict.js",
 			"js/ext-overrides.js",
 			"js/js-overrides.js",
+			"js/md5.min.js",
 			"js/omv/globals.js"
 		];
 		if (TRUE === \OMV\Environment::getBoolean("OMV_DEBUG_EXTJS", FALSE)) {
+			// !!! The following files must be at the beginning of the list.
 			$jsList = array_merge([
-				"/extjs6/ext-all-debug.js",
-				"/extjs6/classic/theme-triton/theme-triton-debug.js"
+				$this->isLocaleRTL() ?
+					"extjs6/ext-all-rtl-debug.js" :
+					"extjs6/ext-all-debug.js",
+				"extjs6/classic/theme-triton/theme-triton-debug.js"
 			], $jsList);
 		} else {
+			// !!! The following files must be at the beginning of the list.
 			$jsList = array_merge([
-				"/extjs6/ext-all.js",
-				"/extjs6/classic/theme-triton/theme-triton.js"
+				$this->isLocaleRTL() ?
+					"extjs6/ext-all-rtl.js" :
+					"extjs6/ext-all.js",
+				"extjs6/classic/theme-triton/theme-triton.js"
 			], $jsList);
 		}
 		foreach ($jsList as $jsListv) {
@@ -157,7 +183,7 @@ EOF;
 		// list of include files will be cached.
 		$jsList = [];
 		$parts = [];
-		$parts[] = strtolower(get_class($this));
+		$parts[] = mb_strtolower(get_class($this));
 		$parts[] = $this->getCacheFileId();
 		$parts[] = "js";
 		$jsonFile = new \OMV\Json\File(sprintf("%s/cache.%s.json",
@@ -209,11 +235,17 @@ EOF;
 	 * @return The page title string.
 	 */
 	protected function getTitle() {
-		$prd = new \OMV\ProductInfo();
-		$title = sprintf("%s %s", $prd->getName(), gettext("control panel"));
 		try {
-			$fqdn = \OMV\System\Net\Dns::getFqdn();
-			$title = sprintf("%s - %s", $title, $fqdn);
+			$prd = new \OMV\ProductInfo();
+			$map = [
+				"{{fqdn}}" => \OMV\System\Net\Dns::getFqdn(),
+				"{{prdname}}" => $prd->getName()
+			];
+			$title = \OMV\Environment::get("OMV_WEBGUI_TITLE",
+				"{{prdname}} control panel - {{fqdn}}");
+			foreach ($map as $mapk => $mapv) {
+				$title = str_replace($mapk, $mapv, $title);
+			}
 		} catch(\Exception $e) {
 			// Nothing to do here.
 		}
@@ -253,19 +285,10 @@ EOF;
 		  \OMV\Environment::get("OMV_HTTPREQUEST_TIMEOUT"),
 		  $prd->getName(), $prd->getURL(), $prd->getCopyright(),
 		  $prd->getPackageName());
-		// Process the RPC error codes.
-		$errorCodes = [];
-		$reflectionClass = new \ReflectionClass("\OMV\ErrorMsgException");
-		foreach ($reflectionClass->getConstants() as $kConst => $vConst) {
-			$errorCodes[] = sprintf("OMV.%s = %s;", $kConst, $vConst);
-		}
-		$errorCodes = implode(" ", $errorCodes);
 		return <<<EOF
 		<script type="application/javascript">
 			// Global defines
 			{$globalDefs}
-			// RPC error codes
-			{$errorCodes}
 		</script>
 EOF;
 	}

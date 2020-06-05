@@ -5,7 +5,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,10 +36,11 @@ class NetworkInterfaceMock extends \OMV\System\Net\NetworkInterface {
 			"    inet6 fe80::5054:ff:fea6:7653/64 scope link ",
 			"       valid_lft forever preferred_lft forever"
 		]);
+		$this->setCached(TRUE);
 	}
 }
 
-class test_openmediavault_system_net extends \PHPUnit_Framework_TestCase {
+class test_openmediavault_system_net extends \PHPUnit\Framework\TestCase {
 	protected function getNetworkInterfaceMock() {
 		return new NetworkInterfaceMock();
 	}
@@ -89,9 +90,9 @@ class test_openmediavault_system_net extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals($mock->getState(), "UP");
 	}
 
-	public function test_isVlan_mocked() {
+	public function test_getType_mocked() {
 		$mock = $this->getNetworkInterfaceMock();
-		$this->assertFalse($mock->isVlan());
+		$this->assertEquals($mock->getType(), "unknown");
 	}
 
 	public function test_real_interface() {
@@ -101,6 +102,7 @@ class test_openmediavault_system_net extends \PHPUnit_Framework_TestCase {
 		// Get existing devices.
 		$devs = $mngr->enumerate(OMV_NETWORK_INTERFACE_TYPE_ETHERNET);
 		$this->assertInternalType("array", $devs);
+		$this->assertGreaterThan(1, count($devs));
 		// Create an interface device object.
 		$netIf = $mngr->getImpl($devs[0]);
 		$this->assertInstanceOf("OMV\System\Net\NetworkInterface", $netIf);

@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ namespace OMV\System\Net\NetworkInterfaceBackend;
 // Register default network interface backends.
 ///////////////////////////////////////////////////////////////////////////////
 $backends = [ "Bond", "Bridge", "Ethernet", "Infiniband", "Loopback",
-  "Virtual", "Vlan", "Wireless" ];
+  "Virtual", "Vlan", "Wifi", "Thunderbolt" ];
 $mngr = Manager::getInstance();
 foreach ($backends as $backendk => $backendv) {
 	$className = sprintf("%s\%s", __NAMESPACE__, $backendv);

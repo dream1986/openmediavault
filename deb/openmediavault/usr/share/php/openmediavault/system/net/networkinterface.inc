@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,6 @@ require_once("openmediavault/functions.inc");
 class NetworkInterface {
 	protected $name = "";
 	protected $ip = null;
-	protected $ethtool = null;
 	protected $regex = [
 		"ipv4" => '\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}',
 		"ipv4cidr" => '(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\/(\d{1,2})',
@@ -38,6 +37,7 @@ class NetworkInterface {
 		"ipv6cidr" => '([a-f0-9:.]+)\/(\d{1,3})',
 		"state" => 'UP|DOWN|UNKNOWN'
 	];
+	private $dataCached = FALSE;
 
 	/**
 	 * Constructor
@@ -47,51 +47,71 @@ class NetworkInterface {
 		$this->name = $name;
 	}
 
+	protected function isCached() {
+		return $this->dataCached;
+	}
+
+	protected function setCached($cached) {
+		return $this->dataCached = $cached;
+	}
+
 	/**
 	 * Get the network interface configuration
 	 * @private
-	 * @return void
 	 * @throw \OMV\ExecException
 	 */
-	private function getData($type) {
-		switch ($type) {
-		case "ip":
-			if (!is_null($this->ip))
-				return;
-			$cmdArgs = [];
-			$cmdArgs[] = "addr";
-			$cmdArgs[] = "show";
-			$cmdArgs[] = "dev";
-			$cmdArgs[] = escapeshellarg($this->getDeviceName());
-			$cmd = new \OMV\System\Process("ip", $cmdArgs);
-			$cmd->setRedirect2to1();
-			$cmd->execute($output);
-			// Process command output for easier parsing.
-			// 2: ens6: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
-			//     link/ether 52:54:00:a6:76:53 brd ff:ff:ff:ff:ff:ff
-			//     inet 192.168.121.38/24 brd 192.168.121.255 scope global dynamic ens6
-			//        valid_lft 3583sec preferred_lft 3583sec
-			//     inet6 ::ffff:192.168.121.38/64 scope global
-			//        valid_lft forever preferred_lft forever
-			//     inet6 fe80::5054:ff:fea6:7653/64 scope link
-			//        valid_lft forever preferred_lft forever
-			foreach ($output as $outputk => &$outputv)
-				$outputv = trim($outputv);
-			$this->ip = implode("|", $output);
-			break;
-		case "ethtool":
-			if (!is_null($this->ethtool))
-				return;
-			$cmdArgs = [];
-			$cmdArgs[] = escapeshellarg($this->getDeviceName());
-			$cmd = new \OMV\System\Process("ethtool", $cmdArgs);
-			$cmd->setRedirect2to1();
-			$cmd->execute($output);
-			foreach ($output as $outputk => &$outputv)
-				$outputv = trim($outputv);
-			$this->ethtool = implode("|", $output);
-			break;
-		}
+	private function getData() {
+		if (FALSE !== $this->isCached())
+			return;
+
+		$cmdArgs = [];
+		$cmdArgs[] = "addr";
+		$cmdArgs[] = "show";
+		$cmdArgs[] = "dev";
+		$cmdArgs[] = escapeshellarg($this->getDeviceName());
+		$cmd = new \OMV\System\Process("ip", $cmdArgs);
+		$cmd->setRedirect2to1();
+		$cmd->execute($output);
+		// Process command output for easier parsing.
+		// 2: ens6: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+		//     link/ether 52:54:00:a6:76:53 brd ff:ff:ff:ff:ff:ff
+		//     inet 192.168.121.38/24 brd 192.168.121.255 scope global dynamic ens6
+		//        valid_lft 3583sec preferred_lft 3583sec
+		//     inet6 ::ffff:192.168.121.38/64 scope global
+		//        valid_lft forever preferred_lft forever
+		//     inet6 fe80::5054:ff:fea6:7653/64 scope link
+		//        valid_lft forever preferred_lft forever
+		foreach ($output as $outputk => &$outputv)
+			$outputv = trim($outputv);
+		$this->ip = implode("|", $output);
+
+		$this->setCached(TRUE);
+	}
+
+	/**
+	 * Refresh the cached information.
+	 * @return void
+	 */
+	public function refresh() {
+		$this->setCached(FALSE);
+		$this->getData();
+	}
+
+	/**
+	 * Get the interface type, e.g. 'ethernet', 'wifi', 'vlan',
+	 * 'bond', 'bridge', 'virtual', 'loopback' or 'unknown'.
+	 */
+	public function getType() {
+		return "unknown";
+	}
+
+	/**
+	 * Get the description of the network interface device.
+	 * @return A description string.
+	 */
+	public function getDescription() {
+		return sprintf("%s [%s]", $this->getDeviceName(),
+			$this->getMAC());
 	}
 
 	/**
@@ -108,11 +128,36 @@ class NetworkInterface {
 	 */
 	public function exists() {
 		try {
-			$this->getData("ip");
+			$this->getData();
 		} catch(\Exception $e) {
 			return FALSE;
 		}
 		return TRUE;
+	}
+
+	/**
+	 * Delete the network interface.
+	 * @throw \OMV\ExecException
+	 */
+	public function delete() {
+		// Bring the network interface down.
+		$cmdArgs = [];
+		$cmdArgs[] = "link";
+		$cmdArgs[] = "set";
+		$cmdArgs[] = "down";
+		$cmdArgs[] = escapeshellarg($this->getDeviceName());
+		$cmd = new \OMV\System\Process("ip", $cmdArgs);
+		$cmd->setRedirect2to1();
+		$cmd->execute();
+		// Remove all addresses.
+		$cmdArgs = [];
+		$cmdArgs[] = "addr";
+		$cmdArgs[] = "flush";
+		$cmdArgs[] = "dev";
+		$cmdArgs[] = escapeshellarg($this->getDeviceName());
+		$cmd = new \OMV\System\Process("ip", $cmdArgs);
+		$cmd->setRedirect2to1();
+		$cmd->execute();
 	}
 
 	/**
@@ -121,7 +166,7 @@ class NetworkInterface {
 	 * @throw \OMV\ExecException
 	 */
 	public function getIP() {
-		$this->getData("ip");
+		$this->getData();
 		$regex = sprintf("/inet\s+%s\s+.+\s+scope global/i",
 			$this->regex['ipv4cidr']);
 		if (1 !== preg_match($regex, $this->ip, $matches))
@@ -135,7 +180,7 @@ class NetworkInterface {
 	 * @throw \OMV\ExecException
 	 */
 	public function getIP6() {
-		$this->getData("ip");
+		$this->getData();
 		$regex = sprintf("/inet6\s+%s\s+scope global/i",
 			$this->regex['ipv6cidr']);
 		if (1 !== preg_match($regex, $this->ip, $matches))
@@ -149,7 +194,7 @@ class NetworkInterface {
 	 * @throw \OMV\ExecException
 	 */
 	public function getPrefix() {
-		$this->getData("ip");
+		$this->getData();
 		$regex = sprintf("/inet\s+%s\s+.+\s+scope global/i",
 			$this->regex['ipv4cidr']);
 		if (1 !== preg_match($regex, $this->ip, $matches))
@@ -164,7 +209,7 @@ class NetworkInterface {
 	 * @throw \OMV\ExecException
 	 */
 	public function getPrefix6() {
-		$this->getData("ip");
+		$this->getData();
 		$regex = sprintf("/inet6\s+%s\s+scope global/i",
 			$this->regex['ipv6cidr']);
 		if (1 !== preg_match($regex, $this->ip, $matches))
@@ -192,20 +237,6 @@ class NetworkInterface {
 	public function getNetmask6() {
 		// ToDo: Return the real netmask and not the prefix length here.
 		return $this->getPrefix6();
-	}
-
-	/**
-	 * @deprecated Will be removed in OMV5.
-	 */
-	public function getMask() {
-		return $this->getNetmask();
-	}
-
-	/**
-	 * @deprecated Will be removed in OMV5.
-	 */
-	public function getMask6() {
-		return $this->getNetmask6();
 	}
 
 	/**
@@ -289,7 +320,7 @@ class NetworkInterface {
 	 * @throw \OMV\ExecException
 	 */
 	public function getState() {
-		$this->getData("ip");
+		$this->getData();
 		if (1 !== preg_match("/state ({$this->regex['state']})/i",
 		  $this->ip, $matches))
 			return FALSE;
@@ -412,28 +443,5 @@ class NetworkInterface {
 		if (!file_exists($filename))
 			return FALSE;
 		return intval(file_get_contents($filename));
-	}
-
-	/**
-	 * Check if the network interface is a VLAN (802.1q) device.
-	 * @return TRUE if the network interface is a VLAN (802.1q) device,
-	 *   otherwise FALSE.
-	 */
-	public function isVlan() {
-		$regex = "/^(\S+\d+)\.(\d+)$/i";
-		if (1 !== preg_match($regex, $this->getDeviceName(), $matches))
-			return FALSE;
-		return TRUE;
-	}
-
-	/**
-	* Get VLAN ID of the network interface.
-	* @return The VLAN id, otherwise FALSE.
-	*/
-	public function getVlanId() {
-		$regex = "/^(\S+\d+)\.(\d+)$/i";
-		if (1 !== preg_match($regex, $this->getDeviceName(), $matches))
-			return FALSE;
-		return !empty($matches[2]) ? intval($matches[2]) : FALSE;
 	}
 }

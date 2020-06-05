@@ -3,7 +3,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,7 +97,7 @@ Ext.define("OMV.form.field.SharedFolderComboBox", {
 				}],
 				listeners: {
 					scope: me,
-					load: function(store, records, options) {
+					load: function(store, records, successful, operation, eOpts) {
 						if (me.allowNone === false)
 							return;
 						// Append the 'None' entry.
@@ -151,7 +151,7 @@ Ext.define("OMV.form.field.SharedFolderComboBox", {
 					// created shared folder
 					var lastOptions = this.store.lastOptions;
 					Ext.apply(lastOptions, {
-						scope: me,
+						scope: me, // lgtm [js/overwritten-property]
 						callback: function(records, operation, success) {
 							if (success) {
 								var record;

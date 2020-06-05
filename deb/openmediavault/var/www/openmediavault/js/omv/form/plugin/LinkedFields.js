@@ -3,7 +3,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -168,10 +168,10 @@ Ext.define("OMV.form.plugin.LinkedFields", {
 						valid = (value >= condition.value);
 						break;
 					case "z": // String is null, that is, has zero length.
-						valid = Ext.isEmpty(value)
+						valid = Ext.isEmpty(value);
 						break;
 					case "n": // String is not null.
-						valid = !Ext.isEmpty(value)
+						valid = !Ext.isEmpty(value);
 						break;
 					}
 				} else {
@@ -240,7 +240,7 @@ Ext.define("OMV.form.plugin.LinkedFields", {
 				case "show":
 				case "!hide":
 				case "notHide":
-					if(valid)
+					if (valid)
 						field.show();
 					else
 						field.hide();
@@ -248,7 +248,7 @@ Ext.define("OMV.form.plugin.LinkedFields", {
 				case "hide":
 				case "!show":
 				case "notShow":
-					if(valid)
+					if (valid)
 						field.hide();
 					else
 						field.show();
@@ -261,6 +261,15 @@ Ext.define("OMV.form.plugin.LinkedFields", {
 				case "notVisible":
 					if (Ext.isFunction(field.setVisible))
 						field.setVisible(!valid);
+					break;
+				case "checked":
+					if (valid && (field.xtype == "checkbox"))
+						field.setValue(true);
+					break;
+				case "!checked":
+				case "notChecked":
+					if (valid && (field.xtype == "checkbox"))
+						field.setValue(false);
 					break;
 				}
 			});

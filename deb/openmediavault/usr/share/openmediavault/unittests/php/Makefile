@@ -4,7 +4,7 @@
 #
 # @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
 # @author    Volker Theile <volker.theile@openmediavault.org>
-# @copyright Copyright (c) 2009-2018 Volker Theile
+# @copyright Copyright (c) 2009-2020 Volker Theile
 #
 # OpenMediaVault is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,8 +27,8 @@ test:
 		echo; \
 	done
 
-setup:
+install:
 	echo "Installing required packages ..."
 	sudo apt-get install phpunit
 
-.PHONY: test setup
+.PHONY: test install

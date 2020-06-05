@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,43 +19,10 @@
  * You should have received a copy of the GNU General Public License
  * along with OpenMediaVault. If not, see <http://www.gnu.org/licenses/>.
  */
-class OMVModuleTftp extends \OMV\Engine\Module\ServiceAbstract implements
-	\OMV\Engine\Notify\IListener, \OMV\Engine\Module\IServiceStatus,
-	\OMV\Engine\Module\IZeroconf {
-	/**
-	 * Get the module name.
-	 */
+class Tftp extends \OMV\Engine\Module\ServiceAbstract implements
+		\OMV\Engine\Notify\IListener, \OMV\Engine\Module\IServiceStatus {
 	public function getName() {
-		return "tftp";
-	}
-
-	/**
-	 * Generate the configuration.
-	 */
-	public function applyConfig() {
-		$cmd = new \OMV\System\Process("omv-mkconf", "tftpd-hpa");
-		$cmd->setRedirect2to1();
-		$cmd->execute();
-	}
-
-	/**
-	 * Stop the managed service.
-	 */
-	public function stopService() {
-		$systemCtl = new \OMV\System\SystemCtl("tftpd-hpa");
-		$systemCtl->disable(TRUE);
-	}
-
-	/**
-	 * Start the managed service.
-	 */
-	public function startService() {
-		$db = \OMV\Config\Database::getInstance();
-		$object = $db->get("conf.service.tftp");
-		if (TRUE !== $object->get("enable"))
-			return;
-		$systemCtl = new \OMV\System\SystemCtl("tftpd-hpa");
-		$systemCtl->enable(TRUE);
+		return "tftpd-hpa";
 	}
 
 	/**
@@ -70,16 +37,6 @@ class OMVModuleTftp extends \OMV\Engine\Module\ServiceAbstract implements
 			"title" => gettext("TFTP"),
 			"enabled" => $object->get("enable"),
 			"running" => $systemCtl->isActive()
-		];
-	}
-
-	/**
-	 * Get the Zeroconf service configuration.
-	 */
-	public function getZeroconfConfig() {
-		return [
-			"id" => "tftp",
-			"title" => gettext("TFTP")
 		];
 	}
 
@@ -102,22 +59,19 @@ class OMVModuleTftp extends \OMV\Engine\Module\ServiceAbstract implements
 		}
 	}
 
-	/**
-	 * Bind listeners.
-	 */
 	function bindListeners(\OMV\Engine\Notify\Dispatcher $dispatcher) {
 		$dispatcher->addListener(
-		  OMV_NOTIFY_MODIFY,
-		  "org.openmediavault.conf.service.tftp",
-		  [ $this, "setDirty" ]);
+			OMV_NOTIFY_MODIFY,
+			"org.openmediavault.conf.service.tftp",
+			[ $this, "setDirty" ]);
 		$dispatcher->addListener(
-		  OMV_NOTIFY_MODIFY,
-		  "org.openmediavault.conf.system.sharedfolder",
-		  [ $this, "onSharedFolder" ]);
+			OMV_NOTIFY_MODIFY,
+			"org.openmediavault.conf.system.sharedfolder",
+			[ $this, "onSharedFolder" ]);
 		$moduleMngr = \OMV\Engine\Module\Manager::getInstance();
 		$dispatcher->addListener(
-		  OMV_NOTIFY_MODIFY,
-		  "org.openmediavault.conf.service.tftp",
-		  [ $moduleMngr->getModule("zeroconf"), "setDirty" ]);
+			OMV_NOTIFY_MODIFY,
+			"org.openmediavault.conf.service.tftp",
+			[ $moduleMngr->getModule("zeroconf"), "setDirty" ]);
 	}
 }

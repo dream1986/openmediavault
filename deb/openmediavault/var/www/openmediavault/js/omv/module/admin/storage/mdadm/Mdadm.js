@@ -3,7 +3,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,6 +69,7 @@ Ext.define("OMV.module.admin.storage.mdadm.device.Create", {
 	autoLoadData: false,
 	hideResetButton: true,
 	width: 550,
+	height: 390,
 
 	getFormConfig: function() {
 		return {
@@ -139,9 +140,8 @@ Ext.define("OMV.module.admin.storage.mdadm.device.Create", {
 			fieldLabel: _("Devices"),
 			valueField: "devicefile",
 			minSelections: 3, // Min. number of devices for RAID5
-			useStringValue: true,
 			minHeight: 170,
-			flex: 1,
+			// flex: 1, // Hides the field info due render error
 			store: Ext.create("OMV.data.Store", {
 				autoLoad: true,
 				model: OMV.data.Model.createImplicit({
@@ -199,25 +199,23 @@ Ext.define("OMV.module.admin.storage.mdadm.device.Create", {
 					stateId: "serialnumber",
 					flex: 1
 				}]
-			}
+			},
+			plugins: [{
+				ptype: "fieldinfo",
+				text: _("Select the devices that will be used to create the RAID device. Devices connected via USB will not be listed (too unreliable).")
+			}]
 		}];
 	},
 
 	doSubmit: function() {
 		var me = this;
-		OMV.MessageBox.show({
-			title: _("Confirmation"),
-			msg: _("Do you really want to create the RAID device?"),
-			buttons: Ext.Msg.YESNO,
-			fn: function(answer) {
+		OMV.MessageBox.confirm(null,
+			_("Do you really want to create the RAID device?"),
+			function(answer) {
 				if (answer === "no")
 					return;
 				me.superclass.doSubmit.call(me);
-			},
-			scope: me,
-			icon: Ext.Msg.QUESTION,
-			defaultFocus: "no"
-		});
+			}, me);
 	}
 });
 
@@ -246,7 +244,7 @@ Ext.define("OMV.module.admin.storage.mdadm.device.Add", {
 	autoLoadData: false,
 	hideResetButton: true,
 	width: 550,
-	height: 270,
+	height: 390,
 
 	getFormConfig: function() {
 		return {
@@ -289,9 +287,8 @@ Ext.define("OMV.module.admin.storage.mdadm.device.Add", {
 			fieldLabel: _("Devices"),
 			valueField: "devicefile",
 			minSelections: 1,
-			useStringValue: true,
-			height: 130,
-//			flex: 1, // Hides the field info due render error
+			height: 170,
+			// flex: 1, // Hides the field info due render error
 			store: Ext.create("OMV.data.Store", {
 				autoLoad: true,
 				model: OMV.data.Model.createImplicit({
@@ -317,7 +314,7 @@ Ext.define("OMV.module.admin.storage.mdadm.device.Add", {
 				}],
 				listeners: {
 					scope: me,
-					load: function(store, records, successful, operation) {
+					load: function(store, records, successful, operation, eOpts) {
 						// Remove the RAID device file.
 						var record = store.findExactRecord("devicefile",
 						  me.devicefile);
@@ -393,7 +390,7 @@ Ext.define("OMV.module.admin.storage.mdadm.device.Remove", {
 	autoLoadData: false,
 	hideResetButton: true,
 	width: 550,
-	height: 270,
+	height: 390,
 
 	getFormConfig: function() {
 		return {
@@ -454,9 +451,8 @@ Ext.define("OMV.module.admin.storage.mdadm.device.Remove", {
 			valueField: "devicefile",
 			minSelections: 1,
 			maxSelections: maxSelections,
-			useStringValue: true,
-			height: 130,
-//			flex: 1, // Hides the field info due render error
+			height: 170,
+			// flex: 1, // Hides the field info due render error
 			store: Ext.create("OMV.data.Store", {
 				autoLoad: true,
 				model: OMV.data.Model.createImplicit({

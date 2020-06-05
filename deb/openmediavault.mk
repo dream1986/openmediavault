@@ -4,7 +4,7 @@
 #
 # @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
 # @author    Volker Theile <volker.theile@openmediavault.org>
-# @copyright Copyright (c) 2009-2018 Volker Theile
+# @copyright Copyright (c) 2009-2020 Volker Theile
 #
 # OpenMediaVault is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,6 +19,8 @@
 # You should have received a copy of the GNU General Public License
 # along with OpenMediaVault. If not, see <http://www.gnu.org/licenses/>.
 
+NUM_PROCESSORS := $(shell nproc)
+
 OMV_PACKAGE := $(shell pwd | sed 's|.*/||')
 OMV_POT_DIR := $(CURDIR)/usr/share/openmediavault/locale
 OMV_POT_FILE := $(OMV_PACKAGE).pot
@@ -29,7 +31,7 @@ omv_tx_status:
 	  --resource=$(OMV_TRANSIFEX_PROJECT_SLUG).$(OMV_PACKAGE)
 
 omv_tx_pull_po:
-	tx --root="$(CURDIR)/../" pull --all \
+	tx --root="$(CURDIR)/../" pull --all --force \
 	  --resource=$(OMV_TRANSIFEX_PROJECT_SLUG).$(OMV_PACKAGE)
 
 omv_tx_push_pot:
@@ -60,9 +62,16 @@ omv_build_doc: debian/doxygen.conf
 	mkdir -p debian/doxygen
 	doxygen $<
 
+omv_beautify_py:
+	black --target-version py37 --line-length 80 --skip-string-normalization .
+
+omv_lint_py:
+	find $(CURDIR) \( -iname *.py \) -type f -print0 | xargs -0r \
+	  pylint --rcfile="$(CURDIR)/../.pylintrc" --jobs=$(NUM_PROCESSORS)
+
 source: clean
 	dpkg-buildpackage -S -us -uc
 
 .PHONY: omv_tx_status omv_tx_pull_po omv_tx_push_pot
 .PHONY: omv_build_pot omv_build_doc omv_clean_scm
-.PHONY: source
+.PHONY: omv_beautify_py omv_lint_py source

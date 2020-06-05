@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -184,9 +184,7 @@ class OMVRpcServiceLogicalVolumeMgmt extends \OMV\Rpc\ServiceAbstract {
 		$this->validateMethodParams($params, "rpc.common.devicefile");
 		// Make sure the disk device is clean, no partition table
 		// should exist, otherwise pvcreate fails.
-		\OMV\System\Storage\StorageDevice::assertStorageDeviceExists(
-			$params['devicefile']);
-		$sd = \OMV\System\Storage\StorageDevice::getStorageDevice(
+		$sd = \OMV\System\Storage\StorageDevice::assertGetStorageDevice(
 			$params['devicefile']);
 		$sd->wipe();
 		// Create the physical volume.
@@ -697,8 +695,8 @@ class OMVRpcServiceLogicalVolumeMgmt extends \OMV\Rpc\ServiceAbstract {
 		  "rpc.logicalvolumemgmt.createlogicalvolume");
 		// Create the logical volume. Convert size to KiB to ensure it is
 		// a multiple of 512.
-		$lv = new \OMV\System\Storage\Lvm\LogicalVolume();
-		$lv->create($params['name'], $params['size'], $params['vgname']);
+		\OMV\System\Storage\Lvm\LogicalVolume::create(
+			$params['name'], $params['size'], $params['vgname']);
 		// Notify configuration changes.
 		$dispatcher = \OMV\Engine\Notify\Dispatcher::getInstance();
 		$dispatcher->notify(OMV_NOTIFY_CREATE,

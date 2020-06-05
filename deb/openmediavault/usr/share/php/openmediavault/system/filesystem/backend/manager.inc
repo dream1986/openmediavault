@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ class Manager implements \IteratorAggregate {
 	final public function registerBackend(BackendAbstract $backend) {
 		if (!isset($backend))
 			return FALSE;
-		$type = strtolower($backend->getType());
+		$type = mb_strtolower($backend->getType());
 		// Check if the filesystem backend already exists.
 		if (NULL !== ($registeredBackend = $this->getBackendByType($type))) {
 			throw new \OMV\Exception("The filesystem backend (type=%s, ".
@@ -71,7 +71,7 @@ class Manager implements \IteratorAggregate {
 	 * @return TRUE if successful, otherwise FALSE.
 	 */
 	final public function unregisterBackend($type) {
-		$type = strtolower($type);
+		$type = mb_strtolower($type);
 		if (NULL === $this->getBackendByType($type))
 			return FALSE;
 		unset($this->map[$type]);
@@ -86,7 +86,7 @@ class Manager implements \IteratorAggregate {
 	 *   NULL.
 	 */
 	final public function getBackendByType($type) {
-		$type = strtolower($type);
+		$type = mb_strtolower($type);
 		if (!array_key_exists($type, $this->map))
 			return NULL;
 		return $this->map[$type];
@@ -121,6 +121,7 @@ class Manager implements \IteratorAggregate {
 	 *   \li /dev/disk/by-uuid/ad3ee177-777c-4ad3-8353-9562f85c0895
 	 *   \li /dev/cciss/c0d0p2
 	 *   \li tank/multimedia/movies
+	 *   \li BigDataRAID (unescaped label)
 	 *   </ul>
 	 * @return The backend that implements the given filesystem, otherwise
 	 *   NULL.
@@ -166,6 +167,7 @@ class Manager implements \IteratorAggregate {
 	 *   \li /dev/disk/by-uuid/ad3ee177-777c-4ad3-8353-9562f85c0895
 	 *   \li /dev/cciss/c0d0p2
 	 *   \li tank/multimedia/movies
+	 *   \li BigDataRAID (unescaped label)
 	 *   </ul>
 	 * @throw \OMV\AssertException
 	 */
@@ -192,13 +194,14 @@ class Manager implements \IteratorAggregate {
 	/**
 	 * Enumerate all available/detected file systems.
 	 * @return An array of objects with the fields \em devicefile, \em uuid,
-	 *   \em label and \em type.
+	 *   \em label (unescaped) and \em type.
 	 * @throw \OMV\ExecException
 	 * @throw \UnexpectedValueException
 	 */
 	final public function enumerate() {
 		$result = [];
 		$blkidEnumsByType = [];
+		$output = [];
 		// Get all file systems that are identified by the block device
 		// identification library.
 		// !!! Note !!!
@@ -208,7 +211,12 @@ class Manager implements \IteratorAggregate {
 		// command 'blkid -t TYPE=<xxx> -o full'.
 		$cmd = new \OMV\System\Process("blkid", "-o full");
 		$cmd->setRedirect2to1();
-		$cmd->execute($output);
+		$cmd->setQuiet(TRUE);
+		$cmd->execute($output, $exitStatus);
+		if (!in_array($exitStatus, [0, 2])) {
+			throw new \OMV\ExecException($cmd->getCommandLine(), $output,
+				$exitStatus);
+		}
 		foreach ($output as $outputk => $outputv) {
 			// Parse command output:
 			// /dev/sdb: UUID="e6a0f61e-d969-ffcb-d4c5-06e7711285a3" LABEL="dhcppc4:0" TYPE="linux_raid_member"
@@ -241,7 +249,8 @@ class Manager implements \IteratorAggregate {
 				$keyValue = explode("=", $partv);
 				if (count($keyValue) != 2)
 					continue;
-				$data[strtolower($keyValue[0])] = substr($keyValue[1], 1, -1);
+				$data[mb_strtolower($keyValue[0])] = substr(
+					$keyValue[1], 1, -1);
 			}
 			// Append the found filesystem to the list for further processing.
 			if (!array_key_exists($data['type'], $blkidEnumsByType))

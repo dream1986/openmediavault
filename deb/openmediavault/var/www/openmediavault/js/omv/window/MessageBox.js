@@ -3,7 +3,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,8 +32,52 @@ Ext.define("OMV.window.MessageBox", {
 	YESCANCEL: 10,
 
 	/**
-	 * Display a info box.
-	 * @param title The title bar text.
+	 * Display a confirmation box that can be answered with 'Yes' or 'No'.
+	 * The 'No' button is focused by default.
+	 * @param title The title bar text. Defaults to 'Confirmation'.
+	 * @param msg The message box body text.
+	 * @param fn (optional) The callback function invoked after the.
+	 * message box is closed.
+	 * @param scope (optional) The scope in which the callback is executed.
+	 */
+	confirm: function(title, msg, fn, scope) {
+		return this.show({
+			title: title || _("Confirmation"),
+			msg: msg,
+			modal: true,
+			icon: this.QUESTION,
+			buttons: this.YESNO,
+			defaultFocus: "no",
+			fn: fn,
+			scope: scope
+		});
+	},
+
+	/**
+	 * Display a warning box that can be answered with 'Yes' or 'No'.
+	 * The 'No' button is focused by default.
+	 * @param title The title bar text. Defaults to 'Warning'.
+	 * @param msg The message box body text.
+	 * @param fn (optional) The callback function invoked after the.
+	 * message box is closed.
+	 * @param scope (optional) The scope in which the callback is executed.
+	 */
+	confirmWarning: function(title, msg, fn, scope) {
+		return this.show({
+			title: title || _("Warning"),
+			msg: msg,
+			modal: true,
+			icon: this.WARNING,
+			buttons: this.YESNO,
+			defaultFocus: "no",
+			fn: fn,
+			scope: scope
+		});
+	},
+
+	/**
+	 * Display an info box.
+	 * @param title The title bar text. Defaults to 'Information'.
 	 * @param msg The message box body text.
 	 * @param fn (optional) The callback function invoked after the.
 	 * message box is closed.
@@ -53,7 +97,7 @@ Ext.define("OMV.window.MessageBox", {
 
 	/**
 	 * Display a warning box.
-	 * @param title The title bar text.
+	 * @param title The title bar text. Defaults to 'Warning'.
 	 * @param msg The message box body text.
 	 * @param fn (optional) The callback function invoked after the.
 	 * message box is closed.
@@ -73,7 +117,7 @@ Ext.define("OMV.window.MessageBox", {
 
 	/**
 	 * Display a success box.
-	 * @param title The title bar text.
+	 * @param title The title bar text. Defaults to 'Success'.
 	 * @param msg The message box body text.
 	 * @param fn (optional) The callback function invoked after the.
 	 * message box is closed.
@@ -93,7 +137,7 @@ Ext.define("OMV.window.MessageBox", {
 
 	/**
 	 * Display a failure box.
-	 * @param title The title bar text.
+	 * @param title The title bar text. Defaults to 'Error'.
 	 * @param msg The message box body text.
 	 * @param fn (optional) The callback function invoked after the
 	 *   message box is closed.
@@ -132,7 +176,6 @@ Ext.define("OMV.window.MessageBox", {
 			detailsText += _("Error #") + error.code + ":\n";
 		if (!Ext.isEmpty(error.trace))
 			detailsText += error.trace;
-		detailsText = OMV.util.Format.whitespace(detailsText, "pre");
 		// Display the error dialog.
 		var dlg = Ext.create("Ext.Window", {
 			title: title || _("Error"),
@@ -166,7 +209,7 @@ Ext.define("OMV.window.MessageBox", {
 				hidden: Ext.isEmpty(detailsText),
 				handler: function(c, e) {
 					var visible = details.isVisible();
-					c.setText(visible ? _("Hide details") : _("Show details"));
+					c.setText(!visible ? _("Hide details") : _("Show details"));
 					details.setVisible(!visible);
 				}
 			}],
@@ -210,7 +253,7 @@ Ext.define("OMV.window.MessageBox", {
 				hidden: true,
 				scrollable: true,
 				minHeight: 175,
-				html: detailsText
+				html: OMV.util.Format.whitespace(detailsText, "pre")
 			})]
 		});
 		/*
@@ -296,9 +339,10 @@ Ext.define("OMV.window.MessageBox", {
 	 * Displays a message box with an infinitely auto-updating progress bar.
 	 * @param title The title bar text
 	 * @param msg The message box body text
+	 * @param config A Ext.ProgressBar#wait config object.
 	 */
-	wait: function(title, msg) {
-		return this.callParent([ msg, title || _("Please wait ...") ]);
+	wait: function(title, msg, config) {
+		return this.callParent([ msg, title || _("Please wait ..."), config ]);
 	},
 
 	/**
@@ -322,6 +366,8 @@ Ext.define("OMV.window.MessageBox", {
 	 *     or key has been pressed.
 	 *   \li scope The scope (this reference) in which the function will
 	 *     be executed.
+	 *   \li closable Set to FALSE to ignore mouse clicks and indefinitely
+	 *     display the message box.
 	 * @return The window object.
 	 */
 	guru: function(config) {
@@ -348,23 +394,25 @@ Ext.define("OMV.window.MessageBox", {
 			html: Ext.String.format("Software Failure.&nbsp;&nbsp;&nbsp;" +
 			  "Press left mouse button to continue.<br/>{0}", config.msg)
 		});
-		// Monitor key press and mouse clicks.
-		var fn = function(e, t, eOpts) {
-			// Unregister event handlers.
-			Ext.getBody().un({
+		if (!Ext.isDefined(config.closable) || (true === config.closable)) {
+			// Monitor key press and mouse clicks.
+			var fn = function(e, t, eOpts) {
+				// Unregister event handlers.
+				Ext.getBody().un({
+					keypress: fn,
+					click: fn
+				});
+				// Remove message box.
+				dlg.close();
+				// Execute given callback function.
+				if (Ext.isFunction(config.fn))
+					config.fn.call(config.scope || me, me);
+			};
+			Ext.getBody().on({
 				keypress: fn,
 				click: fn
 			});
-			// Remove message box.
-			dlg.close();
-			// Execute given callback function.
-			if (Ext.isFunction(config.fn))
-				config.fn.call(config.scope || me, me);
-		};
-		Ext.getBody().on({
-			keypress: fn,
-			click: fn
-		});
+		}
 		return dlg.show();
 	}
 }, function() {

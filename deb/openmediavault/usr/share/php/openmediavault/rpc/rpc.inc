@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,7 +73,7 @@ class Rpc {
 		if ($mode & Rpc::MODE_LOCAL) {
 			$rpcServiceMngr = &\OMV\Rpc\ServiceManager::getInstance();
 			if (FALSE !== ($rpcService = $rpcServiceMngr->getService(
-			  $service))) {
+					$service))) {
 				if (TRUE === $rpcService->hasMethod($method)) {
 					// Restore server and execution environment information
 					// if exists.
@@ -88,16 +88,17 @@ class Rpc {
 					// Throw an exception if the RPC service method has not
 					// been found and redirection to omv-engined is disabled.
 					if (~$mode & Rpc::MODE_REMOTE) {
-						throw new Exception("The method '%s' does not exist ".
-						  "for the RPC service '%s'.", $method, $service);
+						throw new \OMV\HttpErrorException(404,
+							"The method '%s' does not exist for the RPC ".
+							"service '%s'.", $method, $service);
 					}
 				}
 			} else {
 				// Throw an exception if the RPC service has not been found
 				// and redirection to omv-engined is disabled.
 				if (~$mode & Rpc::MODE_REMOTE) {
-					throw new Exception("RPC service '%s' not found.",
-					  $service);
+					throw new \OMV\HttpErrorException(404,
+						"RPC service '%s' not found.", $service);
 				}
 			}
 		}
@@ -196,8 +197,10 @@ class Rpc {
 			if (array_key_exists("error", $response) && !is_null(
 			  $response['error'])) {
 				$error = $response['error'];
-				throw new TraceException($error['message'], $error['code'],
-				  $error['trace']);
+				$e = new TraceException($error['message'], $error['code'],
+					$error['trace']);
+				$e->setHttpStatusCode($error['http_status_code']);
+				throw $e;
 			}
 			return $response['response'];
 		}
@@ -228,11 +231,13 @@ class Rpc {
 				// Execute the RPC service method as a background process.
 				return $rpcService->callMethodBg($method, $params, $context);
 			} else {
-				throw new Exception("The method '%s' does not exist ".
-					"for the RPC service '%s'.", $method, $service);
+				throw new \OMV\HttpErrorException(404,
+					"The method '%s' does not exist for the RPC service '%s'.",
+					$method, $service);
 			}
 		} else {
-			throw new Exception("RPC service '%s' not found.", $service);
+			throw new \OMV\HttpErrorException(404,
+				"RPC service '%s' not found.", $service);
 		}
 	}
 }

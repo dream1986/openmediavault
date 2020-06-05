@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,8 +61,8 @@ class OMVRpcServiceSession extends \OMV\Rpc\ServiceAbstract {
 				// authenticated?
 				if ($session->getUsername() !== $params['username']) {
 					$session->commit();
-					throw new \OMV\ErrorMsgException(
-					  \OMV\ErrorMsgException::E_SESSION_ALREADY_AUTHENTICATED);
+					throw new \OMV\HttpErrorException(400,
+					    _("Another user is already authenticated."));
 				}
 			} else {
 				// Initialize session.
@@ -76,8 +76,8 @@ class OMVRpcServiceSession extends \OMV\Rpc\ServiceAbstract {
 		// Get the product information to customize the syslog identity
 		// and cookie name.
 		$prd = new \OMV\ProductInfo();
-		$ident = strtolower(sprintf("%s-webgui", $prd->getName()));
-		$prefix = strtoupper(sprintf("X-%s-LOGIN", $prd->getName()));
+		$ident = mb_strtolower(sprintf("%s-webgui", $prd->getName()));
+		$prefix = mb_strtoupper(sprintf("X-%s-LOGIN", $prd->getName()));
 		// Open connection to system logger.
 		openlog($ident, LOG_PID | LOG_PERROR, LOG_AUTH);
 		if (TRUE === $authenticated) {
@@ -141,6 +141,9 @@ class OMVRpcServiceSession extends \OMV\Rpc\ServiceAbstract {
 			syslog(LOG_ALERT, sprintf("Unauthorized login attempt from %s ".
 			  "[username=%s, user-agent=%s]", $_SERVER['REMOTE_ADDR'],
 			  $params['username'], $_SERVER['HTTP_USER_AGENT']));
+			closelog();
+			throw new \OMV\HttpErrorException(400,
+				_("Incorrect username or password."));
 		}
 		closelog();
 		return [

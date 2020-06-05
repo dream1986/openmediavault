@@ -5,7 +5,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 require_once("openmediavault/autoloader.inc");
 require_once("openmediavault/globals.inc");
 
-class test_openmediavault_json_schema extends \PHPUnit_Framework_TestCase {
+class test_openmediavault_json_schema extends \PHPUnit\Framework\TestCase {
 	protected function getSchema() {
 		return new \OMV\Json\Schema([
 			"type" => "object",
@@ -72,6 +72,18 @@ class test_openmediavault_json_schema extends \PHPUnit_Framework_TestCase {
 				"slaves" => [
 					"type" => "string",
 					"pattern" => "^(((eth|wlan)\\d+|(en|wl)\\S+),)*((eth|wlan)\\d+|(en|wl)\\S+)$"
+				],
+				"upsname" => [
+					"type" => "string",
+					"pattern" => "^[a-z0-9_-]+$"
+				],
+				"devices" => [
+					"type" => "string",
+					"pattern" => "^(.+[,;])*.+$"
+				],
+				"hostname" => [
+					"type" => "string",
+					"format" => "hostname"
 				]
 			]
 		]);
@@ -127,16 +139,77 @@ class test_openmediavault_json_schema extends \PHPUnit_Framework_TestCase {
 		$schema->validate(["name" => "Eggs", "price" => 34.99]);
 	}
 
-	public function testValidatePattern() {
+	/**
+	 * @doesNotPerformAssertions
+	 */
+	public function testValidatePattern1() {
 		$schema = $this->getSchema();
 		$schema->validate(["name" => "Eggs", "slaves" => "eth0"]);
 	}
 
 	/**
+	 * @doesNotPerformAssertions
+	 */
+	public function testValidatePattern2() {
+		$schema = $this->getSchema();
+		$schema->validate([
+			"name" => "foo",
+			"upsname" => utf8_encode("foo-bar_1234")
+		]);
+	}
+
+	/**
+	 * @doesNotPerformAssertions
+	 */
+	public function testValidatePattern3() {
+		$schema = $this->getSchema();
+		$schema->validate([
+			"name" => "bar",
+			"devices" => utf8_encode("/dev/vdb")
+		]);
+	}
+
+	/**
+	 * @doesNotPerformAssertions
+	 */
+	public function testValidatePattern4() {
+		$schema = $this->getSchema();
+		$schema->validate([
+			"name" => "xyz",
+			"hostname" => utf8_encode("omv4box")
+		]);
+	}
+
+	/**
 	 * @expectedException OMV\Json\SchemaValidationException
 	 */
-	public function testValidatePatternFail() {
+	public function testValidatePatternFail1() {
 		$schema = $this->getSchema();
-		$schema->validate(["name" => "Eggs", "slaves" => "xyz0"]);
+		$schema->validate([
+			"name" => "Eggs",
+			"slaves" => utf8_encode("xyz0")
+		]);
+	}
+
+	/**
+	 * @expectedException OMV\Json\SchemaValidationException
+	 */
+	public function testValidatePatternFail2() {
+		$schema = $this->getSchema();
+		$schema->validate([
+			"name" => "foo",
+			"upsname" => utf8_encode("ε体λñι語ά_1234")
+		]);
+	}
+
+	/**
+	 * @expectedException OMV\Json\SchemaValidationException
+	 */
+	public function testValidatePatternFail3() {
+		$schema = $this->getSchema();
+		$schema->validate([
+			"name" => "xyz",
+			"hostname" => utf8_encode("ε体λñ-ι語ά1234")
+		]);
 	}
 }

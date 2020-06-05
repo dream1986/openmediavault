@@ -3,7 +3,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ Ext.ns("OMV.util");
  * @ingroup webgui
  */
 OMV.util.Format = function() {
-	f = function() {}
+	var f = function() {}
 	f.prototype = Ext.util.Format;
 	var o = function() {}
 	Ext.extend(o, f, function() {
@@ -44,39 +44,6 @@ OMV.util.Format = function() {
 					value = value.toLowerCase();
 				return Ext.Array.contains(trueValue, value) ?
 					_("Yes") : _("No");
-			},
-
-			/**
-			 * @method booleanRenderer
-			 * Returns a boolean rendering function
-			 * @return The boolean rendering function.
-			 * @deprecated Use grid column 'booleantextcolumn' instead.
-			 */
-			booleanRenderer: function() {
-				return function(value) {
-					return OMV.util.Format.boolean(value);
-				};
-			},
-
-			/**
-			 * @method booleanIconRenderer
-			 * Returns a boolean rendering function which renders an image
-			 * @param trueIcon The icon to use, defaults to 'yes.png'
-			 * @param falseIcon The icon to use, defaults to 'no.png'
-			 * @return The boolean rendering function.
-			 * @deprecated Use grid column 'booleaniconcolumn' instead.
-			 */
-			booleanIconRenderer: function(trueIcon, falseIcon) {
-				trueIcon = trueIcon || "yes.png";
-				falseIcon = falseIcon || "no.png";
-				return function(value) {
-					if((true === value) || (1 == value))
-						img = trueIcon;
-					else
-						img = falseIcon;
-					return "<img border='0' src='images/" + img + "' alt='" +
-					  OMV.util.Format.boolean(value) + "'>";
-				};
 			},
 
 			/**
@@ -116,7 +83,6 @@ OMV.util.Format = function() {
 			 * UNIX epoch timestamp in human readable form using the
 			 * local time format.
 			 * @return The rendering function.
-			 * @deprecated Use grid column 'unixtimestampcolumn' instead.
 			 */
 			localeTimeRenderer: function() {
 				return function(value) {
@@ -141,34 +107,6 @@ OMV.util.Format = function() {
 			},
 
 			/**
-			 * @method whitespaceRenderer
-			 * Return a rendering function that formats a value using the
-			 * defined white-space mode.
-			 * @param mode The mode to use. This can be: normal, nowrap, pre,
-			 *   pre-line, pre-wrap or inherit. Defaults to 'normal'.
-			 * @return The rendering function.
-			 * @deprecated Use grid column 'whitespacecolumn' instead.
-			 */
-			whitespaceRenderer: function(mode) {
-				return function(value) {
-					return OMV.util.Format.whitespace(value, mode);
-				};
-			},
-
-			/**
-			 * @method emptyRenderer
-			 * Returns a rendering function that displays 'n/a' if the value
-			 * is empty.
-			 * @return The rendering function.
-			 * @deprecated Use grid column 'emptycolumn' instead.
-			 */
-			emptyRenderer: function() {
-				return function(value) {
-					return Ext.isEmpty(value) ? _("n/a") : value;
-				};
-			},
-
-			/**
 			 * @method binaryUnit
 			 * Convert a value into the highest possible binary unit.
 			 * @param value The value to format.
@@ -182,19 +120,6 @@ OMV.util.Format = function() {
 				if (!Ext.isNumber(v) || (0 > v))
 					return invalidText;
 				return v.binaryFormat();
-			},
-
-			/**
-			 * @method binaryUnitRenderer
-			 * Returns a rendering function that displays the value in the
-			 * highest possible binary unit.
-			 * @return The rendering function.
-			 * @deprecated Use grid column 'binaryunitcolumn' instead.
-			 */
-			binaryUnitRenderer: function() {
-				return function(value) {
-					return OMV.util.Format.binaryUnit(value);
-				};
 			},
 
 			/**
@@ -219,7 +144,7 @@ OMV.util.Format = function() {
 							Ext.Function.defer(fn, 50);
 							return;
 						}
-						cls = ""
+						var cls = "";
 						if (Ext.isDefined(warningThreshold)) {
 							if (percentage >= warningThreshold)
 								cls = Ext.baseCSSPrefix + "progress-warning";

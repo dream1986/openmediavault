@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: openmediavault\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-01-21 11:50+0100\n"
-"PO-Revision-Date: 2018-01-21 10:50+0000\n"
+"POT-Creation-Date: 2020-04-15 19:10+0200\n"
+"PO-Revision-Date: 2020-04-15 17:14+0000\n"
 "Last-Translator: Volker <votdev@gmx.de>\n"
 "Language-Team: Dutch (Netherlands) (http://www.transifex.com/votdev/openmediavault/language/nl_NL/)\n"
 "MIME-Version: 1.0\n"
@@ -263,12 +263,6 @@ msgstr "Een gedeelde map toevoegen"
 msgid "Add user"
 msgstr "Een gebruiker toevoegen"
 
-msgid ""
-"Additional device settings, e.g. 'autoneg off speed 100 duplex full'. See <a"
-" href='http://linux.die.net/man/8/ethtool' target='_blank'>manual pages</a> "
-"for more details."
-msgstr "Extra apparaatinstellingen, b.v. 'autoneg off speed 100 duplex full'. Raadpleeg de <a href='http://linux.die.net/man/8/ethtool' target='_blank'>handleiding</a> voor meer details."
-
 msgid "Address"
 msgstr "Adres"
 
@@ -323,11 +317,14 @@ msgid ""
 "Allow this server to advertise itself as a time server to Windows clients"
 msgstr "De server toestaan om zichzelf als tijdserver te identificeren bij Windows clients"
 
-msgid "Allow this server to try and become a local master browser"
-msgstr "De server toestaan om te proberen een lokale master browser te worden"
-
 msgid "American Samoa"
 msgstr "Amerikaans Samoa"
+
+msgid ""
+"An attempt to send the test email has been made. Please check your mailbox. "
+"If the email does not arrive, check any spam folders and also check there "
+"are no Postfix related errors in the system log."
+msgstr ""
 
 msgid ""
 "An email message with the command output (if any produced) is send to the "
@@ -356,6 +353,9 @@ msgstr "Anonymous"
 
 msgid "Anonymous FTP"
 msgstr "Anonieme FTP"
+
+msgid "Another user is already authenticated."
+msgstr ""
 
 msgid "Antarctica"
 msgstr "Antarctica"
@@ -395,9 +395,6 @@ msgstr "Asynchrone I/O"
 
 msgid "At reboot"
 msgstr "Bij herstart"
-
-msgid "Attribute name"
-msgstr "Attribuutnaam"
 
 msgid "Attributes"
 msgstr "Attributen"
@@ -696,6 +693,12 @@ msgstr "Overdrachtszelftest"
 msgid "Cook Islands"
 msgstr "Kook eilanden"
 
+msgid "Copy"
+msgstr ""
+
+msgid "Copy public SSH key"
+msgstr ""
+
 msgid "Copy to clipboard"
 msgstr "Kopieer naar het klembord"
 
@@ -873,8 +876,8 @@ msgstr "Map"
 msgid "Disabled"
 msgstr "Uitgeschakeld"
 
-msgid "Disallow the user to modify his account."
-msgstr "De gebruiker niet toestaan om dit account te wijzigen."
+msgid "Disallow the user to modify their account."
+msgstr ""
 
 msgid "Disk usage"
 msgstr "Schijfgebruik"
@@ -1050,9 +1053,6 @@ msgstr "Geplande taak aanpassen"
 msgid "Edit scheduled test"
 msgstr "Geplande test aanpassen"
 
-msgid "Edit service"
-msgstr "Dienst aanpassen"
-
 msgid "Edit share"
 msgstr "Gedeelde bron aanpassen"
 
@@ -1088,6 +1088,9 @@ msgstr "SSL/TLS inschakelen"
 
 msgid "Enable SSL/TLS connections"
 msgstr "SSL/TLS connecties inschakelen"
+
+msgid "Enable Time Machine support for this share."
+msgstr ""
 
 msgid "Enable WINS server"
 msgstr "WINS server inschakelen"
@@ -1162,6 +1165,9 @@ msgstr "Schrijf-cache inschakelen"
 
 msgid "Enabled"
 msgstr "Ingeschakeld"
+
+msgid "Encryption mode"
+msgstr ""
 
 msgid "Enter your password"
 msgstr "Voer uw wachtwoord in"
@@ -1439,6 +1445,9 @@ msgstr "Guinee-Bissau"
 msgid "Guyana"
 msgstr "Guyana "
 
+msgid "HTTP 404 error"
+msgstr ""
+
 msgid "HTTP-Proxy"
 msgstr "HTTP-proxy"
 
@@ -1653,11 +1662,22 @@ msgstr "Extensies installeren ..."
 msgid "Installing updates ..."
 msgstr "Updates installeren ..."
 
+msgid ""
+"Installs the public SSH key on a remote system as an authorized key. Make "
+"sure password authentication is enabled on that remote system."
+msgstr ""
+
 msgid "Interfaces"
 msgstr "Interfaces"
 
+msgid "Invalid IP address."
+msgstr ""
+
 msgid "Invalid SSH public key (RFC 4716)"
 msgstr "Ongeldige SSH publieke sleutel (RFC 4716)"
+
+msgid "Invalid User-Agent."
+msgstr ""
 
 msgid "Invalid domain name"
 msgstr "Ongeldige domeinnaam"
@@ -1676,6 +1696,9 @@ msgstr "Ongeldige naam"
 
 msgid "Invalid user name"
 msgstr "Ongeldige gebruikersnaam"
+
+msgid "Invalid user."
+msgstr ""
 
 msgid "Iran"
 msgstr "Iran"
@@ -1817,14 +1840,14 @@ msgstr "Laden, een ogenblik geduld ..."
 msgid "Local"
 msgstr "Lokaal"
 
-msgid "Local master browser"
-msgstr "Lokale hoofdbrowser"
-
 msgid "Location"
 msgstr "Locatie"
 
 msgid "Log level"
 msgstr "Logniveau"
+
+msgid "Logging out, please wait ..."
+msgstr ""
 
 msgid "Login"
 msgstr "Aanmelden"
@@ -2202,9 +2225,6 @@ msgstr "November"
 msgid "Num"
 msgstr "Num"
 
-msgid "Number of servers"
-msgstr "Het aantal servers"
-
 msgid "OK"
 msgstr "Ok"
 
@@ -2292,8 +2312,8 @@ msgstr "Paraguay"
 msgid "Parent Device"
 msgstr "Moeder apparaat"
 
-msgid "Parent interface"
-msgstr "Hoofdnetwerkkaart"
+msgid "Parent device"
+msgstr ""
 
 msgid "Passive FTP"
 msgstr "Passieve FTP"
@@ -2307,11 +2327,11 @@ msgstr "Wachtwoordauthenticatie"
 msgid "Passwords don't match"
 msgstr "Wachtwoorden stemmen niet overeen"
 
-msgid "Paste a RSA certificate in X.509 PEM format here."
-msgstr "Plak hier een RSA-certificaat in X.509 PEM-formaat."
+msgid "Paste a RSA or ECC certificate in X.509 PEM format here."
+msgstr ""
 
-msgid "Paste an private RSA key in X.509 PEM format here."
-msgstr "Plak hier een RSA-sleutel in X.509 PEM-formaat."
+msgid "Paste a RSA or ECC private key in X.509 PEM format here."
+msgstr ""
 
 msgid "Path"
 msgstr "Bestandspad"
@@ -2455,8 +2475,14 @@ msgstr "ACL's behouden"
 msgid "Preserve extended attributes"
 msgstr "Uitgebreide kenmerken behouden"
 
+msgid "Preserve group"
+msgstr ""
+
 msgid "Preserve modification times"
 msgstr "Wijzigingstijden behouden"
+
+msgid "Preserve owner"
+msgstr ""
 
 msgid "Preserve permissions"
 msgstr "Rechten behouden"
@@ -2654,9 +2680,9 @@ msgid ""
 msgstr "Stuur een bericht als de temperatuur is veranderd met ten minste N graden Celsius sinds het laatste bericht. Zet op 0 om berichtgeving uit te schakelen."
 
 msgid ""
-"Report if the temperature is greater or equal than N degrees Celsius. Set to"
-" 0 to disable this report."
-msgstr "Stuur een bericht als de temperatuur gelijk is aan, of groter dan N graden Celcius. Zet op 0 om berichtgeving uit te schakelen."
+"Report if the temperature is greater than or equal to N degrees Celsius. Set"
+" to 0 to disable this report."
+msgstr ""
 
 msgid "Repository"
 msgstr "Depot"
@@ -2768,6 +2794,9 @@ msgstr "SSL"
 msgid "SSL/TLS"
 msgstr "SSL/TLS"
 
+msgid "STARTTLS"
+msgstr ""
+
 msgid "Saint Helena"
 msgstr "Saint Helena"
 
@@ -2864,12 +2893,6 @@ msgstr "Selecteer een groepsnaam ..."
 msgid "Select a language ..."
 msgstr "Selecteer een taal ..."
 
-msgid "Select a parent interface ..."
-msgstr "Een hoofdnetwerkkaart selecteren ..."
-
-msgid "Select a primary interface ..."
-msgstr "Een primaire netwerkkaart selecteren ..."
-
 msgid "Select a protocol ..."
 msgstr "Selecteer een protocol ..."
 
@@ -2893,6 +2916,11 @@ msgstr "Selecteer apparaten die van het RAID-apparaat verwijderd moet worden."
 
 msgid "Select or enter a user name ..."
 msgstr "Selecteer of voer een gebruikersnaam in..."
+
+msgid ""
+"Select the devices that will be used to create the RAID device. Devices "
+"connected via USB will not be listed (too unreliable)."
+msgstr ""
 
 msgid "Self-test logs"
 msgstr "Zelftestlogboeken"
@@ -2933,9 +2961,6 @@ msgstr "Server"
 msgid "Service"
 msgstr "Dienst"
 
-msgid "Service Discovery"
-msgstr "Service Ontdekking"
-
 msgid "Service disabled"
 msgstr "Service uitgeschakeld"
 
@@ -2960,6 +2985,15 @@ msgstr "Read only aan"
 msgid ""
 "Set the destination permissions to be the same as the source permissions"
 msgstr "Rechten van het doel overeenkomstig rechten van de bron"
+
+msgid ""
+"Set the group of the destination file to be the same as the source file."
+msgstr ""
+
+msgid ""
+"Set the owner of the destination file to be the same as the source file, but"
+" only if the receiving rsync is being run as the super-user."
+msgstr ""
 
 msgid "Set write only"
 msgstr "Alleen schrijven aan"
@@ -3088,9 +3122,6 @@ msgstr "Spanje"
 
 msgid "Special action flag"
 msgstr "Special actionvlag"
-
-msgid "Specifies how many server threads to create."
-msgstr "Geeft aan hoeveel server threads er aangemaakt worden."
 
 msgid "Specifies one of the bonding policies."
 msgstr "Specificeert een van de bindende beleidsregels."
@@ -3310,6 +3341,9 @@ msgstr "Aanmaken van het bestandssysteem succesvol afgerond."
 msgid "The hostname is a label that identifies the system to the network."
 msgstr "De hostnaam is een naam waarmee het systeem zich kenbaar maakt aan het netwerk."
 
+msgid "The hostname of the remote system."
+msgstr ""
+
 msgid ""
 "The information about available software is out-of-date. You need to reload "
 "the information about available software."
@@ -3355,6 +3389,9 @@ msgid ""
 "single share to be used flexibly by each user."
 msgstr "De rechten op nieuwe bestanden en mappen worden normaal toegekend door het aanmaak- en mapmasker, maar de parameter voor het erven van rechten overschrijft dit. Dit is in het bijzonder handig voor het flexibel gebruik van een gedeelde bron op een systeem met veel gebruikers."
 
+msgid "The port on which SSH is running on the remote system."
+msgstr ""
+
 msgid "The private RSA key in X.509 PEM format."
 msgstr "De privé RSA-sleutel in X.509 PEM-opmaak."
 
@@ -3366,16 +3403,13 @@ msgid ""
 "packages."
 msgstr "De repository zal worden gecontroleerd op nieuwe, verwijderde of bijgewerkte pakketten."
 
+msgid "The requested page was not found."
+msgstr ""
+
 msgid ""
 "The requirement that the SSL session from the control connection is reused "
 "for data connections is not required."
 msgstr "De eis dat de SSL-sessie van de control verbinding wordt hergebruikt voor data-verbindingen is niet verplicht."
-
-msgid "The session IP address has been changed."
-msgstr ""
-
-msgid "The session user no longer exists."
-msgstr ""
 
 msgid ""
 "The source remote server, e.g. [USER@]HOST:SRC, [USER@]HOST::SRC or "
@@ -3388,11 +3422,11 @@ msgstr "De gedeelde map van de bron."
 msgid "The specified quota exceeds the max. possible value of 4TiB."
 msgstr "De gespecificeerde quota zijn groter dan de maximaal mogelijke waarde van 4TiB."
 
+msgid "The system must be rebooted."
+msgstr ""
+
 msgid "The system will reboot now. This may take some time ..."
 msgstr "Het systeem wordt opnieuw opgestart. Dit kan enige tijd duren ..."
-
-msgid "The test email has been sent successfully. Please check your mailbox."
-msgstr "De testmail is succesvol verzonden. Controleer uw e-mail."
 
 msgid "The volume label for the file system."
 msgstr "De schijfbenaming voor het bestandssysteem."
@@ -3616,6 +3650,9 @@ msgstr "Dit geeft aan wat er gedaan wordt wanneer het pakket overeenstemt."
 msgid "This will create a recycle bin on the share."
 msgstr "Deze instelling maakt een prullenbak op de gedeelde bron aan."
 
+msgid "Threshold"
+msgstr ""
+
 msgid "Thursday"
 msgstr "Donderdag"
 
@@ -3624,6 +3661,9 @@ msgstr "TiB"
 
 msgid "Time"
 msgstr "Tijd"
+
+msgid "Time Machine support"
+msgstr ""
 
 msgid "Time interval"
 msgstr "Tijdinterval"
@@ -3643,9 +3683,6 @@ msgstr "Tijdzone"
 msgid "Timeout"
 msgstr "Timeout"
 
-msgid "Times"
-msgstr "Keren"
-
 msgid "Togo"
 msgstr "Togo"
 
@@ -3661,14 +3698,16 @@ msgstr "Totaal"
 msgid "Transfer log"
 msgstr "Overdrachtslogbestand"
 
+msgid ""
+"Transfer modification times along with the files and update them on the "
+"remote system."
+msgstr ""
+
 msgid "Transfer time"
 msgstr "Overdrachtstijd"
 
 msgid "Transfer type"
 msgstr "Overdrachtstype"
-
-msgid "Treshold"
-msgstr "Grens"
 
 msgid "Trial run"
 msgstr "Test"
@@ -3779,11 +3818,11 @@ msgstr "De uitgebreide attributen op de bestemming bijwerken zodat ze overeenkom
 msgid "Updates"
 msgstr "Updates"
 
+msgid "Updates available"
+msgstr ""
+
 msgid "Updating ACL settings"
 msgstr "ACL-instellingen bijwerken"
-
-msgid "Upgrade"
-msgstr "Bijwerken"
 
 msgid "Upload"
 msgstr "Upload"
@@ -3808,9 +3847,6 @@ msgstr "Uruguay"
 
 msgid "Use NTP server"
 msgstr "Gebruik NTP-server"
-
-msgid "Use SSL/TLS secure connection"
-msgstr "Gebruik SSL/TLS-beveiligde verbinding"
 
 msgid "Use chroot"
 msgstr "Chroot gebruiken."

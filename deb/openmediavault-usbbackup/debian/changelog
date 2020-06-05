@@ -1,3 +1,54 @@
+openmediavault-usbbackup (5.0.4-1) stable; urgency=low
+
+  * Issue #656: Build correct file path.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Sat, 28 Mar 2020 14:10:46 +0100
+
+openmediavault-usbbackup (5.0.3-1) stable; urgency=low
+
+  * Update locales.
+  * Adapt code for SaltStack 3000.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Mon, 24 Feb 2020 00:28:28 +0100
+
+openmediavault-usbbackup (5.0.2-1) stable; urgency=low
+
+  * Update locales.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Thu, 21 Nov 2019 09:30:28 +0100
+
+openmediavault-usbbackup (5.0.1-1) stable; urgency=low
+
+  * Issue #449: Fix Jinja syntax error: no filter named 'prettify_dir_path'.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Fri, 13 Sep 2019 16:54:27 +0200
+
+openmediavault-usbbackup (5.0-1) stable; urgency=low
+
+  * Adapt to openmediavault 5 (Usul).
+  * Disable various rsync options if the target file system is not
+    POSIX compliant.
+  * If the 'Archive' option is enabled and one of its implied option
+    'Recursive', 'Preserve permissions', 'Times', 'Group' or 'Owner'
+    is disabled, then this option will be prefixed with '--no-xxx' in
+    the rsync command line.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Tue, 25 Dec 2018 23:21:13 +0100
+
+openmediavault-usbbackup (4.0.8-1) stable; urgency=low
+
+  * Remove useless systemd unit file.
+  * Fix bug in UI. The whole UI was not usable after closing the job dialog.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Wed, 26 Dec 2018 11:21:24 +0100
+
+ openmediavault-usbbackup (4.0.7-1) stable; urgency=low
+
+  * Fix various bugs, e.g. in shell scripts when the devicefile looks like
+    /dev/disk/by-label/... and contains blanks.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Sun, 26 Aug 2018 22:09:03 +0200
+
 openmediavault-usbbackup (4.0.6-1) stable; urgency=low
 
   * Fix postrm script.

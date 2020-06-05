@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,22 +44,16 @@ class Login extends ControlPanelAbstract {
 				Ext.create("OMV.window.Login", {
 					listeners: {
 						login: function(wnd, response) {
-							if (response.authenticated === true) {
-								// Close the window now.
-								wnd.close();
-								// Display loading progress dialog. This will
-								// be displayed until the web administration
-								// interface is loaded and rendered.
-								Ext.getBody().mask(
-								  _("Loading, please wait ..."));
-								// Reload page to render the web
-								// administration interface.
-								document.location.reload(true);
-							} else {
-								OMV.MessageBox.guru({
-									msg: _("Incorrect username or password.")
-								});
-							}
+							// Close the window now.
+							wnd.close();
+							// Display loading progress dialog. This will
+							// be displayed until the web administration
+							// interface is loaded and rendered.
+							Ext.getBody().mask(
+								_("Loading, please wait ..."));
+							// Reload page to render the web
+							// administration interface.
+							document.location.reload(true);
 						}
 					}
 				}).show();

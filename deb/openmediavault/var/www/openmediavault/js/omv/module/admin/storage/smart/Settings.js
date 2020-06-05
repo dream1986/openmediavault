@@ -3,7 +3,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,7 +86,6 @@ Ext.define("OMV.module.admin.storage.smart.Settings", {
 				xtype: "numberfield",
 				name: "tempdiff",
 				fieldLabel: _("Difference"),
-				width: 40,
 				minValue: 0,
 				allowDecimals: false,
 				allowBlank: false,
@@ -99,27 +98,25 @@ Ext.define("OMV.module.admin.storage.smart.Settings", {
 				xtype: "numberfield",
 				name: "tempinfo",
 				fieldLabel: _("Informal"),
-				width: 40,
 				minValue: 0,
 				allowDecimals: false,
 				allowBlank: false,
 				value: 0,
 				plugins: [{
 					ptype: "fieldinfo",
-					text: _("Report if the temperature is greater or equal than N degrees Celsius. Set to 0 to disable this report.")
+					text: _("Report if the temperature is greater than or equal to N degrees Celsius. Set to 0 to disable this report.")
 				}]
 			},{
 				xtype: "numberfield",
 				name: "tempcrit",
 				fieldLabel: _("Critical"),
-				width: 40,
 				minValue: 0,
 				allowDecimals: false,
 				allowBlank: false,
 				value: 0,
 				plugins: [{
 					ptype: "fieldinfo",
-					text: _("Report if the temperature is greater or equal than N degrees Celsius. Set to 0 to disable this report.")
+					text: _("Report if the temperature is greater than or equal to N degrees Celsius. Set to 0 to disable this report.")
 				}]
 			}]
 		}];

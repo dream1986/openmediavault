@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,8 @@
  * You should have received a copy of the GNU General Public License
  * along with OpenMediaVault. If not, see <http://www.gnu.org/licenses/>.
  */
+namespace Engined\Rpc;
+
 require_once("openmediavault/functions.inc");
 
 class OMVRpcServiceFileSystemMgmt extends \OMV\Rpc\ServiceAbstract {
@@ -68,107 +70,110 @@ class OMVRpcServiceFileSystemMgmt extends \OMV\Rpc\ServiceAbstract {
 		// Get list of all detected filesystems.
 		$filesystems = \OMV\System\Filesystem\Filesystem::getFilesystems();
 		// Process the detected filesystems and skip unwanted ones.
-		$result = [];
+		$procs = [];
 		foreach ($filesystems as $fs) {
-			// Get the filesystem backend.
-			$fsb = $fs->getBackend();
-			if (is_null($fsb)) {
-				throw new \OMV\Exception(
-				  "No filesystem backend set for '%s'.",
-				  $fs->getDeviceFile());
-			}
-			// Set default values.
-			$object = [
-				"devicefile" => $fs->getPreferredDeviceFile(),
-				"parentdevicefile" => $fs->getParentDeviceFile(),
-				"uuid" => $fs->getUuid(),
-				"label" => $fs->getLabel(),
-				"type" => $fs->getType(),
-				"blocks" => "-1", // as string
-				"mounted" => FALSE,
-				"mountpoint" => "",
-				"used" => "-1", // as string
-				"available" => "-1", // as string
-				"size" => "-1", // as string
-				"percentage" => -1,
-				"description" => $fs->hasLabel() ? $fs->getLabel() :
-				  $fs->getDeviceFile(),
-				"propposixacl" => $fsb->hasPosixAclSupport(),
-				"propquota" => $fsb->hasQuotaSupport(),
-				"propresize" => $fsb->hasResizeSupport(),
-				"propfstab" => $fsb->hasFstabSupport(),
-				"propreadonly" => $fsb->hasReadOnlySupport(),
-				"propcompress" => $fsb->hasCompressSupport(),
-				"propautodefrag" => $fsb->hasAutoDefragSupport(),
-				"hasmultipledevices" => $fs->hasMultipleDevices(),
-				"devicefiles" => $fs->getDeviceFiles(),
-				"_readonly" => $fsb->hasReadOnlySupport(),
-				"_used" => FALSE
-			];
-			// Check if the filesystem is used. First try to get the
-			// corresponding mount point configuration object. Query the
-			// database for all device files that exist for the given
-			// filesystem to increase the probability to find the mount
-			// point configuration object. If such object exist, then
-			// check if it is referenced by any other object, e.g. by a
-			// shared folder configuration object.
-			$fsNames = $fs->getDeviceFileSymlinks();
-			if (TRUE === $fs->hasUuid()) {
-				$fsNames[] = $fs->getUuid();
-			}
-			$filter = [
-				"operator" => "stringEquals",
-				"arg0" => "fsname",
-				"arg1" => array_shift($fsNames)
-			];
-			foreach ($fsNames as $fsNamek => $fsNamev) {
-				$filter = [
-					"operator" => "or",
-					"arg0" => $filter,
-					"arg1" => [
-						"operator" => "stringEquals",
-						"arg0" => "fsname",
-						"arg1" => $fsNamev
-					]
-				];
-			}
-			$db = \OMV\Config\Database::getInstance();
-			$mpObjects = $db->getByFilter("conf.system.filesystem.mountpoint",
-				$filter);
-			if (!empty($mpObjects)) {
-				$object['_used'] = $db->isReferenced($mpObjects[0]);
-			}
-			// Mark the device where the operating system is installed on
-			// as used and read-only.
-			if (\OMV\System\System::isRootDeviceFile($object['devicefile'])) {
-				$object['_used'] = TRUE;
-				$object['_readonly'] = TRUE;
-			}
-			// If the filesystem is mounted then try to get more
-			// informations about it. Note,it is not possible to get
-			// details from unmounted filesystems, because on most kinds
-			// of systems doing so requires very nonportable intimate
-			// knowledge of filesystem structures. See man (1) df.
-			if (TRUE === $fs->isMounted()) {
-				$object['mounted'] = TRUE;
-				// Get some more filesystem details if possible.
-				if (FALSE !== ($fsStats = $fs->getStatistics())) {
-					$object['used'] = binary_format($fsStats['used']);
-					$object['available'] = $fsStats['available'];
-					$object['percentage'] = $fsStats['percentage'];
-					$object['blocks'] = $fsStats['blocks'];
-					$object['mountpoint'] = $fsStats['mountpoint'];
-					$object['size'] = $fsStats['size'];
-					$object['description'] = sprintf(
-					  gettext("%s (%s available)"),
-					  !empty($object['label']) ? $object['label'] :
-					  $object['devicefile'], binary_format(
-					  $object['available']));
+			// Collect the filesystem information asynchronous.
+			$procs[] = $this->asyncProc(function() use ($fs) {
+				// Get the filesystem backend.
+				$fsb = $fs->getBackend();
+				if (is_null($fsb)) {
+					throw new \OMV\Exception(
+						"No filesystem backend set for '%s'.",
+						$fs->getDeviceFile());
 				}
-			}
-			$result[] = $object;
+				// Set default values.
+				$object = [
+					"devicefile" => $fs->getPreferredDeviceFile(),
+					"parentdevicefile" => $fs->getParentDeviceFile(),
+					"uuid" => $fs->getUuid(),
+					"label" => $fs->getLabel(),
+					"type" => $fs->getType(),
+					"blocks" => "-1", // as string
+					"mounted" => FALSE,
+					"mountpoint" => "",
+					"used" => "-1", // as string
+					"available" => "-1", // as string
+					"size" => "-1", // as string
+					"percentage" => -1,
+					"description" => $fs->hasLabel() ?
+						$fs->getLabel() : $fs->getDeviceFile(),
+					"propposixacl" => $fsb->hasPosixAclSupport(),
+					"propquota" => $fsb->hasQuotaSupport(),
+					"propresize" => $fsb->hasResizeSupport(),
+					"propfstab" => $fsb->hasFstabSupport(),
+					"propreadonly" => $fsb->hasReadOnlySupport(),
+					"propcompress" => $fsb->hasCompressSupport(),
+					"propautodefrag" => $fsb->hasAutoDefragSupport(),
+					"hasmultipledevices" => $fs->hasMultipleDevices(),
+					"devicefiles" => $fs->getDeviceFiles(),
+					"_readonly" => $fsb->hasReadOnlySupport(),
+					"_used" => FALSE
+				];
+				// Check if the filesystem is used. First try to get the
+				// corresponding mount point configuration object. Query the
+				// database for all device files that exist for the given
+				// filesystem to increase the probability to find the mount
+				// point configuration object. If such object exist, then
+				// check if it is referenced by any other object, e.g. by a
+				// shared folder configuration object.
+				$fsNames = $fs->getDeviceFileSymlinks();
+				if (TRUE === $fs->hasUuid()) {
+					$fsNames[] = $fs->getUuid();
+				}
+				$filter = [
+					"operator" => "stringEquals",
+					"arg0" => "fsname",
+					"arg1" => array_shift($fsNames)
+				];
+				foreach ($fsNames as $fsNamek => $fsNamev) {
+					$filter = [
+						"operator" => "or",
+						"arg0" => $filter,
+						"arg1" => [
+							"operator" => "stringEquals",
+							"arg0" => "fsname",
+							"arg1" => $fsNamev
+						]
+					];
+				}
+				$db = \OMV\Config\Database::getInstance();
+				$mpObjects = $db->getByFilter("conf.system.filesystem.mountpoint",
+					$filter);
+				if (!empty($mpObjects)) {
+					$object['_used'] = $db->isReferenced($mpObjects[0]);
+				}
+				// Mark the device where the operating system is installed on
+				// as used and read-only.
+				if (\OMV\System\System::isRootDeviceFile($object['devicefile'])) {
+					$object['_used'] = TRUE;
+					$object['_readonly'] = TRUE;
+				}
+				// If the filesystem is mounted then try to get more
+				// informations about it. Note,it is not possible to get
+				// details from unmounted filesystems, because on most kinds
+				// of systems doing so requires very nonportable intimate
+				// knowledge of filesystem structures. See man (1) df.
+				if (TRUE === $fs->isMounted()) {
+					$object['mounted'] = TRUE;
+					// Get some more filesystem details if possible.
+					if (FALSE !== ($fsStats = $fs->getStatistics())) {
+						$object['used'] = binary_format($fsStats['used']);
+						$object['available'] = $fsStats['available'];
+						$object['percentage'] = $fsStats['percentage'];
+						$object['blocks'] = $fsStats['blocks'];
+						$object['mountpoint'] = $fsStats['mountpoint'];
+						$object['size'] = $fsStats['size'];
+						$object['description'] = sprintf(
+							gettext("%s (%s available)"),
+							!empty($object['label']) ? $object['label'] :
+							$object['devicefile'], binary_format(
+							$object['available']));
+					}
+				}
+				return $object;
+			});
 		}
-		return $result;
+		return $this->waitAsyncProcs($procs);
 	}
 
 	/**
@@ -192,7 +197,7 @@ class OMVRpcServiceFileSystemMgmt extends \OMV\Rpc\ServiceAbstract {
 		// Validate the parameters of the RPC service method.
 		if (!is_null($params)) {
 			$this->validateMethodParams($params,
-			  "rpc.filesystemmgmt.enumeratemountedfilesystems");
+				"rpc.filesystemmgmt.enumeratemountedfilesystems");
 		}
 		// Get list of mount points, except bind mounts.
 		$db = \OMV\Config\Database::getInstance();
@@ -205,78 +210,85 @@ class OMVRpcServiceFileSystemMgmt extends \OMV\Rpc\ServiceAbstract {
 			]
 		]);
 		// Append '/dev/root'?
-		if (TRUE === array_boolval($params, "includeroot", FALSE)) {
+		if (!is_null($params) && (TRUE === array_boolval($params,
+				"includeroot", FALSE))) {
 			$rootObject = new \OMV\Config\ConfigObject(
-			  "conf.system.filesystem.mountpoint");
+				"conf.system.filesystem.mountpoint");
 			$rootObject->set("fsname", \OMV\System\System::getRootDeviceFile());
 			$rootObject->set("dir", "/");
 			array_unshift($objects, $rootObject);
 		}
 		// Get the file system details for each mount point.
-		$result = [];
+		$procs = [];
 		foreach ($objects as $objectk => $objectv) {
-			// Get the filesystem backend.
-			$fsbMngr = \OMV\System\Filesystem\Backend\Manager::getInstance();
-			$fsb = $fsbMngr->getBackendById($objectv->get("fsname"));
-			if (is_null($fsb)) {
-// The device may not exist anymore, e.g. a USB device. Skip it.
-//				throw new \OMV\Exception(
-//				  "No file system backend exists for '%s'",
-//				  $objectv['fsname']);
-				continue;
-			}
-			// Get the file system implementation.
-			$fs = $fsb->getImpl($objectv->get("fsname"));
-			if (is_null($fs) || !$fs->exists()) {
-//				throw new \OMV\Exception(
-//				  "Failed to get the '%s' file system implementation or '%s' ".
-//				  "does not exist", $fsb->getType(), $objectv['fsname']);
-				continue;
-			}
-			// Check if the given file system is mounted based on the configured
-			// mount point. Skip the file systems that are not mounted at the
-			// moment.
-			if (FALSE === $fs->isMounted())
-				continue;
-			// Get the filesystem details.
-			$object = [
-				"devicefile" => $fs->getPreferredDeviceFile(),
-				"parentdevicefile" => $fs->getParentDeviceFile(),
-				"uuid" => $fs->getUuid(),
-				"label" => $fs->getLabel(),
-				"type" => $fs->getType(),
-				"blocks" => "-1", // as string
-				"mountpoint" => $objectv->get("dir"),
-				"used" => "-1", // as string
-				"available" => "-1", // as string
-				"size" => "-1", // as string
-				"percentage" => -1,
-				"description" => $fs->hasLabel() ? $fs->getLabel() :
-				  $fs->getDeviceFile(),
-				"propposixacl" => $fsb->hasPosixAclSupport(),
-				"propquota" => $fsb->hasQuotaSupport(),
-				"propresize" => $fsb->hasResizeSupport(),
-				"propfstab" => $fsb->hasFstabSupport(),
-				"propcompress" => $fsb->hasCompressSupport(),
-				"propautodefrag" => $fsb->hasAutoDefragSupport(),
-				"hasmultipledevices" => $fs->hasMultipleDevices(),
-				"devicefiles" => $fs->getDeviceFiles()
-			];
-			// Get some more filesystem details if possible.
-			if (FALSE !== ($fsStats = $fs->getStatistics())) {
-				$object['used'] = binary_format($fsStats['used']);
-				$object['available'] = $fsStats['available'];
-				$object['percentage'] = $fsStats['percentage'];
-				$object['blocks'] = $fsStats['blocks'];
-				$object['size'] = $fsStats['size'];
-				$object['description'] = sprintf(
-				  gettext("%s (%s available)"), !empty($object['label']) ?
-				  $object['label'] : $object['devicefile'], binary_format(
-				  $object['available']));
-			}
-			$result[] = $object;
+			// Collect the filesystem information asynchronous.
+			$procs[] = $this->asyncProc(function() use ($objectv) {
+				// Get the filesystem backend.
+				$fsbMngr = \OMV\System\Filesystem\Backend\Manager::getInstance();
+				$fsb = $fsbMngr->getBackendById($objectv->get("fsname"));
+				if (is_null($fsb)) {
+					// The device may not exist anymore, e.g. a USB device. Skip it.
+					// throw new \OMV\Exception(
+					//     "No file system backend exists for '%s'",
+					//     $objectv['fsname']);
+					return FALSE;
+				}
+				// Get the file system implementation.
+				$fs = $fsb->getImpl($objectv->get("fsname"));
+				if (is_null($fs) || !$fs->exists()) {
+					// throw new \OMV\Exception(
+					//     "Failed to get the '%s' file system implementation or '%s' ".
+					//     "does not exist", $fsb->getType(), $objectv['fsname']);
+					return FALSE;
+				}
+				// Check if the given file system is mounted based on the configured
+				// mount point. Skip the file systems that are not mounted at the
+				// moment.
+				if (FALSE === $fs->isMounted()) {
+					return FALSE;
+				}
+				// Get the filesystem details.
+				$object = [
+					"devicefile" => $fs->getPreferredDeviceFile(),
+					"parentdevicefile" => $fs->getParentDeviceFile(),
+					"uuid" => $fs->getUuid(),
+					"label" => $fs->getLabel(),
+					"type" => $fs->getType(),
+					"blocks" => "-1", // as string
+					"mountpoint" => $objectv->get("dir"),
+					"used" => "-1", // as string
+					"available" => "-1", // as string
+					"size" => "-1", // as string
+					"percentage" => -1,
+					"description" => $fs->hasLabel() ? $fs->getLabel() :
+						$fs->getDeviceFile(),
+					"propposixacl" => $fsb->hasPosixAclSupport(),
+					"propquota" => $fsb->hasQuotaSupport(),
+					"propresize" => $fsb->hasResizeSupport(),
+					"propfstab" => $fsb->hasFstabSupport(),
+					"propcompress" => $fsb->hasCompressSupport(),
+					"propautodefrag" => $fsb->hasAutoDefragSupport(),
+					"hasmultipledevices" => $fs->hasMultipleDevices(),
+					"devicefiles" => $fs->getDeviceFiles()
+				];
+				// Get some more filesystem details if possible.
+				if (FALSE !== ($fsStats = $fs->getStatistics())) {
+					$object['used'] = binary_format($fsStats['used']);
+					$object['available'] = $fsStats['available'];
+					$object['percentage'] = $fsStats['percentage'];
+					$object['blocks'] = $fsStats['blocks'];
+					$object['size'] = $fsStats['size'];
+					$object['description'] = sprintf(
+						gettext("%s (%s available)"), !empty($object['label']) ?
+						$object['label'] : $object['devicefile'], binary_format(
+						$object['available']));
+				}
+				return $object;
+			});
 		}
-		return $result;
+		// Remove elements that are no associative arrays (e.g. these are
+		// filesystems that are not mounted).
+		return array_filter($this->waitAsyncProcs($procs), "is_assoc_array");
 	}
 
 	/**
@@ -310,9 +322,8 @@ class OMVRpcServiceFileSystemMgmt extends \OMV\Rpc\ServiceAbstract {
 		// Enumerate all detected filesystems.
 		$objects = $this->callMethod("enumerateFilesystems", NULL, $context);
 		foreach ($objects as $objectk => &$objectv) {
-			// Mark each filesystem as as initialized and 'Online'
-			// by default.
-			$objectv['status'] = 1;
+			// Mark each filesystem as 'Online' by default.
+			$objectv['status'] = 1; // Online
 		}
 		// Try to detect filesystems that are being initialized.
 		foreach (new \DirectoryIterator("/tmp") as $file) {
@@ -381,7 +392,7 @@ class OMVRpcServiceFileSystemMgmt extends \OMV\Rpc\ServiceAbstract {
 				"propcompress" => $fsb->hasCompressSupport(),
 				"propautodefrag" => $fsb->hasAutoDefragSupport(),
 				"hasmultipledevices" => false,
-				"status" => 2,
+				"status" => 2, // Initializing
 				"_used" => FALSE
 			];
 		}
@@ -419,7 +430,7 @@ class OMVRpcServiceFileSystemMgmt extends \OMV\Rpc\ServiceAbstract {
 			$fs = $fsb->getImpl($mntentv->get("fsname"));
 			if (!is_null($fs) && $fs->exists())
 				continue;
-			// Append as much informations as possible.
+			// Append as much information as possible.
 			$objects[] = [
 				"devicefile" => is_devicefile($mntentv->get("fsname")) ?
 					$mntentv->get("fsname") : "",
@@ -445,7 +456,7 @@ class OMVRpcServiceFileSystemMgmt extends \OMV\Rpc\ServiceAbstract {
 				"propcompress" => $fsb->hasCompressSupport(),
 				"propautodefrag" => $fsb->hasAutoDefragSupport(),
 				"hasMultipleDevices" => FALSE,
-				"status" => 3,
+				"status" => 3, // Missing
 				"_used" => $db->isReferenced($mntentv)
 			];
 		}
@@ -544,10 +555,8 @@ class OMVRpcServiceFileSystemMgmt extends \OMV\Rpc\ServiceAbstract {
 		// Validate the parameters of the RPC service method.
 		$this->validateMethodParams($params, "rpc.filesystemmgmt.create");
 		// Get the storage device object.
-		\OMV\System\Storage\StorageDevice::assertStorageDeviceExists(
-		  $params['devicefile']);
-		$sd = \OMV\System\Storage\StorageDevice::getStorageDevice(
-		  $params['devicefile']);
+		$sd = \OMV\System\Storage\StorageDevice::assertGetStorageDevice(
+			$params['devicefile']);
 		// Check uniqueness. If there exists a mount point for the given
 		// device then it has already a filesystem that is in use.
 		if (FALSE !== \OMV\Rpc\Rpc::call("FsTab", "getByFsName", [
@@ -845,19 +854,6 @@ class OMVRpcServiceFileSystemMgmt extends \OMV\Rpc\ServiceAbstract {
 				"Failed to get the '%s' filesystem implementation or '%s' ".
 				"does not exist.", $fsb->getType(), $params['id']);
 		}
-		// Get the parent storage device containing the filesystem, e.g.
-		// /dev/sdb or /dev/cciss/c0d0.
-		$parentDeviceFile = $fs->getParentDeviceFile();
-		if (FALSE === is_devicefile($parentDeviceFile)) {
-			throw new \OMV\Exception(
-				"Failed to get parent storage device file from '%s'.",
-				$fs->getDeviceFile());
-		}
-		// Get the according storage device object.
-		\OMV\System\Storage\StorageDevice::assertStorageDeviceExists(
-			$parentDeviceFile);
-		$sd = \OMV\System\Storage\StorageDevice::getStorageDevice(
-			$parentDeviceFile);
 		// Get a predictable device file of the filesystem:
 		// - /dev/disk/by-label/xxx
 		// - /dev/disk/by-id/xxx
@@ -877,6 +873,27 @@ class OMVRpcServiceFileSystemMgmt extends \OMV\Rpc\ServiceAbstract {
 			// Check for duplicates. Create a new mount point configuration
 			// object if necessary.
 			if (FALSE === $meObject) {
+				// Do not allow filesystems which labels contain blanks
+				// because SaltStack has a bug and can't handle such
+				// filesystems.
+				// See https://github.com/saltstack/salt/issues/54508
+				if ($fs->hasLabel() && (FALSE !== strpos(
+						$fs->getLabel(), " "))) {
+					throw new \OMV\Exception(
+						"The filesystem label contains blanks.");
+				}
+				// Optionally try to get the parent storage device on
+				// which the filesystem is located. This device file
+				// is used to get more specific mount options for the
+				// filesystem.
+				// Note, layered filesystems do not provide that.
+				$sd = NULL;
+				$parentDeviceFile = $fs->getParentDeviceFile();
+				if (is_devicefile($parentDeviceFile)) {
+					$sd = \OMV\System\Storage\StorageDevice::assertGetStorageDevice(
+						$parentDeviceFile);
+				}
+				// Create a new mount configuration object in the database.
 				\OMV\Rpc\Rpc::call("FsTab", "set", [
 					"uuid" => \OMV\Environment::get(
 						"OMV_CONFIGOBJECT_NEW_UUID"),
@@ -897,13 +914,15 @@ class OMVRpcServiceFileSystemMgmt extends \OMV\Rpc\ServiceAbstract {
 				// Check if the configuration is marked as dirty, otherwise
 				// the /etc/fstab file is not up-to-date and the mount fails
 				// because of missing entries.
-				if ($this->isModuleDirty("fstab"))
+				if ($this->isModuleDirty("fstab")) {
 					throw new \OMV\Config\ConfigDirtyException();
+				}
 				// Umount the mount point if it is already in use, which
 				// is the case when an USB device is unplugged without
 				// unmounting it.
-				if (TRUE === $fs->isMounted())
+				if (TRUE === $fs->isMounted()) {
 					$fs->umount();
+				}
 				// Does the mount directory exist? Re-create it if
 				// necessary.
 				$mp = new \OMV\System\MountPoint($meObject['dir']);

@@ -5,7 +5,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
  */
 require_once("openmediavault/functions.inc");
 
-class test_openmediavault_functions extends \PHPUnit_Framework_TestCase {
+class test_openmediavault_functions extends \PHPUnit\Framework\TestCase {
 	private function getDict() {
 		return [
 			'x' => 3,
@@ -178,9 +178,34 @@ class test_openmediavault_functions extends \PHPUnit_Framework_TestCase {
 		$this->assertFalse(is_json(123));
 	}
 
-	public function test_build_path() {
+	public function test_build_path_1() {
 		$path = build_path(DIRECTORY_SEPARATOR, "/usr", "local", "share");
 		$this->assertEquals($path, "/usr/local/share");
+	}
+
+	public function test_build_path_2() {
+		$path = build_path(DIRECTORY_SEPARATOR, "usr", "//local", "/share//");
+		$this->assertEquals($path, "usr/local/share/");
+	}
+
+	public function test_build_path_3() {
+		$path = build_path(DIRECTORY_SEPARATOR, "/", "");
+		$this->assertEquals($path, "/");
+	}
+
+	public function test_build_path_4() {
+		$path = build_path(DIRECTORY_SEPARATOR, "", "/");
+		$this->assertEquals($path, "/");
+	}
+
+	public function test_build_path_5() {
+		$path = build_path(DIRECTORY_SEPARATOR, "", "/", "/", "/usr", "");
+		$this->assertEquals($path, "/usr");
+	}
+
+	public function test_build_path_6() {
+		$path = build_path(DIRECTORY_SEPARATOR, ".", "/../", "../");
+		$this->assertEquals($path, "./../../");
 	}
 
 	public function test_json_encode_safe() {
@@ -234,5 +259,80 @@ class test_openmediavault_functions extends \PHPUnit_Framework_TestCase {
 	public function test_unescape_path() {
 		$this->assertEquals(unescape_path("/srv/dev-disk-by-label-xx\\x20yy"),
 			"/srv/dev-disk-by-label-xx yy");
+	}
+
+	public function test_array_remove_key_exists() {
+		$d = ["a" => "xxx"];
+		$this->assertTrue(array_remove_key($d, "a"));
+		$this->assertEquals($d, []);
+	}
+
+	public function test_array_remove_key_not_exists() {
+		$d = ["b" => "yyy"];
+		$this->assertFalse(array_remove_key($d, "a"));
+	}
+
+	public function test_explode_safe_1() {
+		$parts = explode_safe(",", "");
+		$this->assertInternalType("array", $parts);
+		$this->assertEmpty($parts);
+	}
+
+	public function test_explode_safe_2() {
+		$parts = explode_safe(",", "1,2,3");
+		$this->assertInternalType("array", $parts);
+		$this->assertEquals($parts, ["1", "2", "3"]);
+	}
+
+	public function test_array_boolval_1() {
+		$this->assertTrue(array_boolval(["a" => "1"], "a"));
+	}
+
+	public function test_array_boolval_2() {
+		$this->assertTrue(array_boolval(["a" => "ON"], "a"));
+	}
+
+	public function test_array_boolval_3() {
+		$this->assertTrue(array_boolval(["a" => "yes"], "a"));
+	}
+
+	public function test_array_boolval_4() {
+		$this->assertTrue(array_boolval(["a" => "Y"], "a"));
+	}
+
+	public function test_array_boolval_5() {
+		$this->assertTrue(array_boolval(["a" => "true"], "a"));
+	}
+
+	public function test_array_boolval_6() {
+		$this->assertTrue(array_boolval(["a" => TRUE], "a"));
+	}
+
+	public function test_array_boolval_7() {
+		$this->assertTrue(array_boolval(["a" => 1], "a"));
+	}
+
+	public function test_array_boolval_8() {
+		$this->assertFalse(array_boolval(["b" => "no"], "b"));
+	}
+
+	public function test_array_boolval_9() {
+		$this->assertFalse(array_boolval(["b" => FALSE], "b"));
+	}
+
+	public function test_array_boolval_10() {
+		$this->assertFalse(array_boolval(["b" => 0], "b"));
+	}
+
+	public function test_array_boolval_11() {
+		$this->assertFalse(array_boolval(["a" => "b"], "c"));
+	}
+
+	public function test_array_boolval_12() {
+		$this->assertFalse(array_boolval("a", "c"));
+	}
+
+	public function test_array_boolval_13() {
+		$this->assertTrue(array_boolval("a", "c", TRUE));
 	}
 }

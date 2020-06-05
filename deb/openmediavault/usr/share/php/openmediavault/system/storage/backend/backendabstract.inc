@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ namespace OMV\System\Storage\Backend;
 abstract class BackendAbstract {
 	/**
 	 * Get the type of the storage device backend, e.g.
-	 * OMV_STORAGE_DEVICE_TYPE_DISK, OMV_STORAGE_DEVICE_TYPE_HBA, ...
+	 * OMV_STORAGE_DEVICE_TYPE_DISK, OMV_STORAGE_DEVICE_TYPE_SOFTWARERAID, ...
 	 */
 	abstract function getType();
 
@@ -54,7 +54,7 @@ abstract class BackendAbstract {
 	 * @return A list of devicefile names, otherwise FALSE.
 	 */
 	public function enumerateSlaves() {
-		return array();
+		return [];
 	}
 
 	/**

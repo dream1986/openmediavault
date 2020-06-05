@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,14 +38,12 @@ define("OMV_ROLE_EVERYONE",      OMV_ROLE_ADMINISTRATOR | OMV_ROLE_USER);
 
 define("OMV_STORAGE_DEVICE_TYPE_DISK", 0x1);
 define("OMV_STORAGE_DEVICE_TYPE_SOFTWARERAID", 0x2);
-define("OMV_STORAGE_DEVICE_TYPE_HBA", 0x4);
-define("OMV_STORAGE_DEVICE_TYPE_LOOPDEVICE", 0x8);
-define("OMV_STORAGE_DEVICE_TYPE_DEVICEMAPPER", 0x10);
-define("OMV_STORAGE_DEVICE_TYPE_SCSIGENERIC", 0x20); // !!! Character device
+define("OMV_STORAGE_DEVICE_TYPE_LOOPDEVICE", 0x4);
+define("OMV_STORAGE_DEVICE_TYPE_DEVICEMAPPER", 0x8);
+define("OMV_STORAGE_DEVICE_TYPE_SCSIGENERIC", 0x10); // !!! Character device
 define("OMV_STORAGE_DEVICE_TYPE_ALL",
 	OMV_STORAGE_DEVICE_TYPE_DISK |
 	OMV_STORAGE_DEVICE_TYPE_SOFTWARERAID |
-	OMV_STORAGE_DEVICE_TYPE_HBA |
 	OMV_STORAGE_DEVICE_TYPE_LOOPDEVICE |
 	OMV_STORAGE_DEVICE_TYPE_DEVICEMAPPER);
 
@@ -53,7 +51,7 @@ define("OMV_NETWORK_INTERFACE_TYPE_ETHERNET", 0x1);
 define("OMV_NETWORK_INTERFACE_TYPE_BOND", 0x2);
 define("OMV_NETWORK_INTERFACE_TYPE_VLAN", 0x4);
 define("OMV_NETWORK_INTERFACE_TYPE_BRIDGE", 0x8);
-define("OMV_NETWORK_INTERFACE_TYPE_WIRELESS", 0x10);
+define("OMV_NETWORK_INTERFACE_TYPE_WIFI", 0x10);
 define("OMV_NETWORK_INTERFACE_TYPE_VIRTUAL", 0x20);
 define("OMV_NETWORK_INTERFACE_TYPE_LOOPBACK", 0x40);
 define("OMV_NETWORK_INTERFACE_TYPE_ALL", 0xFF);
@@ -92,15 +90,6 @@ define("OMV_NETWORK_INTERFACE_TYPE_ALL", 0xFF);
 \OMV\Environment::set("OMV_FSTAB_MNTOPS_BIND", "nofail");
 \OMV\Environment::set("OMV_APT_PLUGINS_INDEX_FILE", "/var/lib/openmediavault/apt/pluginsindex.json");
 \OMV\Environment::set("OMV_APT_UPGRADE_INDEX_FILE", "/var/lib/openmediavault/apt/upgradeindex.json");
-\OMV\Environment::set("OMV_NETWORK_INTERFACE_TYPE_NAMES", [
-	OMV_NETWORK_INTERFACE_TYPE_ETHERNET => "ethernet",
-	OMV_NETWORK_INTERFACE_TYPE_BOND => "bond",
-	OMV_NETWORK_INTERFACE_TYPE_VLAN => "vlan",
-	OMV_NETWORK_INTERFACE_TYPE_BRIDGE => "bridge",
-	OMV_NETWORK_INTERFACE_TYPE_WIRELESS => "wireless",
-	OMV_NETWORK_INTERFACE_TYPE_VIRTUAL => "virtual",
-	OMV_NETWORK_INTERFACE_TYPE_LOOPBACK => "loopback"
-]);
 \OMV\Environment::set("OMV_DUNE_QUOTES", [ // http://www.nightsolo.net/dune/god.html
 	"The beginning of knowledge is the discovery of something ".
 		"we do not understand.",

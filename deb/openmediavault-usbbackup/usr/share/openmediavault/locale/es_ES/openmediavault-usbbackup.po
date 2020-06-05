@@ -4,13 +4,13 @@
 # 
 # Translators:
 # jmcainzos <jmcainzos@vodafone.es>, 2013
-# Raul Fernandez Garcia <raulfg3@gmail.com>, 2013-2014,2017
+# Raul Fernandez Garcia <raulfg3@gmail.com>, 2013-2014,2017,2019
 msgid ""
 msgstr ""
 "Project-Id-Version: openmediavault\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-11-18 11:05+0100\n"
-"PO-Revision-Date: 2017-11-18 13:27+0000\n"
+"POT-Creation-Date: 2020-01-07 17:31+0100\n"
+"PO-Revision-Date: 2019-11-04 14:11+0000\n"
 "Last-Translator: Raul Fernandez Garcia <raulfg3@gmail.com>\n"
 "Language-Team: Spanish (Spain) (http://www.transifex.com/votdev/openmediavault/language/es_ES/)\n"
 "MIME-Version: 1.0\n"
@@ -109,8 +109,14 @@ msgstr "Conservar ACLs"
 msgid "Preserve extended attributes"
 msgstr "Mantener atributos extendidos"
 
-msgid "Preserve modification times."
-msgstr "Mantener la hora de modificación"
+msgid "Preserve group"
+msgstr "Preservar Grupo"
+
+msgid "Preserve modification times"
+msgstr "Preservar hora de modificación."
+
+msgid "Preserve owner"
+msgstr "Preservar Propietario"
 
 msgid "Preserve permissions"
 msgstr "Conservar permisos"
@@ -143,6 +149,15 @@ msgid ""
 "Set the destination permissions to be the same as the source permissions."
 msgstr "Establecer los permisos del destino como los permisos del origen"
 
+msgid ""
+"Set the group of the destination file to be the same as the source file."
+msgstr "Hacer que el grupo del destino sea el mismo que el del origen."
+
+msgid ""
+"Set the owner of the destination file to be the same as the source file, but"
+" only if the receiving rsync is being run as the super-user."
+msgstr "Hacer que el propietario del destino sea el mismo del origen, SOLO si el servicio RSYNC ha sido ejecutado por un super-usuario."
+
 msgid "Shared folder"
 msgstr "Carpeta compartida"
 
@@ -166,8 +181,10 @@ msgid ""
 "connected."
 msgstr "La carpeta compartida a sincronizar cuando el dispositivo externo sea conectado."
 
-msgid "Times"
-msgstr "Veces"
+msgid ""
+"Transfer modification times along with the files and update them on the "
+"remote system."
+msgstr "Copiar la hora de modificación de los archivos en el destino remoto y hacerla idéntica a la hora original."
 
 msgid "USB Backup"
 msgstr "USB Backup"

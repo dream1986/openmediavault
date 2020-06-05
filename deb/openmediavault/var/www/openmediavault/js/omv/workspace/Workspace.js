@@ -3,7 +3,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@
 // require("js/omv/Rpc.js")
 // require("js/omv/window/MessageBox.js")
 // require("js/omv/toolbar/ApplyCfg.js")
+// require("js/omv/toolbar/HostnameItem.js")
+// require("js/omv/toolbar/RebootRequiredItem.js")
 // require("js/omv/workspace/tab/Panel.js")
 // require("js/omv/workspace/node/tree/Panel.js")
 // require("js/omv/workspace/node/panel/Category.js")
@@ -41,8 +43,10 @@ Ext.define("OMV.workspace.Workspace", {
 		"OMV.SessionManager",
 		"OMV.Rpc",
 		"OMV.toolbar.ApplyCfg",
+		"OMV.toolbar.HostnameItem",
 		"OMV.window.MessageBox",
-		"OMV.workspace.node.tree.Panel"
+		"OMV.workspace.node.tree.Panel",
+		'Ext.rtl.*'
 	],
 	uses: [
 		"OMV.workspace.node.panel.Category",
@@ -51,6 +55,7 @@ Ext.define("OMV.workspace.Workspace", {
 	],
 
 	layout: "border",
+	rtl: OMV.util.i18n.isRTL(),
 
 	initComponent: function() {
 		var me = this;
@@ -89,18 +94,24 @@ Ext.define("OMV.workspace.Workspace", {
 	 * @private
 	 */
 	buildHeader: function() {
-		var me = this;
-		return Ext.create("Ext.Component", {
+		return {
+			xtype: "container",
 			region: "north",
-			cls: Ext.baseCSSPrefix + "workspace-header",
-			autoEl: {
-				tag: "div",
-				html: "<div id='header'><a title='" + OMV.PRODUCT_NAME +
-				  "' href='" + OMV.PRODUCT_URL + "' target='_blank'>" +
-				  "<div id='headerlogo'></div></a><div id='headerrlogo'>" +
-				  "</div></div>"
-			}
-		});
+			fullscreen: true,
+			items: [{
+				xtype: "applycfgtoolbar"
+			},{
+				xtype: "component",
+				cls: Ext.baseCSSPrefix + "workspace-header",
+				autoEl: {
+					tag: "div",
+					html: "<div id='header'><a title='" + OMV.PRODUCT_NAME +
+						"' href='" + OMV.PRODUCT_URL + "' target='_blank'>" +
+						"<div id='headerlogo'></div></a><div id='headerrlogo'>" +
+						"</div></div>"
+				}
+			}]
+		};
 	},
 
 	/**
@@ -173,6 +184,10 @@ Ext.define("OMV.workspace.Workspace", {
 				},{
 					xtype: "tbfill"
 				},{
+					xtype: "tbhostname"
+				},{
+					xtype: "tbrebootrequired"
+				},{
 					xtype: "splitbutton",
 					iconCls: "x-fa fa-ellipsis-v",
 					handler: function() {
@@ -204,7 +219,7 @@ Ext.define("OMV.workspace.Workspace", {
 										// Force rendering of whole page with
 										// selected language.
 										OMV.confirmPageUnload = false;
-										document.location.reload();
+										document.location.reload(true);
 									}
 								}
 							}
@@ -245,13 +260,9 @@ Ext.define("OMV.workspace.Workspace", {
 								if (!(Ext.isObject(item) && Ext.isDefined(
 										item.action)))
 									return;
-								OMV.MessageBox.show({
-									title: _("Confirmation"),
-									msg: item.msg,
-									buttons: Ext.Msg.YESNO,
-									defaultFocus: "no",
-									fn: function(answer) {
-										if(answer !== "yes")
+								OMV.MessageBox.confirm(null, item.msg,
+									function(answer) {
+										if (answer !== "yes")
 											return;
 										switch (item.action) {
 										case "resetdefaults":
@@ -259,7 +270,7 @@ Ext.define("OMV.workspace.Workspace", {
 											Ext.state.Manager.getProvider().clearAll();
 											// Reload the page.
 											OMV.confirmPageUnload = false;
-											document.location.reload();
+											document.location.reload(true);
 											break;
 										case "logout":
 											OMV.SessionManager.logout();
@@ -268,13 +279,11 @@ Ext.define("OMV.workspace.Workspace", {
 											OMV.Rpc.request({
 												scope: this,
 												callback: function(id, success, response) {
-													OMV.MessageBox.show({
-														title: _("Information"),
-														icon: Ext.Msg.INFO,
-														msg: _("The system will reboot now. This may take some time ..."),
-														wait: true,
-														closable: false
-													});
+													OMV.MessageBox.wait(
+														_("Information"),
+														_("The system will reboot now. This may take some time ..."),
+														{ text: "" }
+													);
 													this.waitingForResponse = false;
 													this.hasRebooted = false;
 													Ext.util.TaskManager.start({
@@ -290,7 +299,7 @@ Ext.define("OMV.workspace.Workspace", {
 																	if(success) {
 																		if(this.hasRebooted) {
 																			OMV.confirmPageUnload = false;
-																			document.location.reload();
+																			document.location.reload(true);
 																		}
 																	} else {
 																		this.hasRebooted = true;
@@ -348,18 +357,13 @@ Ext.define("OMV.workspace.Workspace", {
 											});
 											break;
 										}
-									},
-									scope: this,
-									icon: Ext.Msg.QUESTION
-								});
+									}, this);
 							},
 							scope: this
 						}
 					})
 				}]
-			}),{
-				xtype: "applycfgtoolbar"
-			}]
+			})]
 		});
 	},
 

@@ -3,7 +3,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,7 +70,6 @@ Ext.define("OMV.module.admin.storage.filesystem.Create", {
 	},
 
 	getFormItems: function() {
-		var me = this;
 		return [{
 			xtype: "combo",
 			name: "devicefile",
@@ -136,17 +135,14 @@ Ext.define("OMV.module.admin.storage.filesystem.Create", {
 
 	doSubmit: function() {
 		var me = this;
-		OMV.MessageBox.show({
-			title: _("Confirmation"),
-			msg: _("Do you really want to format this device? All data on it will be deleted. Please note that the file system creation may take some time."),
-			buttons: Ext.Msg.YESNO,
-			defaultFocus: "no",
-			fn: function(answer) {
+		OMV.MessageBox.confirm(null,
+			_("Do you really want to format this device? All data on it will be deleted. Please note that the file system creation may take some time."),
+			function(answer) {
 				if (answer === "no")
 					return;
 				// Display dialog showing the file system creation progress.
 				var params = me.getRpcSetParams();
-				var wnd = Ext.create("OMV.window.Execute", {
+				Ext.create("OMV.window.Execute", {
 					title: _("Create file system"),
 					rpcService: "FileSystemMgmt",
 					rpcMethod: "create",
@@ -171,10 +167,7 @@ Ext.define("OMV.module.admin.storage.filesystem.Create", {
 					}
 				}).start();
 				me.superclass.doSubmit.apply(this, arguments);
-			},
-			scope: me,
-			icon: Ext.Msg.QUESTION
-		});
+			}, me);
 	}
 });
 
@@ -304,6 +297,19 @@ Ext.define("OMV.module.admin.storage.filesystem.Quota", {
 					reader: {
 						type: "json"
 					}
+				},
+				listeners: {
+					scope: me,
+					load: function(store, records) {
+						// Records with client-side generated values for
+						// idProperty are called phantom records. These
+						// records need to be modified, otherwise the
+						// 'Reset' button feature will remove them from
+						// the store.
+						Ext.Array.each(records, function(record) {
+							record.phantom = false;
+						});
+					}
 				}
 			}),
 			listeners: {
@@ -394,7 +400,7 @@ Ext.define("OMV.module.admin.storage.filesystem.Filesystems", {
 	},{
 		xtype: "devicefilescolumn",
 		text: _("Device(s)"),
-		sortable: true,
+		sortable: false,
 		dataIndex: "devicefiles",
 		stateId: "devicefiles"
 	},{
@@ -472,8 +478,8 @@ Ext.define("OMV.module.admin.storage.filesystem.Filesystems", {
 		sortable: true,
 		dataIndex: "status",
 		stateId: "status",
-		renderer: function(value) {
-			switch(value) {
+		renderer: function(value, metaData) {
+			switch (value) {
 			case 1:
 				value = _("Online");
 				break;
@@ -482,6 +488,7 @@ Ext.define("OMV.module.admin.storage.filesystem.Filesystems", {
 				  _("Initializing");
 				break;
 			default:
+				metaData.tdCls += " x-color-error";
 				value = _("Missing");
 				break;
 			}
@@ -715,15 +722,9 @@ Ext.define("OMV.module.admin.storage.filesystem.Filesystems", {
 
 	onResizeButton: function() {
 		var me = this;
-		var msg = _("Do you really want to resize the selected file system? You have to do that after a RAID has been grown for example.");
-		OMV.MessageBox.show({
-			title: _("Confirmation"),
-			msg: msg,
-			buttons: Ext.Msg.YESNO,
-			icon: Ext.Msg.QUESTION,
-			defaultFocus: "no",
-			scope: me,
-			fn: function(answer) {
+		OMV.MessageBox.confirm(null,
+			_("Do you really want to resize the selected file system? You have to do that after a RAID has been grown for example."),
+			function(answer) {
 				if (answer !== "yes")
 					return;
 				var record = me.getSelected();
@@ -742,8 +743,7 @@ Ext.define("OMV.module.admin.storage.filesystem.Filesystems", {
 						}
 					}
 				});
-			}
-		});
+			}, me);
 	},
 
 	onQuotaButton: function() {

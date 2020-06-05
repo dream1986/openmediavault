@@ -1,3 +1,107 @@
+openmediavault-clamav (5.0.10-1) stable; urgency=low
+
+  * Update locales.
+  * Issue #702: Do not try to download main.cvd if main.cld exists.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Sat, 09 May 2020 18:10:47 +0200
+
+openmediavault-clamav (5.0.9-1) stable; urgency=low
+
+  * The SLS execution is now correctly deferred for 5 minutes if
+    freshclam downloads the virus database.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Mon, 09 Mar 2020 0:47:15 +0100
+
+openmediavault-clamav (5.0.8-1) stable; urgency=low
+
+  * Fix permission denied issues.
+  * Set ReceiveTimeout=0 (disabled) in freshclam.conf.
+  * Fix various AppArmor issues.
+  * Improved clamav-onaccess.service unit file. Now it is possible to
+    customize the options via /etc/default/clamav-onaccess environment
+    file.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Fri, 06 Mar 2020 17:07:26 +0100
+
+openmediavault-clamav (5.0.7-1) stable; urgency=low
+
+  * Improve clamav-onaccess.service unit file.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Fri, 28 Feb 2020 08:25:35 +0100
+
+openmediavault-clamav (5.0.6-1) stable; urgency=low
+
+  * Update locales.
+  * Reload clamd Apparmor profile if necessary.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Wed, 26 Feb 2020 16:52:04 +0100
+
+openmediavault-clamav (5.0.5-1) stable; urgency=low
+
+  * Update locales.
+  * Adapt code for SaltStack 3000.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Mon, 24 Feb 2020 00:19:41 +0100
+
+openmediavault-clamav (5.0.4-1) stable; urgency=low
+
+  * Issue #607: Error using on-access scanner.
+  * Set ReceiveTimeout=300 (5 minutes) in freshclam.conf,
+    otherwise the database download will never succeed
+    because it will be restarted every 30 seconds when
+    the download was not successful during that time.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Tue, 18 Feb 2020 17:35:19 +0100
+
+openmediavault-clamav (5.0.4-1) stable; urgency=low
+
+  * Various improvements.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Tue, 11 Feb 2020 15:39:47 +0100
+
+openmediavault-clamav (5.0.3-1) stable; urgency=low
+
+  * Update locales.
+  * Adapt to ClamAV 0.102.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Tue, 11 Feb 2020 12:50:29 +0100
+
+openmediavault-clamav (5.0.2-1) stable; urgency=low
+
+  * Various improvements.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Fri, 22 Nov 2019 13:45:38 +0100
+
+openmediavault-clamav (5.0.1-1) stable; urgency=low
+
+  * Do not execute scheduled jobs in UI when service is disabled.
+  * Make sure that the signature databases exists before starting
+    clamav-daemon.
+  * Adapt configuration settings according to
+    https://blog.clamav.net/2018/12/clamav-01010-has-been-released.html
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Wed, 20 Nov 2019 17:56:00 +0100
+
+openmediavault-clamav (5.0-1) stable; urgency=low
+
+  * Adapt to openmediavault 5 (Usul).
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Sun, 23 Dec 2018 22:49:48 +0100
+
+openmediavault-clamav (4.1.9) stable; urgency=low
+
+  * Remove deprecated option StatsEnabled, StatsPEDisabled, StatsHostID
+    and StatsTimeout.
+  * Disable freshclam if database checks are set to 0.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Sun, 23 Dec 2018 18:47:35 +0100
+
+openmediavault-clamav (4.1.8-1) stable; urgency=low
+
+  * Update locales.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Thu, 13 Dec 2018 11:00:09 +0100
+
 openmediavault-clamav (4.1.7-1) stable; urgency=low
 
   * Fix the pattern attribute in the JSON schemas according to the ECMA 262

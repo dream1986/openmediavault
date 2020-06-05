@@ -3,7 +3,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,17 +102,9 @@ Ext.define("OMV.Rpc", {
 
 		if (success) {
 			try {
-				// Decode RPC response. It contains the fields called
-				// response and error.
-				if(!Ext.isEmpty(response.responseText)) {
+				if (!Ext.isEmpty(response.responseText)) {
 					var o = Ext.JSON.decode(response.responseText);
-					// Check if RPC response contains an error object.
-					if(Ext.isObject(o.error)) {
-						success = false;
-						rpcResponse = o.error;
-					} else {
-						rpcResponse = o.response;
-					}
+					rpcResponse = o.response;
 				}
 			} catch(e) {
 				success = false;
@@ -123,41 +115,37 @@ Ext.define("OMV.Rpc", {
 				};
 			}
 		} else {
-			rpcResponse = {
-				code: null,
-				message: Ext.isEmpty(response.statusText) ?
-				  "" : Ext.String.rtrim(response.statusText, " \n"),
-				trace: response.responseText || response.statusText
-			};
+			if (!Ext.isEmpty(response.responseText)) {
+				try {
+					var o = Ext.JSON.decode(response.responseText);
+					rpcResponse = o.error;
+				} catch(e) {
+					rpcResponse = {
+						code: null,
+						message: "",
+						trace: response.responseText || e.toString()
+					};
+				}
+			} else {
+				rpcResponse = {
+					code: null,
+					message: Ext.isEmpty(response.statusText) ?
+						"" : response.statusText.rtrim(" \n"),
+					trace: response.responseText || response.statusText
+				};
+			}
 		}
 
 		// Handle special errors.
 		if (!success) {
-			var abort = false;
 			var reload = false;
 			// Translate various error messages and decide if RPC response
 			// delivery is aborted.
-			switch (rpcResponse.code) {
-			case OMV.E_SESSION_NOT_AUTHENTICATED:
-				abort = true;
-				reload = true;
-				rpcResponse.message = _("Session not authenticated.");
-				break;
-			case OMV.E_SESSION_TIMEOUT:
-				abort = true;
-				reload = true;
-				rpcResponse.message = _("Session expired.");
-				break;
-			case OMV.E_SESSION_INVALID_USER:
-				abort = true;
-				reload = true;
-				rpcResponse.message = _("The session user no longer exists.");
-				break;
-			case OMV.E_SESSION_INVALID_IPADDRESS:
-				abort = true;
-				reload = true;
-				rpcResponse.message = _("The session IP address has been changed.");
-				break;
+			switch (response.status) {
+				case 401: // Unauthorized
+				case 403: // Forbidden
+					reload = true;
+					break;
 			}
 			// Reload page and display a message box?
 			if (true === reload) {
@@ -170,7 +158,7 @@ Ext.define("OMV.Rpc", {
 				// Display a dialog forcing user to click 'OK' to reload
 				// the page.
 				me.guru = OMV.MessageBox.guru({
-					msg: rpcResponse.message,
+					msg: _(rpcResponse.message),
 					fn: function() {
 						OMV.confirmPageUnload = false;
 						// Force browser to reload document. The login
@@ -178,10 +166,9 @@ Ext.define("OMV.Rpc", {
 						document.location.reload(true);
 					}
 				});
-			}
-			// Abort RPC response delivery?
-			if (true === abort)
+				// Abort RPC response delivery.
 				return;
+			}
 		}
 
 		// Handle other errors.
@@ -244,7 +231,7 @@ Ext.define("OMV.RpcObserver", {
 			rpcDelay: 500
 		});
 		// Display a waiting dialog while the RPC is running.
-		OMV.MessageBox.wait(options.title, options.msg);
+		OMV.MessageBox.wait(options.title, options.msg, { text: "" });
 		// Execute RPC.
 		var fn = function(id, success, response) {
 			if (!success) {

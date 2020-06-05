@@ -1,3 +1,44 @@
+openmediavault-nut (5.1.0-1) stable; urgency=low
+
+  * Update locales.
+  * Add UPS client support. Thanks to Daniel Tsai.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Thu, 26 Feb 2020 22:06:36 +0100
+
+openmediavault-nut (5.0.3-1) stable; urgency=low
+
+  * Add IPv6 support.
+  * Restart services if necessary.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Thu, 26 Feb 2020 22:06:36 +0100
+
+openmediavault-nut (5.0.2-1) stable; urgency=low
+
+  * Update locales.
+  * Restart the UPS driver in case of 2 erroneous checks
+    within 1 minute.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Wed, 26 Feb 2020 17:36:33 +0100
+
+openmediavault-nut (5.0.1-1) stable; urgency=low
+
+  * Update locales.
+  * Adapt code for SaltStack 3000.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Mon, 24 Feb 2020 00:26:56 +0100
+
+openmediavault-nut (5.0-1) stable; urgency=low
+
+  * Adapt to openmediavault 5 (Usul).
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Sun, 06 Jan 2019 17:26:43 +0100
+
+openmediavault-nut (4.0.14-1) stable; urgency=low
+
+  * Fix various issues found by the lgtm.com project.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Mon, 22 Oct 2018 18:39:44 +0200
+
 openmediavault-nut (4.0.13-1) stable; urgency=low
 
   * Issue #110: No UPS voltage graphs.

@@ -3,7 +3,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -217,21 +217,14 @@ Ext.define("OMV.module.admin.privilege.sharedfolder.SharedFolder", {
 					isDirty = true;
 			}, me);
 			if (true === isDirty) {
-				OMV.MessageBox.show({
-					title: _("Confirmation"),
-					msg: _("Do you really want to relocate the shared folder? The content of the shared folder will not be moved automatically, you have to do this yourself."),
-					icon: Ext.Msg.QUESTION,
-					buttons: Ext.Msg.YESNO,
-					defaultFocus: "no",
-					fn: function(answer) {
+				OMV.MessageBox.confirm(null,
+					_("Do you really want to relocate the shared folder? The content of the shared folder will not be moved automatically, you have to do this yourself."),
+					function(answer) {
 						if (answer == "yes") // Continue ...
 							me.superclass.doSubmit.apply(this, arguments);
 						else // Close the window and exit.
 							this.close();
-					},
-					scope: me,
-					icon: Ext.Msg.QUESTION
-				});
+					}, me);
 			} else {
 				me.callParent(arguments);
 			}
@@ -557,7 +550,7 @@ Ext.define("OMV.module.admin.privilege.sharedfolder.ACL", {
 			}
 		});
 		// Setup the RPC parameters.
-		rpcParams = {
+		var rpcParams = {
 			uuid: me.uuid,
 			file: me.tp.getPathFromNode(node),
 			recursive: options.recursive,
@@ -689,8 +682,15 @@ Ext.define("OMV.module.admin.privilege.sharedfolder.SharedFolders", {
 							name: "absdirpath",
 							convert: function(value, record) {
 								var mntent = record.get("mntent");
-								return Ext.String.format("{0}/{1}",
-									mntent.dir, record.get("reldirpath"));
+								var parts = [
+									mntent.dir,
+									record.get("reldirpath")
+								];
+								return "/" + parts.map(function(part) {
+									return part.lrtrim("/");
+								}).filter(function(part) {
+									return part.length;
+								}).join("/");
 							},
 							type: "string"
 						},
@@ -857,19 +857,13 @@ Ext.define("OMV.module.admin.privilege.sharedfolder.SharedFolders", {
 			return;
 		}
 		// Recursively delete the shared folder configuration and its content.
-		OMV.MessageBox.show({
-			title: _("Confirmation"),
-			msg: _("Do you really want to remove the shared folder content? It will be permanently removed and cannot be recovered."),
-			icon: Ext.Msg.WARNING,
-			buttons: OMV.Msg.YESNO,
-			defaultFocus: "no",
-			scope: me,
-			fn: function(answer) {
+		OMV.MessageBox.confirmWarning(null,
+			_("Do you really want to remove the shared folder content? It will be permanently removed and cannot be recovered."),
+			function(answer) {
 				if (answer === "yes") {
 					me.superclass.startDeletion.apply(this, [ records ]);
 				}
-			}
-		});
+			}, me);
 	},
 
 	doDeletion: function(record) {

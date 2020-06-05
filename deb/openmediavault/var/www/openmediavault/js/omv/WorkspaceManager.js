@@ -3,7 +3,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,7 +97,7 @@ Ext.define("OMV.WorkspaceManager", {
 			position: 100
 		}, config);
 		// Extract path nodes.
-		var parts = me.explodeNodePath(config.path)
+		var parts = me.explodeNodePath(config.path);
 		var parent = me.getRootNode();
 		// Walk down the node path. Create non-existing nodes during this
 		// process. Normally these nodes will be reconfigured later.
@@ -115,7 +115,7 @@ Ext.define("OMV.WorkspaceManager", {
 		});
 		// Finally create/update the given node.
 		if(parent.containsChild(config.id)) {
-			result = parent.getChild(config.id);
+			var result = parent.getChild(config.id);
 			result.setConfig(Ext.apply(config, {
 				leaf: false
 			}));
@@ -160,7 +160,7 @@ Ext.define("OMV.WorkspaceManager", {
 			// Extract and rebuild node path.
 			var parts = me.explodeNodePath(config.path);
 			var id = parts.pop();
-			var path = me.buildNodePath(parts)
+			var path = me.buildNodePath(parts);
 			// Register parent node, should be re-registered later with
 			// correct values.
 			parent = me.registerNode({

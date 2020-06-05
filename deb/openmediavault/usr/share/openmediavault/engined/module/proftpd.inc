@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,54 +19,22 @@
  * You should have received a copy of the GNU General Public License
  * along with OpenMediaVault. If not, see <http://www.gnu.org/licenses/>.
  */
-class OMVModuleProftpd extends \OMV\Engine\Module\ServiceAbstract
-  implements \OMV\Engine\Notify\IListener, \OMV\Engine\Module\IServiceStatus, \OMV\Engine\Module\IZeroconf {
-	/**
-	 * Get the module name.
-	 */
+namespace Engined\Module;
+
+class Proftpd extends \OMV\Engine\Module\ServiceAbstract implements
+		\OMV\Engine\Notify\IListener, \OMV\Engine\Module\IServiceStatus {
 	public function getName() {
+		return "proftpd";
+	}
+
+	public function getAlias() {
 		return "ftp";
 	}
 
-	/**
-	 * Defines the modules that if present should build their configuration
-	 * before the service provided by this module.
-	 * @return An array of modules.
-	 */
-	public function shouldApply() { return [ "certificatemgmt" ]; }
-
-	/**
-	 * Generate the configuration.
-	 */
-	public function applyConfig() {
-		$cmd = new \OMV\System\Process("omv-mkconf", "proftpd");
-		$cmd->setRedirect2to1();
-		$cmd->execute();
+	public function deployAfter(): array {
+		return ["certificates", "monit"];
 	}
 
-	/**
-	 * Stop the managed service.
-	 */
-	public function stopService() {
-		$systemCtl = new \OMV\System\SystemCtl("proftpd");
-		$systemCtl->disable(TRUE);
-	}
-
-	/**
-	 * Start the managed service.
-	 */
-	public function startService() {
-        $db = \OMV\Config\Database::getInstance();
-		$object = $db->get("conf.service.ftp");
-		if (TRUE !== $object->get("enable"))
-			return;
-		$systemCtl = new \OMV\System\SystemCtl("proftpd");
-		$systemCtl->enable(TRUE);
-	}
-
-	/**
-	 * Get the status of the managed service.
-	 */
 	public function getStatus() {
 		$db = \OMV\Config\Database::getInstance();
 		$object = $db->get("conf.service.ftp");
@@ -76,16 +44,6 @@ class OMVModuleProftpd extends \OMV\Engine\Module\ServiceAbstract
 			"title" => gettext("FTP"),
 			"enabled" => $object->get("enable"),
 			"running" => $systemCtl->isActive()
-		];
-	}
-
-	/**
-	 * Get the Zeroconf service configuration.
-	 */
-	public function getZeroconfConfig() {
-		return [
-			"id" => "ftp",
-			"title" => gettext("FTP")
 		];
 	}
 
@@ -109,41 +67,55 @@ class OMVModuleProftpd extends \OMV\Engine\Module\ServiceAbstract
 	}
 
 	/**
-	 * Bind listeners.
+	 * Helper function that is called whenever the global service
+	 * settings have been modified.
+	 * @param type The event message type.
+	 * @param path The event message path.
+	 * @param object The new configuration object.
+	 * @param oldObject The previous configuration object.
 	 */
+	final public function onModifySettings($type, $path, $object, $oldObject) {
+		// Mark this module as dirty.
+		$this->setDirty();
+		// Mark 'monit' as dirty when this service is enabled/disabled.
+		if ($oldObject['enable'] !== $object['enable']) {
+			$this->setDirtyByName("monit");
+		}
+	}
+
 	function bindListeners(\OMV\Engine\Notify\Dispatcher $dispatcher) {
 		$dispatcher->addListener(
-		  OMV_NOTIFY_MODIFY,
-		  "org.openmediavault.conf.service.ftp",
-		  [ $this, "setDirty" ]);
+			OMV_NOTIFY_MODIFY,
+			"org.openmediavault.conf.service.ftp",
+			[$this, "onModifySettings"]);
 		$dispatcher->addListener(
-		  OMV_NOTIFY_CREATE | OMV_NOTIFY_MODIFY | OMV_NOTIFY_DELETE,
-		  "org.openmediavault.conf.service.ftp.share",
-		  [ $this, "setDirty" ]);
+			OMV_NOTIFY_CREATE | OMV_NOTIFY_MODIFY | OMV_NOTIFY_DELETE,
+			"org.openmediavault.conf.service.ftp.share",
+			[$this, "setDirty"]);
 		$dispatcher->addListener(
-		  OMV_NOTIFY_CREATE | OMV_NOTIFY_MODIFY | OMV_NOTIFY_DELETE,
-		  "org.openmediavault.conf.service.ftp.modban.rule",
-		  [ $this, "setDirty" ]);
+			OMV_NOTIFY_CREATE | OMV_NOTIFY_MODIFY | OMV_NOTIFY_DELETE,
+			"org.openmediavault.conf.service.ftp.modban.rule",
+			[$this, "setDirty"]);
 		$dispatcher->addListener(
-		  OMV_NOTIFY_MODIFY,
-		  "org.openmediavault.conf.service.ftp.modtls",
-		  [ $this, "setDirty" ]);
+			OMV_NOTIFY_MODIFY,
+			"org.openmediavault.conf.service.ftp.modtls",
+			[$this, "setDirty"]);
 		$dispatcher->addListener(
-		  OMV_NOTIFY_MODIFY,
-		  "org.openmediavault.conf.system.network.dns",
-		  [ $this, "setDirty" ]);
+			OMV_NOTIFY_MODIFY,
+			"org.openmediavault.conf.system.network.dns",
+			[$this, "setDirty"]);
 		$dispatcher->addListener(
-		  OMV_NOTIFY_MODIFY,
-		  "org.openmediavault.conf.system.sharedfolder",
-		  [ $this, "onSharedFolder" ]);
+			OMV_NOTIFY_MODIFY,
+			"org.openmediavault.conf.system.sharedfolder",
+			[$this, "onSharedFolder"]);
 		$dispatcher->addListener(
-		  OMV_NOTIFY_MODIFY,
-		  "org.openmediavault.conf.system.sharedfolder.privilege",
-		  [ $this, "onSharedFolder" ]);
+			OMV_NOTIFY_MODIFY,
+			"org.openmediavault.conf.system.sharedfolder.privilege",
+			[$this, "onSharedFolder"]);
 		$moduleMngr = \OMV\Engine\Module\Manager::getInstance();
 		$dispatcher->addListener(
-		  OMV_NOTIFY_MODIFY,
-		  "org.openmediavault.conf.service.ftp",
-		  [ $moduleMngr->getModule("zeroconf"), "setDirty" ]);
+			OMV_NOTIFY_MODIFY,
+			"org.openmediavault.conf.service.ftp",
+			[$moduleMngr->getModule("zeroconf"), "setDirty"]);
 	}
 }

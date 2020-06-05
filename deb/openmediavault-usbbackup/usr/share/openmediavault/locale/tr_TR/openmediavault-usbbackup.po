@@ -3,13 +3,13 @@
 # This file is distributed under the same license as the openmediavault-usbbackup package.
 # 
 # Translators:
-# Serhat SUT <serhat.sut@gmail.com>, 2013-2014,2017
+# Serhat SUT <serhat.sut@gmail.com>, 2013-2014,2017,2020
 msgid ""
 msgstr ""
 "Project-Id-Version: openmediavault\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-11-18 11:05+0100\n"
-"PO-Revision-Date: 2017-11-18 22:07+0000\n"
+"POT-Creation-Date: 2020-01-07 17:31+0100\n"
+"PO-Revision-Date: 2020-01-05 15:10+0000\n"
 "Last-Translator: Serhat SUT <serhat.sut@gmail.com>\n"
 "Language-Team: Turkish (Turkey) (http://www.transifex.com/votdev/openmediavault/language/tr_TR/)\n"
 "MIME-Version: 1.0\n"
@@ -108,8 +108,14 @@ msgstr "ACL leri koru"
 msgid "Preserve extended attributes"
 msgstr "Genişletilmiş öznitelikleri koru"
 
-msgid "Preserve modification times."
-msgstr "Değiştirilme zamanlarını koru"
+msgid "Preserve group"
+msgstr "Grubu koru"
+
+msgid "Preserve modification times"
+msgstr "Değişiklik zamanını koru"
+
+msgid "Preserve owner"
+msgstr "Sahibi koru"
 
 msgid "Preserve permissions"
 msgstr "Yetkileri koru"
@@ -142,6 +148,15 @@ msgid ""
 "Set the destination permissions to be the same as the source permissions."
 msgstr "Hedef yetkilerini kaynak yetkileri ile aynı olacak şekilde ayarla"
 
+msgid ""
+"Set the group of the destination file to be the same as the source file."
+msgstr "Hedef dosya gurubunu kaynak dosya ile aynı olacak şekilde ayarla."
+
+msgid ""
+"Set the owner of the destination file to be the same as the source file, but"
+" only if the receiving rsync is being run as the super-user."
+msgstr "Sadece super-user tarafından çalıştırılan rsync ile alındığında hedef dosya sahiplik bilgisini kaynak dosya ile aynı olacak şekilde ayarla."
+
 msgid "Shared folder"
 msgstr "Paylaşılmış klasör"
 
@@ -165,8 +180,10 @@ msgid ""
 "connected."
 msgstr "Harici depolama cihazı bağlandığında eşleştirilecek olan paylaşımlı klasör."
 
-msgid "Times"
-msgstr "Kere"
+msgid ""
+"Transfer modification times along with the files and update them on the "
+"remote system."
+msgstr "Dosyaların değiştirilme zamanını transfer et ve uzak erişim sisteminde de güncelle."
 
 msgid "USB Backup"
 msgstr "USB yedekleme"

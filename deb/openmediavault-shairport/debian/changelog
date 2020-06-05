@@ -1,3 +1,16 @@
+openmediavault-shairport (5.0.1-1) stable; urgency=low
+
+  * Update locales.
+  * Adapt code for SaltStack 3000.
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Mon, 24 Feb 2020 00:27:38 +0100
+
+openmediavault-shairport (5.0-1) stable; urgency=low
+
+  * Adapt to openmediavault 5 (Usul).
+
+ -- Volker Theile <volker.theile@openmediavault.org>  Tue, 25 Dec 2018 22:40:41 +0100
+
 openmediavault-shairport (4.0.7-1) stable; urgency=low
 
   * Fix monit configuration.

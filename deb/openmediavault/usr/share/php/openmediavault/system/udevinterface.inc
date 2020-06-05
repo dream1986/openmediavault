@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +29,8 @@ interface UdevInterface {
 	/**
 	 * Queries the udev database for device information stored in the
 	 * udev database.
-	 * @param boolean force Force the collection of the information, even
-	 *   when the information is already cached. Defaults to FALSE.
+	 * @param boolean force Force the collection of the information,
+	 *   although the information is already cached. Defaults to FALSE.
 	 * @result void
 	 */
 	public function queryUdevInfo($force = FALSE);
@@ -44,8 +44,7 @@ interface UdevInterface {
 	public function hasUdevProperty($id);
 
 	/**
-	 * Queries the udev database for device information stored in the udev
-	 * database.
+	 * Get the specified udev property.
 	 * @param string id The name of the property, e.g. ID_VENDOR, ID_MODEL
 	 *   or ID_SERIAL_SHORT.
 	 * @return mixed|boolean The requested property, otherwise FALSE.

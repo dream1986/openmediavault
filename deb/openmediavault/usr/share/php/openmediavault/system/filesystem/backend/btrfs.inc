@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,15 +35,47 @@ class Btrfs extends BackendAbstract {
 	 * See parent class definition.
 	 */
 	public function enumerateByBlkid(array $enums) {
-		// Sort filesystems by device names.
-		array_sort_key($enums, "devicefile");
-		// Filter filesystems with duplicate UUID, e.g. when they are
-		// used in a RAID. Because of the previous sorting always the
-		// lower device is used.
-		// The following example of a RAID1 will return /dev/sdk.
-		// /dev/sdk: LABEL="TestFS" UUID="b7adba40-b980-4067-b33c-dd5c8ee17044" UUID_SUB="7b19094b-e7df-4a3e-a3db-57e2d4c548b3" TYPE="btrfs"
-		// /dev/sdl: LABEL="TestFS" UUID="b7adba40-b980-4067-b33c-dd5c8ee17044" UUID_SUB="ba1e2b16-5022-4cbd-ad35-6d609e9560e9" TYPE="btrfs"
-		return array_unique_key($enums, "uuid");
+		$result = [];
+		// !!! Attention !!!
+		// We need to keep the following in mind when processing BTRFS
+		// filesystems:
+		// * BTRFS will report multiple devices for a RAID.
+		// * BTRFS seems to randomly use a device file for the canonical
+		//   path from a device of the RAID.
+		//
+		// # blkid
+		// /dev/sdb: LABEL="openmediavaultData" UUID="9b84cea2-3c7b-4f88-b346-f3bc1ee7c804" UUID_SUB="c86b22dd-c08d-47c5-93f3-90bd445931bb" TYPE="btrfs"
+		// /dev/sda: LABEL="openmediavaultData" UUID="9b84cea2-3c7b-4f88-b346-f3bc1ee7c804" UUID_SUB="04c92e67-4e6e-4cfc-bb71-18f9a109aa35" TYPE="btrfs"
+		// /dev/sdc: LABEL="openmediavaultData" UUID="9b84cea2-3c7b-4f88-b346-f3bc1ee7c804" UUID_SUB="9756742b-1552-46ce-9631-8e9376e1a918" TYPE="btrfs"
+		// /dev/mapper/sda-crypt: UUID="fbb9e5a9-53f0-4522-b753-b3c545e3bc6d" UUID_SUB="533a8498-5089-4bd7-8e03-ddbfe564b0d9" TYPE="btrfs"
+		//
+		// # ls -alh /dev/disk/by-label/openmediavaultData
+		// lrwxrwxrwx 1 root root 9 Dec 24 14:05 /dev/disk/by-label/openmediavaultData -> ../../sdc
+		// # ls -alh /dev/mapper/sda-crypt
+		// lrwxrwxrwx 1 root root 7 Jan  1 16:26 /dev/mapper/sda-crypt -> ../dm-0
+		//
+		// For RAID devices we need to find out the correct device file
+		// and return ONLY that device.
+		//
+		// To achieve this, we first filter for unique UUIDs and use
+		// the /dev/disk/by-uuid/<UUID> device file to get the
+		// canonical one. After that we only need to find that device
+		// in the enum list given as input argument.
+
+		// First we need to convert all device files to their canonical
+		// equivalent, otherwise devices like '/dev/mapper/xxx' won't get
+		// found in the enum list given as input argument later.
+		foreach ($enums as $enumk => &$enumv) {
+			$enumv['devicefile'] = realpath($enumv['devicefile']);
+		}
+		$uniqueEnums = array_unique_key($enums, "uuid");
+		foreach ($uniqueEnums as $uniqueEnumk => $uniqueEnumv) {
+			$canonicalDeviceFile = realpath(sprintf("/dev/disk/by-uuid/%s",
+				$uniqueEnumv['uuid']));
+			$result[] = array_filter_ex($enums, "devicefile",
+				$canonicalDeviceFile)[0];
+		}
+		return $result;
 	}
 
 	/**

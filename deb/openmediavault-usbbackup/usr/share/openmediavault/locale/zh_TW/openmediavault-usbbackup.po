@@ -3,13 +3,13 @@
 # This file is distributed under the same license as the openmediavault-usbbackup package.
 # 
 # Translators:
-# kochin <kochinc@outlook.com>, 2013-2014,2017
+# kochin <kochinc@outlook.com>, 2013-2014,2017,2019
 msgid ""
 msgstr ""
 "Project-Id-Version: openmediavault\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-11-18 11:05+0100\n"
-"PO-Revision-Date: 2017-11-18 13:00+0000\n"
+"POT-Creation-Date: 2020-01-07 17:31+0100\n"
+"PO-Revision-Date: 2019-11-19 04:46+0000\n"
 "Last-Translator: kochin <kochinc@outlook.com>\n"
 "Language-Team: Chinese (Taiwan) (http://www.transifex.com/votdev/openmediavault/language/zh_TW/)\n"
 "MIME-Version: 1.0\n"
@@ -108,8 +108,14 @@ msgstr "保存 ACLs"
 msgid "Preserve extended attributes"
 msgstr "保存擴展屬性"
 
-msgid "Preserve modification times."
-msgstr "保存修改的時間。"
+msgid "Preserve group"
+msgstr "保存群組"
+
+msgid "Preserve modification times"
+msgstr "保存變更時間"
+
+msgid "Preserve owner"
+msgstr "保存擁有者"
 
 msgid "Preserve permissions"
 msgstr "保存權限"
@@ -142,6 +148,15 @@ msgid ""
 "Set the destination permissions to be the same as the source permissions."
 msgstr "將目的地的權限設定為與來源的權限相同。"
 
+msgid ""
+"Set the group of the destination file to be the same as the source file."
+msgstr "將目的檔案的群組設定為與來源檔案相同。"
+
+msgid ""
+"Set the owner of the destination file to be the same as the source file, but"
+" only if the receiving rsync is being run as the super-user."
+msgstr "將目的檔案的擁有者設定為與來源檔案相同，但只有當接收方 rsync 是以超級用戶執行時。"
+
 msgid "Shared folder"
 msgstr "共享檔案夾"
 
@@ -165,8 +180,10 @@ msgid ""
 "connected."
 msgstr "當外接儲存裝置連接上時，所要進行同步作業的分享檔案夾。"
 
-msgid "Times"
-msgstr "時間"
+msgid ""
+"Transfer modification times along with the files and update them on the "
+"remote system."
+msgstr "將變更時間與檔案一同傳送，在遠端系統上做更新。"
 
 msgid "USB Backup"
 msgstr "USB 備份"

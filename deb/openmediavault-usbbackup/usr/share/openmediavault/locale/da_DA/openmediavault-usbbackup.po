@@ -3,14 +3,14 @@
 # This file is distributed under the same license as the openmediavault-usbbackup package.
 # 
 # Translators:
-# Stefan Thrane Overby <stoverby@gmail.com>, 2013-2014
+# Stefan Thrane Overby <stoverby@gmail.com>, 2013-2014,2020
 msgid ""
 msgstr ""
 "Project-Id-Version: openmediavault\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-11-18 11:05+0100\n"
-"PO-Revision-Date: 2017-11-18 10:08+0000\n"
-"Last-Translator: Volker <votdev@gmx.de>\n"
+"POT-Creation-Date: 2020-01-07 17:31+0100\n"
+"PO-Revision-Date: 2020-05-25 11:04+0000\n"
+"Last-Translator: Stefan Thrane Overby <stoverby@gmail.com>\n"
 "Language-Team: Danish (http://www.transifex.com/votdev/openmediavault/language/da/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -51,7 +51,7 @@ msgid "Device"
 msgstr "Enhed"
 
 msgid "Done ..."
-msgstr ""
+msgstr "Færdig ..."
 
 msgid "Edit backup job"
 msgstr "Rediger backup opgave"
@@ -108,8 +108,14 @@ msgstr "Bevar ACL'er"
 msgid "Preserve extended attributes"
 msgstr "Bevar udvidede attributter"
 
-msgid "Preserve modification times."
-msgstr "Bevar ændrings antal."
+msgid "Preserve group"
+msgstr "Bevar gruppe"
+
+msgid "Preserve modification times"
+msgstr "Bevar ændrings antal"
+
+msgid "Preserve owner"
+msgstr "Bevar ejer"
 
 msgid "Preserve permissions"
 msgstr "Bevar tilladelser"
@@ -142,6 +148,15 @@ msgid ""
 "Set the destination permissions to be the same as the source permissions."
 msgstr "Sæt destinations tilladelser til at være de samme som kilde tilladelser"
 
+msgid ""
+"Set the group of the destination file to be the same as the source file."
+msgstr "Sæt gruppen på destination fil til at være den samme som kilde fil."
+
+msgid ""
+"Set the owner of the destination file to be the same as the source file, but"
+" only if the receiving rsync is being run as the super-user."
+msgstr "Sæt ejer på destinations filen til at være den samme som kilde filen, men kun hvis den modtagende rsync bliver kørt som super-bruger."
+
 msgid "Shared folder"
 msgstr "Delt mappe"
 
@@ -165,8 +180,10 @@ msgid ""
 "connected."
 msgstr "Den delte mappe der synkroniseres når den eksterne lagerenhed bliver tilsluttet."
 
-msgid "Times"
-msgstr "Antal gange"
+msgid ""
+"Transfer modification times along with the files and update them on the "
+"remote system."
+msgstr "Overfør ændrings antal sammen med filerne, og opdater dem på fjernsystemet."
 
 msgid "USB Backup"
 msgstr "USB Backup"

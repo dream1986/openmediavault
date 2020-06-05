@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,9 +63,9 @@ class TopologicalSort {
 	/**
 	 * Add a node and its dependencies.
 	 * @param string $node The node.
-	 * @param mixed $deps The node dependencies. This can be an array or
-	 *   a string. Defaults to an empty array.
-	 * @return TRUE if successful, otherwise FALSE.
+	 * @param array|string $deps The node dependencies. This can be an array
+	 *   or a string. Defaults to an empty array.
+	 * @return bool TRUE if successful, otherwise FALSE.
 	 */
 	public function add($node, $deps = []) {
 		if (!is_array($deps)) {
@@ -89,10 +89,10 @@ class TopologicalSort {
 	}
 
 	/**
-	 * @param boolean $ignoreMissing Ignore dependency nodes that do not exist.
+	 * @param bool $ignoreMissing Ignore dependency nodes that do not exist.
 	 *   Defaults to TRUE.
-	 * @return Returns the sorted nodes based on the given dependencies,
-	 *   otherwise FALSE if the dependencies can not be solved.
+	 * @return array|bool Returns the sorted nodes based on the given
+	 *   dependencies, otherwise FALSE if the dependencies can not be solved.
 	 */
 	public function sort($ignoreMissing = TRUE) {
 		$sorted = [];

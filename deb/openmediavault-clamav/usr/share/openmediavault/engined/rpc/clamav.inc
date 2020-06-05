@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,7 +102,7 @@ class OMVRpcServiceClamAV extends \OMV\Rpc\ServiceAbstract {
 			  'followdirectorysymlinks'],
 			"clamd.detectpua" => $params['detectpua'],
 			"clamd.extraoptions" => $params['extraoptions'],
-			"freshclam.enable" => $params['enable'],
+			"freshclam.enable" => $params['enable'] && $params['checks'] > 0,
 			"freshclam.checks" => $params['checks']
 		]);
 		// Do some validations:
@@ -253,6 +253,13 @@ class OMVRpcServiceClamAV extends \OMV\Rpc\ServiceAbstract {
 		// until now.
 		if ($this->isModuleDirty("clamav"))
 			throw new \OMV\Config\ConfigDirtyException();
+		// Make sure the service is enabled.
+		$db = \OMV\Config\Database::getInstance();
+		$object = $db->get("conf.service.clamav");
+		if (FALSE === $object->get("enable")) {
+			throw new \OMV\Exception(
+				"Failed to run scheduled job because the service is disabled.");
+		}
 		// Create the background process.
 		return $this->execBgProc(function($bgStatusFilename, $bgOutputFilename)
 		  use ($params) {

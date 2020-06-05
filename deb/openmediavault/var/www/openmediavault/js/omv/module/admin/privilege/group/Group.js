@@ -3,7 +3,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -466,10 +466,15 @@ Ext.define("OMV.module.admin.privilege.group.Groups", {
 				c.showMenu();
 			},
 			menu: Ext.create("Ext.menu.Menu", {
-				items: [
-					{ text: _("Add"), value: "add" },
-					{ text: _("Import"), value: "import" }
-				],
+				items: [{
+					iconCls: me.addButtonIconCls,
+					text: me.addButtonText,
+					value: "create"
+				},{
+					iconCls: "mdi mdi-import",
+					text: _("Import"),
+					value: "import"
+				}],
 				listeners: {
 					scope: me,
 					click: function(menu, item, e, eOpts) {
@@ -498,7 +503,7 @@ Ext.define("OMV.module.admin.privilege.group.Groups", {
 	onAddButton: function(action) {
 		var me = this;
 		switch(action) {
-		case "add":
+		case "create":
 			Ext.create("OMV.module.admin.privilege.group.Group", {
 				title: _("Add group"),
 				listeners: {

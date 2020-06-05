@@ -3,15 +3,16 @@
 # This file is distributed under the same license as the openmediavault package.
 # 
 # Translators:
-# Henrik Sandström <inactive+sandstroem@transifex.com>, 2012
-# Jonatan Nyberg, 2017-2018
+# d8527209fb8c70c5b5fcb33678ff7c94_64a2687 <02f319e914d16f5dcdd2de15d3144927_23340>, 2012
+# Jonatan Nyberg <jonatan.nyberg.karl@gmail.com>, 2018-2020
+# Jonatan Nyberg <jonatan.nyberg.karl@gmail.com>, 2017-2018
 msgid ""
 msgstr ""
 "Project-Id-Version: openmediavault\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-01-21 11:50+0100\n"
-"PO-Revision-Date: 2018-01-25 04:44+0000\n"
-"Last-Translator: Jonatan Nyberg\n"
+"POT-Creation-Date: 2020-04-15 19:10+0200\n"
+"PO-Revision-Date: 2020-05-21 12:13+0000\n"
+"Last-Translator: Jonatan Nyberg <jonatan.nyberg.karl@gmail.com>\n"
 "Language-Team: Swedish (http://www.transifex.com/votdev/openmediavault/language/sv/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -39,7 +40,7 @@ msgid "0 KiB/s means unlimited."
 msgstr "0 KiB/s betyder ingen begränsning."
 
 msgid "1 - Minimum power usage with standby (spindown)"
-msgstr "1 - Minimal strömförbrukning med vänteläge (spindown)"
+msgstr "1 - Lägsta strömförbrukning med vänteläge (spindown)"
 
 msgid "1 day"
 msgstr "1 dag"
@@ -73,7 +74,7 @@ msgid "127 - Intermediate power usage with standby"
 msgstr "127 - Mellanliggande strömförbrukning med vänteläge"
 
 msgid "128 - Minimum power usage without standby (no spindown)"
-msgstr "128 - Minimal strömförbrukning utan vänteläge (ingen spindown)"
+msgstr "128 - Lägsta strömförbrukning utan vänteläge (ingen spindown)"
 
 msgid "15 minutes"
 msgstr "15 minuter"
@@ -112,7 +113,7 @@ msgid "25 years"
 msgstr "25 år"
 
 msgid "254 - Maximum performance, maximum power usage"
-msgstr "254 - Maximal prestanda, maximal strömförbrukning"
+msgstr "254 - Högsta prestanda, högsta strömförbrukning"
 
 msgid "255 - Disabled"
 msgstr "255 - Inaktiverad"
@@ -261,12 +262,6 @@ msgstr "Lägg till delad mapp"
 msgid "Add user"
 msgstr "Lägg till användare"
 
-msgid ""
-"Additional device settings, e.g. 'autoneg off speed 100 duplex full'. See <a"
-" href='http://linux.die.net/man/8/ethtool' target='_blank'>manual pages</a> "
-"for more details."
-msgstr "Ytterligare enhetsinställningar, t.ex. 'autoneg off speed 100 duplex full'. Se <a href='http://linux.die.net/man/8/ethtool' target='_blank'>manualsidor</a> för mer information."
-
 msgid "Address"
 msgstr "Adress"
 
@@ -321,11 +316,14 @@ msgid ""
 "Allow this server to advertise itself as a time server to Windows clients"
 msgstr "Tillåt denna server att annonsera sig som en tidsserver till Windows-klienter"
 
-msgid "Allow this server to try and become a local master browser"
-msgstr "Tillåt denna server att försöka bli en lokal \"master browser\""
-
 msgid "American Samoa"
 msgstr "Amerikanska Samoa"
+
+msgid ""
+"An attempt to send the test email has been made. Please check your mailbox. "
+"If the email does not arrive, check any spam folders and also check there "
+"are no Postfix related errors in the system log."
+msgstr "Ett försök att skicka test e-postmeddelandet har gjorts. Vänligen kontrollera din brevlåda. Om e-postmeddelandet inte kommer fram, kontrollera eventuella skräppostmappar och kontrollera också att det inte finns några postfix-relaterade fel i systemloggen."
 
 msgid ""
 "An email message with the command output (if any produced) is send to the "
@@ -354,6 +352,9 @@ msgstr "Anonym"
 
 msgid "Anonymous FTP"
 msgstr "Anonym FTP"
+
+msgid "Another user is already authenticated."
+msgstr "En annan användare är redan autentiserad."
 
 msgid "Antarctica"
 msgstr "Antarktis"
@@ -393,9 +394,6 @@ msgstr "Asynchronous I/O"
 
 msgid "At reboot"
 msgstr "Vid omstart"
-
-msgid "Attribute name"
-msgstr "Attributnamn"
 
 msgid "Attributes"
 msgstr "Attribut"
@@ -694,6 +692,12 @@ msgstr "Överföringssjälvtest"
 msgid "Cook Islands"
 msgstr "Cooköarna"
 
+msgid "Copy"
+msgstr "Kopiera"
+
+msgid "Copy public SSH key"
+msgstr "Kopiera offentlig SSH-nyckel"
+
 msgid "Copy to clipboard"
 msgstr "Kopiera till urklipp"
 
@@ -716,7 +720,7 @@ msgid "Create self-signed SSL certificate"
 msgstr "Skapa självsignerade SSL-certifikat "
 
 msgid "Creating the file system, please wait ..."
-msgstr "Skapar filsystemet, vänta ..."
+msgstr "Skapar filsystemet, vänligen vänta ..."
 
 msgid "Critical"
 msgstr "Kritisk"
@@ -871,8 +875,8 @@ msgstr "Mapp"
 msgid "Disabled"
 msgstr "Inaktiverad"
 
-msgid "Disallow the user to modify his account."
-msgstr "Förhindra att användaren ändrar sitt konto."
+msgid "Disallow the user to modify their account."
+msgstr "Tillåt inte användaren att ändra sitt konto."
 
 msgid "Disk usage"
 msgstr "Diskanvändning"
@@ -907,7 +911,7 @@ msgstr "Vill du verkligen ta bort valda objekt?"
 msgid ""
 "Do you really want to format this device? All data on it will be deleted. "
 "Please note that the file system creation may take some time."
-msgstr "Vill du verkligen formatera den här enheten? Alla data på den tas bort. Observera att skapandet av filsystemet kan ta tid."
+msgstr "Vill du verkligen formatera den här enheten? Alla data på den tas bort. Vänligen observera att skapandet av filsystemet kan ta tid."
 
 msgid "Do you really want to install the selected plugin(s)?"
 msgstr "Vill du verkligen installera vald(a) insticksmodul(er)?"
@@ -981,7 +985,7 @@ msgid "Down delay"
 msgstr "Nedåt-fördröjning"
 
 msgid "Download"
-msgstr "Ladda ner"
+msgstr "Hämta"
 
 msgid "Downloading package information"
 msgstr "Hämtar paketinformation"
@@ -1048,9 +1052,6 @@ msgstr "Redigera schemalagt jobb"
 msgid "Edit scheduled test"
 msgstr "Redigera schemalagd test"
 
-msgid "Edit service"
-msgstr "Redigera tjänst"
-
 msgid "Edit share"
 msgstr "Redigera delad resurs"
 
@@ -1086,6 +1087,9 @@ msgstr "Aktivera SSL/TLS"
 
 msgid "Enable SSL/TLS connections"
 msgstr "Aktivera SSL/TLS anslutningar"
+
+msgid "Enable Time Machine support for this share."
+msgstr "Aktivera stöd för Time Machine för den här delningen."
 
 msgid "Enable WINS server"
 msgstr "Aktivera WINS-server"
@@ -1160,6 +1164,9 @@ msgstr "Aktivera skriv-cache."
 
 msgid "Enabled"
 msgstr "Aktiverad"
+
+msgid "Encryption mode"
+msgstr "Krypteringsläge"
 
 msgid "Enter your password"
 msgstr "Ange ditt lösenord"
@@ -1315,7 +1322,7 @@ msgid "Firmware version"
 msgstr "Firmware-version"
 
 msgid "First Page"
-msgstr "Första sida"
+msgstr "Första sidan"
 
 msgid "Flags"
 msgstr "Flaggor"
@@ -1437,6 +1444,9 @@ msgstr "Guinea-Bissau"
 msgid "Guyana"
 msgstr "Guyana"
 
+msgid "HTTP 404 error"
+msgstr "HTTP 404-fel"
+
 msgid "HTTP-Proxy"
 msgstr "HTTP-proxy"
 
@@ -1543,7 +1553,7 @@ msgid ""
 msgstr "Om det här alternativet är inställt, kommer demonen att chroot till sökvägen av den delade mappen innan filöverföringen med klienten. Då är det inte möjligt att kartlägga användare och grupper efter namn och demonen kan inte följa symboliska länkar som är antingen absoluta eller utanför den nya root sökvägen."
 
 msgid "If this option is set, then any attempted downloads will fail."
-msgstr "Om detta alternativ är inställt, kommer alla försök till nedladdning att misslyckas."
+msgstr "Om det här alternativet är inställt, kommer alla försök till hämtningar att misslyckas."
 
 msgid "If this option is set, then any attempted uploads will fail."
 msgstr "Om detta alternativ är inställt, kommer alla försök till uppladdning att misslyckas."
@@ -1651,11 +1661,22 @@ msgstr "Installerar insticksmoduler ..."
 msgid "Installing updates ..."
 msgstr "Installerar uppdateringar ..."
 
+msgid ""
+"Installs the public SSH key on a remote system as an authorized key. Make "
+"sure password authentication is enabled on that remote system."
+msgstr "Installerar den offentliga SSH-nyckeln på ett fjärrsystem som en auktoriserad nyckel. Se till att lösenordsautentisering är aktiverad på det fjärrsystemet."
+
 msgid "Interfaces"
 msgstr "Gränssnitt"
 
+msgid "Invalid IP address."
+msgstr "Ogiltig IP-adress."
+
 msgid "Invalid SSH public key (RFC 4716)"
 msgstr "Ogiltig SSH offentlig nyckel (RFC 4716)"
+
+msgid "Invalid User-Agent."
+msgstr "Ogiltig användaragent."
 
 msgid "Invalid domain name"
 msgstr "Ogiltigt domännamn"
@@ -1674,6 +1695,9 @@ msgstr "Ogiltigt namn"
 
 msgid "Invalid user name"
 msgstr "Ogiltigt användarnamn"
+
+msgid "Invalid user."
+msgstr "Ogiltig användare."
 
 msgid "Iran"
 msgstr "Iran"
@@ -1810,19 +1834,19 @@ msgid "Loading ..."
 msgstr "Laddar ..."
 
 msgid "Loading, please wait ..."
-msgstr "Laddar, vänta ..."
+msgstr "Läser in, vänligen vänta ..."
 
 msgid "Local"
 msgstr "Lokal"
-
-msgid "Local master browser"
-msgstr "Lokal \"master-browser\""
 
 msgid "Location"
 msgstr "Plats"
 
 msgid "Log level"
 msgstr "Loggnivå"
+
+msgid "Logging out, please wait ..."
+msgstr "Loggar ut, vänligen vänta ..."
 
 msgid "Login"
 msgstr "Logga in"
@@ -1922,31 +1946,31 @@ msgid "Max. login attempts"
 msgstr "Max. inloggningsförsök"
 
 msgid "Maximum download rate (KiB/s)"
-msgstr "Maximal nedladdningshastighet (KiB/s)"
+msgstr "Högsta hämtningshastighet (KiB/s)"
 
 msgid ""
 "Maximum idle time in seconds. Setting idle timeout to 0 disables the idle "
 "timer completely (clients can stay connected for ever, without sending "
 "data)."
-msgstr "Maximal inaktiv tid i sekunder. Ställer du timeout för vilotid till 0 inaktiveras  timern för vilotid helt (klienter kan hålla kontakten för alltid, utan att skicka data)."
+msgstr "Längsta inaktiva tid i sekunder. Ställer du timeout för vilotid till 0 inaktiveras tidtagaren för vilotid helt (klienter kan hålla kontakten för alltid, utan att skicka data)."
 
 msgid "Maximum number of allowed password attempts before disconnection."
-msgstr "Maximalt antal tillåtna lösenordsförsök innan frånkoppling."
+msgstr "Högsta antal tillåtna lösenordsförsök innan frånkoppling."
 
 msgid "Maximum number of connections per IP (0 = unlimited)."
-msgstr "Maximalt antal anslutningar per IP (0 = obegränsad)."
+msgstr "Högsta antal anslutningar per IP (0 = obegränsad)."
 
 msgid "Maximum number of simultaneous clients."
-msgstr "Maximalt antal samtidiga klienter."
+msgstr "Högsta antal samtidiga klienter."
 
 msgid "Maximum performance, maximum acoustic output"
-msgstr "Maximal prestanda, maximal ljudnivå"
+msgstr "Högsta prestanda, högsta ljudnivå"
 
 msgid "Maximum upload rate (KiB/s)"
-msgstr "Maximal uppladdningshastighet (KiB/s)"
+msgstr "Högsta sändningshastighet (KiB/s)"
 
 msgid "Maximum {0} selected item(s) allowed"
-msgstr "Maximalt {0} valda objekt tillåtna"
+msgstr "Högst {0} valda objekt tillåtna"
 
 msgid "May"
 msgstr "Maj"
@@ -1985,10 +2009,10 @@ msgid "Midway Islands"
 msgstr "Midwayöarna"
 
 msgid "Minimum"
-msgstr "Minimal"
+msgstr "Lägsta"
 
 msgid "Minimum performance, Minimum acoustic output"
-msgstr "Minimal prestanda, minimal ljudnivå"
+msgstr "Lägsta prestanda, lägsta ljudnivå"
 
 msgid "Minimum {0} selected item(s) required"
 msgstr "Minst {0} vald(a) objekt krävs"
@@ -2200,9 +2224,6 @@ msgstr "November"
 msgid "Num"
 msgstr "Num"
 
-msgid "Number of servers"
-msgstr "Antal servrar"
-
 msgid "OK"
 msgstr "OK"
 
@@ -2290,8 +2311,8 @@ msgstr "Paraguay"
 msgid "Parent Device"
 msgstr "Huvudenhet"
 
-msgid "Parent interface"
-msgstr "Huvudgränssnitt"
+msgid "Parent device"
+msgstr "Huvudenhet"
 
 msgid "Passive FTP"
 msgstr "Passiv FTP"
@@ -2305,11 +2326,11 @@ msgstr "Lösenordsautentisering"
 msgid "Passwords don't match"
 msgstr "Lösenorden matchar inte"
 
-msgid "Paste a RSA certificate in X.509 PEM format here."
-msgstr "Klistra in ett RSA-cerfitikat i X.509 PEM-format här."
+msgid "Paste a RSA or ECC certificate in X.509 PEM format here."
+msgstr "Klistra in ett RSA- eller ECC-certifikat i X.509 PEM-formatet här."
 
-msgid "Paste an private RSA key in X.509 PEM format here."
-msgstr "Klistra in en privat RSA-nyckel i X.509 PEM-format här."
+msgid "Paste a RSA or ECC private key in X.509 PEM format here."
+msgstr "Klistra in en RSA- eller ECC-privatnyckel i X.509 PEM-formatet här."
 
 msgid "Path"
 msgstr "Sökväg"
@@ -2359,66 +2380,66 @@ msgstr "Pitcairnöarna"
 msgid ""
 "Please check the <a href='http://linux.die.net/man/5/exports' "
 "target='_blank'>manual page</a> for more details."
-msgstr "Kontrollera <a href='http://linux.die.net/man/5/exports' target='_blank'>manualsidan</a> för mer information."
+msgstr "Vänligen kontrollera <a href='http://linux.die.net/man/5/exports' target='_blank'>manualsidan</a> för mer information."
 
 msgid ""
 "Please check the <a href='http://www.proftpd.org/docs/contrib/mod_tls.html' "
 "target='_blank'>manual page</a> for more details."
-msgstr "Kontrollera <a href='http://www.proftpd.org/docs/contrib/mod_tls.html' target='_blank'>manualsidan</a> för mer information."
+msgstr "Vänligen kontrollera <a href='http://www.proftpd.org/docs/contrib/mod_tls.html' target='_blank'>manualsidan</a> för mer information."
 
 msgid ""
 "Please check the <a "
 "href='http://www.proftpd.org/docs/directives/configuration_full.html' "
 "target='_blank'>manual page</a> for more details."
-msgstr "Kontrollera <a href='http://www.proftpd.org/docs/directives/configuration_full.html' target='_blank'>manualsidan</a> för mer information."
+msgstr "Vänligen kontrollera <a href='http://www.proftpd.org/docs/directives/configuration_full.html' target='_blank'>manualsidan</a> för mer information."
 
 msgid ""
 "Please check the <a href='http://www.proftpd.org/docs/directives/linked/by-"
 "name.html' target='_blank'>manual page</a> for more details."
-msgstr "Se <a href='http://www.proftpd.org/docs/directives/linked/by-name.html' target='_blank'>manualsidan</a> för mer detaljer."
+msgstr "Vänligen se <a href='http://www.proftpd.org/docs/directives/linked/by-name.html' target='_blank'>manualsidan</a> för mer detaljer."
 
 msgid ""
 "Please check the <a href='http://www.samba.org/ftp/rsync/rsync.html' "
 "target='_blank'>manual page</a> for more details."
-msgstr "Kontrollera <a href='http://www.samba.org/ftp/rsync/rsync.html' target='_blank'>manualsidan</a> för mer information."
+msgstr "Vänligen kontrollera <a href='http://www.samba.org/ftp/rsync/rsync.html' target='_blank'>manualsidan</a> för mer information."
 
 msgid ""
 "Please check the <a href='http://www.samba.org/ftp/rsync/rsyncd.conf.html' "
 "target='_blank'>manual page</a> for more details."
-msgstr "Kontrollera <a href='http://www.samba.org/ftp/rsync/rsyncd.conf.html' target='_blank'>manualsidan</a> för mer information."
+msgstr "Vänligen kontrollera <a href='http://www.samba.org/ftp/rsync/rsyncd.conf.html' target='_blank'>manualsidan</a> för mer information."
 
 msgid ""
 "Please check the <a "
 "href='http://www.samba.org/samba/docs/man/manpages-3/smb.conf.5.html' "
 "target='_blank'>manual page</a> for more details."
-msgstr "Kontrollera <a href='http://www.samba.org/samba/docs/man/manpages-3/smb.conf.5.html' target='_blank'>manualsidan</a> för mer information."
+msgstr "Vänligen kontrollera <a href='http://www.samba.org/samba/docs/man/manpages-3/smb.conf.5.html' target='_blank'>manualsidan</a> för mer information."
 
 msgid ""
 "Please check the <a href='https://man.openbsd.org/sshd_config.5' "
 "target='_blank'>manual page</a> for more details."
-msgstr "Kontrollera <a href='https://man.openbsd.org/sshd_config.5' target='_blank'>manualsidan</a> för mer detaljer."
+msgstr "Vänligen kontrollera <a href='https://man.openbsd.org/sshd_config.5' target='_blank'>manualsidan</a> för mer detaljer."
 
 msgid "Please choose the method to wipe the device or 'Cancel' to abort."
-msgstr "Välj en metod för att radera enheten eller välj 'Avbryt' "
+msgstr "Vänligen välj metoden för att rensa av enheten eller \"Avbryt\" för att avbryta."
 
 msgid "Please first select a device."
-msgstr "Välj först en enhet."
+msgstr "Vänligen välj först en enhet."
 
 msgid ""
 "Please note that no communication with the system is possible during this "
 "test."
-msgstr "Observera att ingen kommunikation med systemet är möjlig under detta test."
+msgstr "Vänligen observera att ingen kommunikation med systemet är möjlig under detta test."
 
 msgid "Please reload the page to let the changes take effect."
-msgstr "Ladda om sidan för att låta ändringarna träda i kraft."
+msgstr "Vänligen ladda om sidan för att låta ändringarna träda i kraft."
 
 msgid "Please wait ..."
-msgstr "Vänta ..."
+msgstr "Vänligen vänta ..."
 
 msgid ""
 "Please wait until the RAID has been initialized before creating a file "
 "system."
-msgstr "Vänta tills RAID har initierats innan du skapar ett filsystem."
+msgstr "Vänligen vänta tills RAID har initierats innan du skapar ett filsystem."
 
 msgid "Plugins"
 msgstr "Insticksmoduler"
@@ -2453,8 +2474,14 @@ msgstr "Bevara ACL:er"
 msgid "Preserve extended attributes"
 msgstr "Bevara utökade attribut"
 
+msgid "Preserve group"
+msgstr "Bevara grupp"
+
 msgid "Preserve modification times"
 msgstr "Bevara modifieringsgånger"
+
+msgid "Preserve owner"
+msgstr "Bevara ägare"
 
 msgid "Preserve permissions"
 msgstr "Bevara behörigheter"
@@ -2506,7 +2533,7 @@ msgid "Proxy"
 msgstr "Proxy"
 
 msgid "Public"
-msgstr "Publik"
+msgstr "Offentlig"
 
 msgid "Public key"
 msgstr "Offentlig nyckel"
@@ -2652,9 +2679,9 @@ msgid ""
 msgstr "Rapportera om temperaturen har förändrats med minst N grader Celsius sedan den senaste rapporten. Ställ in 0 för att inaktivera denna rapport."
 
 msgid ""
-"Report if the temperature is greater or equal than N degrees Celsius. Set to"
-" 0 to disable this report."
-msgstr "Rapportera om temperaturen är högre än eller lika med N grader Celsius. Ställ in 0 för att inaktivera denna rapport."
+"Report if the temperature is greater than or equal to N degrees Celsius. Set"
+" to 0 to disable this report."
+msgstr "Rapportera om temperaturen är större än eller lika med N grader Celsius. Ställ in 0 för att inaktivera denna rapport."
 
 msgid "Repository"
 msgstr "Förvaringsplats"
@@ -2766,6 +2793,9 @@ msgstr "SSL"
 msgid "SSL/TLS"
 msgstr "SSL/TLS"
 
+msgid "STARTTLS"
+msgstr "STARTTLS"
+
 msgid "Saint Helena"
 msgstr "Saint Helena"
 
@@ -2862,12 +2892,6 @@ msgstr "Välj ett gruppnamn ..."
 msgid "Select a language ..."
 msgstr "Välj ett språk ..."
 
-msgid "Select a parent interface ..."
-msgstr "Välj en huvudgränssnitt ..."
-
-msgid "Select a primary interface ..."
-msgstr "Välj ett primärt gränssnitt ..."
-
 msgid "Select a protocol ..."
 msgstr "Välj ett protokoll ..."
 
@@ -2891,6 +2915,11 @@ msgstr "Välj enheter som ska tas bort från RAID-enheten."
 
 msgid "Select or enter a user name ..."
 msgstr "Välj eller ange ett användarnamn ..."
+
+msgid ""
+"Select the devices that will be used to create the RAID device. Devices "
+"connected via USB will not be listed (too unreliable)."
+msgstr "Välj de enheter som ska användas för att skapa RAID-enheten. Enheter som är anslutna via USB kommer inte att listas (för opålitliga)."
 
 msgid "Self-test logs"
 msgstr "Loggar för självtest"
@@ -2931,9 +2960,6 @@ msgstr "Server"
 msgid "Service"
 msgstr "Tjänst"
 
-msgid "Service Discovery"
-msgstr "Tjänst upptäckt"
-
 msgid "Service disabled"
 msgstr "Tjänst inaktiverad"
 
@@ -2958,6 +2984,15 @@ msgstr "Ange skrivskydd"
 msgid ""
 "Set the destination permissions to be the same as the source permissions"
 msgstr "Ange destinationsbehörigheter att bli samma som källbehörigheter"
+
+msgid ""
+"Set the group of the destination file to be the same as the source file."
+msgstr "Ställ in gruppen för målfilen att vara samma som för källfilen."
+
+msgid ""
+"Set the owner of the destination file to be the same as the source file, but"
+" only if the receiving rsync is being run as the super-user."
+msgstr "Ställ in att ägaren till målfilen ska vara densamma som källfilen, men endast om den mottagande rsync körs som superanvändare."
 
 msgid "Set write only"
 msgstr "Ange endast skriv"
@@ -3086,9 +3121,6 @@ msgstr "Spanien"
 
 msgid "Special action flag"
 msgstr "Särskilda åtgärder flagga"
-
-msgid "Specifies how many server threads to create."
-msgstr "Anger hur många servertrådar att skapa."
 
 msgid "Specifies one of the bonding policies."
 msgstr "Anger en av de bindande policys."
@@ -3308,6 +3340,9 @@ msgstr "Skapandet av filsystem har slutförts."
 msgid "The hostname is a label that identifies the system to the network."
 msgstr "Värdnamnet är en etikett som identifierar systemet till nätverket."
 
+msgid "The hostname of the remote system."
+msgstr "Fjärrsystemets värdnamn."
+
 msgid ""
 "The information about available software is out-of-date. You need to reload "
 "the information about available software."
@@ -3353,6 +3388,9 @@ msgid ""
 "single share to be used flexibly by each user."
 msgstr "Behörigheter för nya filer och kataloger styrs normalt av att skapa-mask och katalog-mask men ärva behörigheter-parametern åsidosätter detta. Detta kan vara särskilt användbart på system med många användare att tillåta att en enda utdelning används flexibelt av varje användare."
 
+msgid "The port on which SSH is running on the remote system."
+msgstr "Porten på vilken SSH körs på fjärrsystemet."
+
 msgid "The private RSA key in X.509 PEM format."
 msgstr "Den privata RSA-nyckeln i X.509 PEM-format."
 
@@ -3364,16 +3402,13 @@ msgid ""
 "packages."
 msgstr "Centralkatalogen kommer att kontrolleras för nya, borttagna eller uppgraderade mjukvarupaket."
 
+msgid "The requested page was not found."
+msgstr "Den begärda sidan hittades inte."
+
 msgid ""
 "The requirement that the SSL session from the control connection is reused "
 "for data connections is not required."
 msgstr "Kravet på att SSL-sessionen från kontrollanslutningen återanvänds för dataanslutningar krävs inte."
-
-msgid "The session IP address has been changed."
-msgstr "Sessions-IP-adressen har ändrats."
-
-msgid "The session user no longer exists."
-msgstr "Sessionsanvändaren finns inte längre."
 
 msgid ""
 "The source remote server, e.g. [USER@]HOST:SRC, [USER@]HOST::SRC or "
@@ -3386,11 +3421,11 @@ msgstr "Delade mappens källa."
 msgid "The specified quota exceeds the max. possible value of 4TiB."
 msgstr "Den angivna kvoten överstiger max. möjliga värdet av 4TiB."
 
+msgid "The system must be rebooted."
+msgstr "Systemet måste startas om."
+
 msgid "The system will reboot now. This may take some time ..."
 msgstr "Systemet startar nu om. Detta kan ta lite tid ..."
-
-msgid "The test email has been sent successfully. Please check your mailbox."
-msgstr "Testets e-postmeddelande har skickats. Kontrollera din brevlåda."
 
 msgid "The volume label for the file system."
 msgstr "Volymeniketten för filsystemet."
@@ -3406,7 +3441,7 @@ msgstr "Arbetsgruppen som servern utger sig för att vara i när klienterna frå
 msgid ""
 "These settings are used by the services to configure the user access rights."
 " Please note that these settings have no effect on file system permissions."
-msgstr "Dessa inställningar används av tjänsterna för att konfigurera användarrättigheterna. Observera att dessa inställningar inte påverkar filsystembehörigheterna."
+msgstr "Dessa inställningar används av tjänsterna för att konfigurera användarrättigheterna. Vänligen observera att dessa inställningar inte påverkar filsystemsbehörigheterna."
 
 msgid ""
 "This controls whether this share is seen in the list of available shares in "
@@ -3577,7 +3612,7 @@ msgstr "Det här alternativet anger gruppens namn som filöverföringar till och
 msgid ""
 "This option specifies the maximum number of simultaneous connections. 0 "
 "means no limit."
-msgstr "Det här alternativet anger det maximala antalet samtidiga anslutningar. 0 betyder ingen gräns."
+msgstr "Det här alternativet anger det högsta antalet samtidiga anslutningar. 0 betyder ingen gräns."
 
 msgid ""
 "This option specifies the user name that file transfers to and from that "
@@ -3614,6 +3649,9 @@ msgstr "Detta anger vad du ska göra om paketet matchar."
 msgid "This will create a recycle bin on the share."
 msgstr "Detta skapar en papperskorg på utdelningen."
 
+msgid "Threshold"
+msgstr "Tröskelvärde"
+
 msgid "Thursday"
 msgstr "Torsdag"
 
@@ -3622,6 +3660,9 @@ msgstr "TiB"
 
 msgid "Time"
 msgstr "Tid"
+
+msgid "Time Machine support"
+msgstr "Stöd för Time Machine"
 
 msgid "Time interval"
 msgstr "Tidsintervall"
@@ -3641,9 +3682,6 @@ msgstr "Tidszon"
 msgid "Timeout"
 msgstr "Timeout"
 
-msgid "Times"
-msgstr "Gånger"
-
 msgid "Togo"
 msgstr "Togo"
 
@@ -3659,14 +3697,16 @@ msgstr "Totalt"
 msgid "Transfer log"
 msgstr "Överföringslogg"
 
+msgid ""
+"Transfer modification times along with the files and update them on the "
+"remote system."
+msgstr "Överför ändringstider tillsammans med filerna och uppdatera dem på fjärrsystemet."
+
 msgid "Transfer time"
 msgstr "Överföringstid"
 
 msgid "Transfer type"
 msgstr "Överföringstyp"
-
-msgid "Treshold"
-msgstr "Tröskelvärde"
 
 msgid "Trial run"
 msgstr "Testkörning"
@@ -3777,11 +3817,11 @@ msgstr "Uppdatera destinationens utökade attribut för att vara desamma som de 
 msgid "Updates"
 msgstr "Uppdateringar"
 
+msgid "Updates available"
+msgstr "Uppdateringar tillgängliga"
+
 msgid "Updating ACL settings"
 msgstr "Uppdaterar ACL-inställningar"
-
-msgid "Upgrade"
-msgstr "Uppgradera"
 
 msgid "Upload"
 msgstr "Ladda upp"
@@ -3806,9 +3846,6 @@ msgstr "Uruguay"
 
 msgid "Use NTP server"
 msgstr "Använd NTP-server"
-
-msgid "Use SSL/TLS secure connection"
-msgstr "Använd SSL/TLS säker anslutning"
 
 msgid "Use chroot"
 msgstr "Använd chroot"

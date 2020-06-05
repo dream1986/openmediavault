@@ -4,7 +4,7 @@
 #
 # @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
 # @author    Volker Theile <volker.theile@openmediavault.org>
-# @copyright Copyright (c) 2009-2018 Volker Theile
+# @copyright Copyright (c) 2009-2020 Volker Theile
 #
 # OpenMediaVault is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,35 +30,40 @@ we always want to have not localized command output to do not
 get error message in foreign languages that the maintainers
 do not understand.
 """
-__all__ = [ "Popen", "call", "check_call", "check_output" ]
+__all__ = ["Popen", "call", "check_call", "check_output"]
 
 import os
-import subprocess
+import subprocess  # lgtm[py/import-own-module]
+
 
 def _modify_kwargs(kwargs):
-	"""
-	Append 'LANG="C"' to the 'env' keyword argument because we
-	always want untranslated command line output.
-	"""
-	# Append the env keyword if it does not exist.
-	if "env" not in kwargs:
-		kwargs["env"] = dict(os.environ, LANG="C")
-	else:
-		kwargs["env"].update({"LANG": "C"})
+    """
+    Append 'LANG="C"' to the 'env' keyword argument because we
+    always want untranslated command line output.
+    """
+    # Append the env keyword if it does not exist.
+    if "env" not in kwargs:
+        kwargs["env"] = dict(os.environ, LANG="C.UTF-8")
+    else:
+        kwargs["env"].update({"LANG": "C.UTF-8"})
+
 
 def call(*popenargs, **kwargs):
-	_modify_kwargs(kwargs)
-	return subprocess.call(*popenargs, **kwargs)
+    _modify_kwargs(kwargs)
+    return subprocess.call(*popenargs, **kwargs)
+
 
 def check_call(*popenargs, **kwargs):
-	_modify_kwargs(kwargs)
-	return subprocess.check_call(*popenargs, **kwargs)
+    _modify_kwargs(kwargs)
+    return subprocess.check_call(*popenargs, **kwargs)
+
 
 def check_output(*popenargs, **kwargs):
-	_modify_kwargs(kwargs)
-	return subprocess.check_output(*popenargs, **kwargs)
+    _modify_kwargs(kwargs)
+    return subprocess.check_output(*popenargs, **kwargs)
+
 
 class Popen(subprocess.Popen):
-	def __init__(self, *popenargs, **kwargs):
-		_modify_kwargs(kwargs)
-		super().__init__(*popenargs, **kwargs)
+    def __init__(self, *popenargs, **kwargs):
+        _modify_kwargs(kwargs)
+        super().__init__(*popenargs, **kwargs)  # lgtm[py/super-in-old-style]

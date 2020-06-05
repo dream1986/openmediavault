@@ -3,7 +3,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -144,6 +144,12 @@ Ext.define("OMV.module.admin.service.smb.Share", {
 				ptype: "fieldinfo",
 				text: _("This controls whether this share is seen in the list of available shares in a net view and in the browse list.")
 			}]
+		},{
+			xtype: "checkbox",
+			name: "timemachine",
+			fieldLabel: _("Time Machine support"),
+			checked: false,
+			boxLabel: _("Enable Time Machine support for this share.")
 		},{
 			xtype: "checkbox",
 			name: "inheritacls",

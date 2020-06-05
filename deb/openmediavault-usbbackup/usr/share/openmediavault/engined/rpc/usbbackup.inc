@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,10 +80,8 @@ class OMVRpcServiceUsbBackup extends \OMV\Rpc\ServiceAbstract {
 			$parentDeviceFile = $fs->getParentDeviceFile();
 			if (FALSE === is_devicefile($parentDeviceFile))
 				continue;
-			\OMV\System\Storage\StorageDevice::assertStorageDeviceExists(
-			  $parentDeviceFile);
-			$sd = \OMV\System\Storage\StorageDevice::getStorageDevice(
-			  $parentDeviceFile);
+			$sd = \OMV\System\Storage\StorageDevice::assertGetStorageDevice(
+				$parentDeviceFile);
 			// Skip everything which is not an USB or eSATA device or is a
 			// read-only medium.
 			if (!($sd->isUsb() || $sd->isAta()) || $sd->isReadOnly())
@@ -94,7 +92,8 @@ class OMVRpcServiceUsbBackup extends \OMV\Rpc\ServiceAbstract {
 				"devicefile" => $fs->getPredictableDeviceFile(),
 				"label" => $objectv['label'],
 				"type" => $objectv['type'],
-				"description" => $sd->getDescription()
+				"description" => $sd->getDescription(),
+				"propposixacl" => $fsb->hasPosixAclSupport()
 			];
 		}
 		return $result;
@@ -133,7 +132,7 @@ class OMVRpcServiceUsbBackup extends \OMV\Rpc\ServiceAbstract {
 			// Update the 'sharedfoldername' property.
 			$objectv->set("sharedfoldername", $sfObject->get("name"));
 			// Get job status.
-			$statusFile = sprintf("/var/run/openmediavault-usbbackup-%s",
+			$statusFile = sprintf("/run/openmediavault-usbbackup-%s",
 			  md5($objectv->get("devicefile")));
 			$objectv->set("running", file_exists($statusFile));
 			$objectsAssoc[] = $objectv->getAssoc();
@@ -230,23 +229,25 @@ class OMVRpcServiceUsbBackup extends \OMV\Rpc\ServiceAbstract {
 		// Get the configuration object.
 		$db = \OMV\Config\Database::getInstance();
 		$object = $db->get("conf.service.usbbackup.job", $params['uuid']);
-		// Get the file system and mount it if necessary.
+		// Get the device file of the destination storage device and
+		// generate the mount point path. This is generated using the
+		// MD5 sum of the device file.
 		$deviceFile = $object->get("devicefile");
-		\OMV\System\Filesystem\Filesystem::assertGetImpl($deviceFile);
-		$fs = \OMV\System\Filesystem\Filesystem::getImpl($deviceFile);
-		if (FALSE === $fs->isMounted()) {
-			// Make sure the mount point exists.
-			// Note, the name of the mount point is generated from the MD5
-			// sum of the device file.
-			$dir = \OMV\System\MountPoint::buildPath(md5($deviceFile));
-			$mp = new \OMV\System\MountPoint($dir);
-			$mp->create();
-			// Mount the file system at the specified directory.
+		$dir = \OMV\System\MountPoint::buildPath(md5($deviceFile));
+		// Make sure the mount point exists.
+		$mp = new \OMV\System\MountPoint($dir);
+		$mp->create();
+		// Get the file system and mount it if necessary. Note, the
+		// file system is not listed in the fstab, so we need to
+		// specify the mount point, too.
+		if (FALSE === $mp->isMounted()) {
+			\OMV\System\Filesystem\Filesystem::assertGetImpl($deviceFile);
+			$fs = \OMV\System\Filesystem\Filesystem::getImpl($deviceFile);
 			$fs->mount([], $dir);
 		}
 		// Create a background process.
 		return $this->execBgProc(function($bgStatusFilename, $bgOutputFilename)
-		  use ($object, $fs, $mp) {
+		  use ($object, $mp) {
 			// Execute the rsync script.
 			$cmdArgs = [];
   			$cmdArgs[] = "--shell";
@@ -265,7 +266,7 @@ class OMVRpcServiceUsbBackup extends \OMV\Rpc\ServiceAbstract {
 			// Execute the command.
 			$exitStatus = $this->exec($cmdLine, $output, $bgOutputFilename);
 			// Cleanup.
-			$fs->umount();
+			$mp->umount();
 			$mp->unlink();
 			// Check the exit status.
 			if (0 !== $exitStatus)

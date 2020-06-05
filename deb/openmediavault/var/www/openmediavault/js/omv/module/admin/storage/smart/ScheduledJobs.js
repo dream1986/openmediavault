@@ -3,7 +3,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,24 +84,7 @@ Ext.define("OMV.module.admin.storage.smart.schedule.Job", {
 				model: OMV.data.Model.createImplicit({
 					idProperty: "devicefile",
 					fields: [
-						{
-							name: "devicefile",
-							convert: function(value, record) {
-								// Try to find the '/dev/disk/by-id/' device
-								// file and use this instead of the canonical
-								// device file.
-								Ext.each(record.get("devicelinks"),
-									function(devlink) {
-										if (RegExp("^\/dev\/disk\/by-id\/.+$",
-											"i").test(devlink)) {
-												value = devlink;
-												return false;
-											}
-									})
-								return value;
-							},
-							type: "string"
-						},
+						{ name: "devicefile", type: "string" },
 						{ name: "description", type: "string" }
 					]
 				}),

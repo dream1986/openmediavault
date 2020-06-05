@@ -3,7 +3,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,19 +38,6 @@ Ext.define("OMV.module.admin.service.nfs.Settings", {
 			name: "enable",
 			fieldLabel: _("Enable"),
 			checked: false
-		},{
-			xtype: "numberfield",
-			name: "numproc",
-			fieldLabel: _("Number of servers"),
-			minValue: 1,
-			maxValue: 65535,
-			allowDecimals: false,
-			allowBlank: false,
-			value: 8,
-			plugins: [{
-				ptype: "fieldinfo",
-				text: _("Specifies how many server threads to create.")
-			}]
 		}];
 	}
 });

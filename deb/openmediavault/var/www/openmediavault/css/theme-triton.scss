@@ -3,7 +3,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with OpenMediaVault. If not, see <http://www.gnu.org/licenses/>.
  */
-
-@import 'defaults';
+@import "defaults";
 
 /******************************************************************************/
 /* Miscellaneous */
@@ -45,6 +44,11 @@ body > .x-mask {
 /* Form fieldset */
 .x-fieldset-header-default > .x-fieldset-header-text {
 	color: $omv-color-more-darker;
+}
+/* Fix Safari browser issue */
+/* https://github.com/openmediavault/openmediavault/issues/467 */
+.x-fieldset-header-default > .x-fieldset-header-text {
+	position: unset;
 }
 /******************************************************************************/
 /* Trigger field */
@@ -128,7 +132,8 @@ body > .x-mask {
 }
 /******************************************************************************/
 /* Tree */
-.x-tree-icon, .x-tree-elbow-img {
+.x-tree-icon,
+.x-tree-elbow-img {
 }
 .x-tree-icon-custom {
 	background-size: 16px 16px;
@@ -227,13 +232,22 @@ body > .x-mask {
 }
 /******************************************************************************/
 /* Buttons */
+.x-btn-default-small,
+.x-btn-default-toolbar-small {
+	border-radius: 3px;
+}
 .x-btn-default-small {
 	border-color: $omv-color-default;
 	background-color: $omv-color-default;
 }
 .x-btn-focus.x-btn-default-small {
-	border-color: $omv-color-default;
-	background-color: $omv-color-default;
+	border-color: $omv-color-darker;
+	background-color: $omv-color-darker;
+}
+.x-btn-focus.x-btn-default-small,
+.x-btn-focus.x-btn-over.x-btn-default-small,
+.x-btn-focus.x-btn-pressed.x-btn-default-small {
+	box-shadow: none;
 }
 .x-btn-over.x-btn-default-small {
 	border-color: $omv-color-darker;

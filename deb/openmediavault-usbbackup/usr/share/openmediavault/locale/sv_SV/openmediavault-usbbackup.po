@@ -3,14 +3,15 @@
 # This file is distributed under the same license as the openmediavault-usbbackup package.
 # 
 # Translators:
-# Jonatan Nyberg, 2017-2018
+# Jonatan Nyberg <jonatan.nyberg.karl@gmail.com>, 2019-2020
+# Jonatan Nyberg <jonatan.nyberg.karl@gmail.com>, 2017-2018
 msgid ""
 msgstr ""
 "Project-Id-Version: openmediavault\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-11-18 11:05+0100\n"
-"PO-Revision-Date: 2018-01-28 13:36+0000\n"
-"Last-Translator: Jonatan Nyberg\n"
+"POT-Creation-Date: 2020-01-07 17:31+0100\n"
+"PO-Revision-Date: 2020-02-23 13:33+0000\n"
+"Last-Translator: Jonatan Nyberg <jonatan.nyberg.karl@gmail.com>\n"
 "Language-Team: Swedish (http://www.transifex.com/votdev/openmediavault/language/sv/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -94,13 +95,13 @@ msgstr "Läge"
 msgid ""
 "Please check the <a href='http://www.samba.org/ftp/rsync/rsync.html' "
 "target='_blank'>manual page</a> for more details."
-msgstr "Se <a href='http://www.samba.org/ftp/rsync/rsync.html' target='_blank'>manualsidan</a> för mer detaljer."
+msgstr "Vänligen se <a href='http://www.samba.org/ftp/rsync/rsync.html' target='_blank'>manualsidan</a> för mer detaljer."
 
 msgid ""
 "Please note that the web interface is blocked until the manually started "
 "backup job has been finished. However the backup job is automatically "
 "executed in the background when the storage device is connected to the host."
-msgstr "Observera att webbgränssnittet är blockerat tills det manuellt startade säkerhetskopieringsjobbet har slutförts. Men säkerhetskopieringsjobbet utförs automatiskt i bakgrunden när lagringsenheten är ansluten till värden."
+msgstr "Vänligen observera att webbgränssnittet är blockerat tills det manuellt startade säkerhetskopieringsjobbet har slutförts. Men säkerhetskopieringsjobbet utförs automatiskt i bakgrunden när lagringsenheten är ansluten till värden."
 
 msgid "Preserve ACLs"
 msgstr "Bevara ACL:er"
@@ -108,8 +109,14 @@ msgstr "Bevara ACL:er"
 msgid "Preserve extended attributes"
 msgstr "Bevara utökade attribut"
 
-msgid "Preserve modification times."
-msgstr "Bevara ändringstider."
+msgid "Preserve group"
+msgstr "Bevara grupp"
+
+msgid "Preserve modification times"
+msgstr "Bevara ändringstider"
+
+msgid "Preserve owner"
+msgstr "Bevara ägare"
 
 msgid "Preserve permissions"
 msgstr "Bevara behörigheter"
@@ -142,6 +149,15 @@ msgid ""
 "Set the destination permissions to be the same as the source permissions."
 msgstr "Ställ in destinationsbehörigheterna att vara desamma som källtillstånden."
 
+msgid ""
+"Set the group of the destination file to be the same as the source file."
+msgstr "Ställ in gruppen för målfilen att vara samma som för källfilen."
+
+msgid ""
+"Set the owner of the destination file to be the same as the source file, but"
+" only if the receiving rsync is being run as the super-user."
+msgstr "Ställ in att ägaren till målfilen ska vara densamma som källfilen, men endast om den mottagande rsync körs som superanvändare."
+
 msgid "Shared folder"
 msgstr "Delad mapp"
 
@@ -165,8 +181,10 @@ msgid ""
 "connected."
 msgstr "Den delade mappen synkroniseras när den externa lagringsenheten är ansluten."
 
-msgid "Times"
-msgstr "Tider"
+msgid ""
+"Transfer modification times along with the files and update them on the "
+"remote system."
+msgstr "Överför ändringstider tillsammans med filerna och uppdatera dem på fjärrsystemet."
 
 msgid "USB Backup"
 msgstr "USB-säkerhetskopiering"

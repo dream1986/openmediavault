@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,6 +47,7 @@ class Filesystem extends \OMV\System\BlockDevice
 	 *   \li /dev/sde1
 	 *   \li /dev/disk/by-id/scsi-SATA_ST3200XXXX2AS_5XWXXXR6-part1
 	 *   \li /dev/disk/by-label/DATA
+	 *   \li /dev/disk/by-label/My\x20Passport\x20Blue
 	 *   \li /dev/disk/by-path/pci-0000:00:10.0-scsi-0:0:0:0-part2
 	 *   \li /dev/disk/by-uuid/ad3ee177-777c-4ad3-8353-9562f85c0895
 	 *   \li /dev/cciss/c0d0p2
@@ -145,7 +146,7 @@ class Filesystem extends \OMV\System\BlockDevice
 			$keyValue = explode("=", $partv);
 			if (count($keyValue) != 2)
 				continue;
-			$data[strtolower($keyValue[0])] = substr($keyValue[1], 1, -1);
+			$data[mb_strtolower($keyValue[0])] = substr($keyValue[1], 1, -1);
 		}
 
 		$this->deviceFile = $data['devicefile'];
@@ -267,15 +268,6 @@ class Filesystem extends \OMV\System\BlockDevice
 	public function getType() {
 		$this->getData();
 		return $this->type;
-	}
-
-	/**
-	 * Get the partition scheme, e.g. 'gpt', 'mbr', 'apm' or 'dos'.
-	 * @deprecated
-	 * @return The filesystem type, otherwise NULL.
-	 */
-	public function getPartitionType() {
-		return $this->getPartitionScheme();
 	}
 
 	/**
@@ -468,11 +460,24 @@ class Filesystem extends \OMV\System\BlockDevice
 	}
 
 	/**
+	 * Get the device file to present in the UI, e.g.:
+	 * <ul>
+	 * \li /dev/disk/by-id/xxx
+	 * \li /dev/disk/by-path/xxx
+	 * \li /dev/xxx
+	 * </ul>
+	 * @return string Returns a device file.
+	 */
+	public function getPreferredDeviceFile() {
+		return $this->getPredictableDeviceFile();
+	}
+
+	/**
 	 * Get all devices that make up the filesystem.
 	 * @return An array that contains the component devices of the filesystem.
 	 */
 	public function getDeviceFiles() {
-		return [ $this->getPreferredDeviceFile() ];
+		return [ $this->getCanonicalDeviceFile() ];
 	}
 
 	/**
@@ -559,7 +564,7 @@ class Filesystem extends \OMV\System\BlockDevice
 		$this->getData();
 		$cmdArgs = [];
 		$cmdArgs[] = "-cnrv";
-		$cmdArgs[] = "-o SOURCE,TARGET";
+		$cmdArgs[] = "-o SOURCE,TARGET,UUID";
 		$cmd = new \OMV\System\Process("findmnt", $cmdArgs);
 		$cmd->setRedirect2to1();
 		$cmd->execute($output);
@@ -569,30 +574,35 @@ class Filesystem extends \OMV\System\BlockDevice
 		// udev /dev
 		// devpts /dev/pts
 		// tmpfs /run
-		// /dev/sda1 /
 		// tmpfs /run/lock
 		// tmpfs /run/shm
 		// tmpfs /tmp
-		// /dev/sde1 /media/8c982ec2-8aa7-4fe2-a912-7478f0429e06
-		// /dev/sdc1 /media/ea792ccb-cce6-409d-ab9b-0e3fd2bfbfc4
-		// /dev/md0 /media/2853402e-fe8f-443b-abd5-c42892f25be1
+		// /dev/sde1 /media/8c982ec2-8aa7-4fe2-a912-7478f0429e06 8c982ec2-8aa7-4fe2-a912-7478f0429e06
+		// /dev/md0 /srv/2853402e-fe8f-443b-abd5-c42892f25be1 2853402e-fe8f-443b-abd5-c42892f25be1
 		// rpc_pipefs /var/lib/nfs/rpc_pipefs
-		// /dev/sdf1 /media/7A48-BA97
-		// /dev/mapper/vg01-lv01 /srv/_dev_disk_by-id_dm-name-vg01-lv01
-		// /dev/sdb1 /srv/dev-disk-by-label-xx\x20yy
+		// /dev/sdf1 /media/7A48-BA97 7A48-BA97
+		// /dev/mapper/vg01-lv01 /srv/_dev_disk_by-id_dm-name-vg01-lv01 82500674-26a5-11ea-88e2-c308d0da44db
+		// /dev/sdb1 /srv/dev-disk-by-label-xx\x20yy 8a003c90-26a5-11ea-8789-ef3b0d18ebb6
 		$result = FALSE;
 		foreach ($output as $outputk => $outputv) {
 			// Split the line into parts.
+			// <DEVICEFILE> <MOUNTPOINT> <FSUUID>
 			$parts = preg_split("/[\s]+/", $outputv);
-			// Skip everything that does not contain two parts.
-			if (2 !== count($parts))
-				continue;
-			// Skip everything that does not look like '/dev/xxx'.
-			if (FALSE === is_devicefile($parts[0]))
-				continue;
-			if (realpath($parts[0]) == $this->getCanonicalDeviceFile()) {
-				$result = unescape_path($parts[1]);
-				break;
+			// Is it a device file (/dev/xxx)?
+			if (is_devicefile($parts[0])) {
+				if (realpath($parts[0]) == $this->getCanonicalDeviceFile()) {
+					$result = unescape_path($parts[1]);
+					break;
+				}
+			}
+			// Is it a UUID?
+			if ((3 == count($parts)) && is_fs_uuid($parts[2])) {
+				if ($this->hasUuid()) {
+					if ($parts[2] == $this->getUuid()) {
+						$result = unescape_path($parts[1]);
+						break;
+					}
+				}
 			}
 		}
 		return $result;
@@ -660,7 +670,7 @@ class Filesystem extends \OMV\System\BlockDevice
 		$this->getData();
 		$cmdArgs = [];
 		$cmdArgs[] = "-cnrv";
-		$cmdArgs[] = "-o SOURCE";
+		$cmdArgs[] = "-o SOURCE,UUID";
 		$cmd = new \OMV\System\Process("findmnt", $cmdArgs);
 		$cmd->setRedirect2to1();
 		$cmd->execute($output);
@@ -670,21 +680,29 @@ class Filesystem extends \OMV\System\BlockDevice
 		// udev
 		// devpts
 		// tmpfs
-		// /dev/sda1
-		// /dev/sde1
-		// /dev/sdc1
-		// /dev/md0
-		// /dev/sdf1
-		// /dev/mapper/vg01-lv01
+		// /dev/sda1 90ee6298-385f-4841-bfdc-8b1e0e0ae5c1
+		// /dev/sdc1 e248be58-2e8c-4abf-9473-7dca10d0ad32
+		// /dev/md0 6ec83dab-5aaa-4e42-88ba-eee5011c4318
+		// /dev/mapper/vg01-lv01 60566672-8aad-4c1c-85c4-ca4196b7bbc5
 		$result = FALSE;
 		foreach ($output as $outputk => $outputv) {
-			// Skip everything that does not look like '/dev/xxx'.
-			if (FALSE === is_devicefile($outputv))
-				continue;
-			// Compare the device files.
-			if (realpath($outputv) == $this->getCanonicalDeviceFile()) {
-				$result = TRUE;
-				break;
+			// Split the line into parts.
+			$parts = preg_split("/[\s]+/", $outputv);
+			// Is it a device file (/dev/xxx)?
+			if (is_devicefile($parts[0])) {
+				if (realpath($parts[0]) == $this->getCanonicalDeviceFile()) {
+					$result = TRUE;
+					break;
+				}
+			}
+			// Is it a UUID?
+			if ((2 == count($parts)) && is_fs_uuid($parts[1])) {
+				if ($this->hasUuid()) {
+					if ($parts[1] == $this->getUuid()) {
+						$result = TRUE;
+						break;
+					}
+				}
 			}
 		}
 		return $result;
@@ -834,8 +852,8 @@ class Filesystem extends \OMV\System\BlockDevice
 	 *   \li /dev/disk/by-uuid/ad3ee177-777c-4ad3-8353-9562f85c0895
 	 *   \li /dev/cciss/c0d0p2
 	 *   </ul>
-	 * @return The object of the class implementing the given filesystem,
-	 *   otherwise NULL.
+	 * @return object|null The object of the class implementing the given
+	 *   filesystem, otherwise NULL.
 	 */
 	public static function getImpl($id) {
 		$mngr = Backend\Manager::getInstance();
@@ -845,6 +863,9 @@ class Filesystem extends \OMV\System\BlockDevice
 	}
 
 	/**
+	 * @see Filesystem::getImpl()
+	 * @return object The object of the class implementing the given
+	 *   filesystem.
 	 * @throw \OMV\AssertException
 	 */
 	public static function assertGetImpl($id) {
@@ -854,36 +875,30 @@ class Filesystem extends \OMV\System\BlockDevice
 			  "Failed to get the filesystem implementation for '%s' ".
 			  "or the filesystem does not exist.", $id);
 		}
+		return $result;
 	}
 
 	/**
-	 * Get the object of the class which implements the specified filesystem
+	 * Get the object of the class which implements the filesystem
 	 * for the given mount point.
 	 * @param dir The file system path prefix, e.g. '/home/ftp/data'.
-	 * @return The class object or NULL on failure.
+	 * @return The class object (which implements the interface
+	 *   OMV\System\Filesystem\FilesystemInterface) or NULL on failure.
 	 */
 	public static function getImplByMountPoint($dir) {
-		if (TRUE === empty($dir))
+		if (TRUE === empty($dir)) {
 			return NULL;
-		$result = NULL;
-		foreach (file("/proc/mounts") as $rowk => $rowv) {
-			// Parse command output:
-			// rootfs / rootfs rw 0 0
-			// none /sys sysfs rw,nosuid,nodev,noexec,relatime 0 0
-			// none /proc proc rw,nosuid,nodev,noexec,relatime 0 0
-			// tmpfs /dev/shm tmpfs rw,nosuid,nodev,relatime 0 0
-			// /dev/sdb2 /home/ftp/data ext4 rw,noexec,relatime,user_xattr,acl,barrier=1,data=ordered,jqfmt=vfsv0,usrjquota=aquota.user,grpjquota=aquota.group 0 0
-			// /dev/sde1 /media/46607e80-dc8e-427e-9939-7909985dfe5b ext4 rw,noexec,relatime,user_xattr,acl,barrier=1,data=ordered,jqfmt=vfsv0,usrjquota=aquota.user,grpjquota=aquota.group 0 0
-			$parts = explode(" ", $rowv);
-			if ($parts[1] == escape_path($dir, TRUE)) {
-				// Get the backend by the file system type (e.g. ext4, xfs,
-				// nfs, aufs, ...).
-				$mngr = Backend\Manager::getInstance();
-				if (NULL !== ($backend = $mngr->getBackendByType($parts[2])))
-					$result = $backend->getImpl($parts[0]);
-				break;
-			}
 		}
-		return $result;
+		// Exit immediately if the specified directory is no mount point.
+		$mp = new \OMV\System\MountPoint($dir);
+		if (FALSE === $mp->isMountPoint()) {
+			return NULL;
+		}
+		// Try to get the backend using the filesystem type. This has
+		// to be done especially when using union filesystems.
+		$info = $mp->getInfo();
+		$mngr = Backend\Manager::getInstance();
+		$backend = $mngr->getBackendByType($info['fstype']);
+		return $backend->getImpl($info['source']);
 	}
 }

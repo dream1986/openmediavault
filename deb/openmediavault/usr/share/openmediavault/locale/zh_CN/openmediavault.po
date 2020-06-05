@@ -3,14 +3,15 @@
 # This file is distributed under the same license as the openmediavault package.
 # 
 # Translators:
-# songming <by@songming.me>, 2013-2018
+# Herald Yu <yuhr123@gmail.com>, 2018-2019
+# songming <by@songming.me>, 2013-2020
 # Wei Ding <dyw.net@gmail.com>, 2014-2015
 msgid ""
 msgstr ""
 "Project-Id-Version: openmediavault\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-01-21 11:50+0100\n"
-"PO-Revision-Date: 2018-05-16 06:05+0000\n"
+"POT-Creation-Date: 2020-04-15 19:10+0200\n"
+"PO-Revision-Date: 2020-04-20 02:49+0000\n"
 "Last-Translator: songming <by@songming.me>\n"
 "Language-Team: Chinese (China) (http://www.transifex.com/votdev/openmediavault/language/zh_CN/)\n"
 "MIME-Version: 1.0\n"
@@ -64,7 +65,7 @@ msgstr "10 年"
 
 #, javascript-format
 msgid "100% completed ..."
-msgstr "100%完成 ..."
+msgstr "100% 完成 ..."
 
 msgid "120 minutes"
 msgstr "120 分钟"
@@ -73,7 +74,7 @@ msgid "127 - Intermediate power usage with standby"
 msgstr "127 - 待机状态时中等功耗"
 
 msgid "128 - Minimum power usage without standby (no spindown)"
-msgstr "128 - 非待机状态时最低功耗(磁头运转中)"
+msgstr "128 - 非待机状态时最低功耗(磁头不停转)"
 
 msgid "15 minutes"
 msgstr "15 分钟"
@@ -220,7 +221,7 @@ msgid "Add bond connection"
 msgstr "添加链路汇聚"
 
 msgid "Add devices to RAID device"
-msgstr "添加设备到 RAID 阵列中"
+msgstr "添加设备到 RAID 阵列"
 
 msgid "Add ethernet connection"
 msgstr "添加网络连接"
@@ -232,7 +233,7 @@ msgid "Add group"
 msgstr "添加用户组"
 
 msgid "Add hot spares / recover RAID device"
-msgstr "添加热备/恢复 RAID 阵列"
+msgstr "添加热备/恢复 RAID 设备"
 
 msgid "Add module"
 msgstr "添加模块"
@@ -260,12 +261,6 @@ msgstr "添加共享文件夹"
 
 msgid "Add user"
 msgstr "添加用户"
-
-msgid ""
-"Additional device settings, e.g. 'autoneg off speed 100 duplex full'. See <a"
-" href='http://linux.die.net/man/8/ethtool' target='_blank'>manual pages</a> "
-"for more details."
-msgstr "附加设置，例如 :'autoneg off speed 100 duplex full'。详情请见 <a href='http://linux.die.net/man/8/ethtool' target='_blank'> 手册 </a>。"
 
 msgid "Address"
 msgstr "地址"
@@ -312,7 +307,7 @@ msgstr "全部"
 
 msgid ""
 "Allow clients to attempt to store OS/2 style extended attributes on a share."
-msgstr "允许客户端通过共享存储 OS/2 类型扩展特性。"
+msgstr "允许客户端尝试在共享上存储 OS / 2 风格的扩展属性。"
 
 msgid "Allow clients to resume interrupted uploads and downloads"
 msgstr "允许客户端恢复中断的上传和下载"
@@ -321,21 +316,24 @@ msgid ""
 "Allow this server to advertise itself as a time server to Windows clients"
 msgstr "允许此服务器作为 Windows 客户端的时间服务器"
 
-msgid "Allow this server to try and become a local master browser"
-msgstr "允许本服务器作为 local master browser，LMB 主要是扫描局域网内工作组和电脑名称，如果局域网中没有域控制器建议开启此项。"
-
 msgid "American Samoa"
 msgstr "美属萨摩亚"
 
 msgid ""
+"An attempt to send the test email has been made. Please check your mailbox. "
+"If the email does not arrive, check any spam folders and also check there "
+"are no Postfix related errors in the system log."
+msgstr "尝试发送测试邮件到你邮箱，请检查你的邮箱，如果收件箱没有检查一下垃圾邮件夹，同时检查 Postfix 系统日志是否有错误信息。"
+
+msgid ""
 "An email message with the command output (if any produced) is send to the "
 "administrator."
-msgstr "一封包含命令输出 (如果发生) 的邮件将发送给管理员。"
+msgstr "一封包含命令输出 (如果有) 的邮件将发送给管理员。"
 
 msgid ""
 "An email message with the command output (if any produced) is send to the "
 "user who performs the job."
-msgstr "一封包含命令输出 (如果发生) 的邮件将发送给执行该任务的用户。"
+msgstr "一封包含命令输出 (如果有) 的邮件将发送给执行该任务的用户。"
 
 msgid "An error has occured"
 msgstr "发生一个错误"
@@ -354,6 +352,9 @@ msgstr "匿名"
 
 msgid "Anonymous FTP"
 msgstr "匿名 FTP"
+
+msgid "Another user is already authenticated."
+msgstr "另一个用户已经授权。"
 
 msgid "Antarctica"
 msgstr "南极洲"
@@ -393,9 +394,6 @@ msgstr "异步 I/O"
 
 msgid "At reboot"
 msgstr "在重启时"
-
-msgid "Attribute name"
-msgstr "属性名称"
 
 msgid "Attributes"
 msgstr "属性"
@@ -437,7 +435,7 @@ msgid "Auto logout"
 msgstr "自动登出"
 
 msgid "Auto logout after the specified idle period."
-msgstr "指定空闲多久后自动登出."
+msgstr "指定空闲多久后自动登出。"
 
 msgid "Automatic Acoustic Management"
 msgstr "自动声音管理"
@@ -623,7 +621,7 @@ msgid "Client address"
 msgstr "客户端地址"
 
 msgid "Clients allowed to mount the file system, e.g. 192.168.178.0/24."
-msgstr "客户端可以挂载文件系统，如 192.168.178.0/24。"
+msgstr "允许挂载文件系统的客户端，如 192.168.178.0/24。"
 
 msgid "Close"
 msgstr "关闭"
@@ -644,7 +642,7 @@ msgid "Common Name"
 msgstr "通用名"
 
 msgid "Community-maintained updates."
-msgstr "社区维护更新。"
+msgstr "社区维护的更新。"
 
 msgid "Comoros"
 msgstr "科摩罗"
@@ -659,7 +657,7 @@ msgid "Compress"
 msgstr "压缩"
 
 msgid "Compress file data during the transfer"
-msgstr "在传输过程中压缩文件数据"
+msgstr "在传输时压缩文件数据"
 
 msgid "Compressed"
 msgstr "压缩的"
@@ -694,6 +692,12 @@ msgstr "传输时自检"
 msgid "Cook Islands"
 msgstr "库克群岛"
 
+msgid "Copy"
+msgstr "复制"
+
+msgid "Copy public SSH key"
+msgstr "复制 SSH 公钥"
+
 msgid "Copy to clipboard"
 msgstr "复制到剪贴板"
 
@@ -713,10 +717,10 @@ msgid "Create file system"
 msgstr "创建文件系统"
 
 msgid "Create self-signed SSL certificate"
-msgstr "创建自签名证书"
+msgstr "创建自签名 SSL 证书"
 
 msgid "Creating the file system, please wait ..."
-msgstr "创建文件系统，请等待..."
+msgstr "正在创建文件系统，请稍等.."
 
 msgid "Critical"
 msgstr "严重"
@@ -782,7 +786,7 @@ msgid "Delete file system"
 msgstr "删除文件系统"
 
 msgid "Delete files on the receiving side that don't exist on sender"
-msgstr "若发送端不存而接收端存在的文件则删除"
+msgstr "在接收端删除发送端不存在的文件"
 
 msgid "Deleting selected item(s)"
 msgstr "删除选择项目(可复选)"
@@ -791,7 +795,7 @@ msgid "Denmark"
 msgstr "丹麦"
 
 msgid "Deny logins which do not have a valid shell"
-msgstr "拒绝无效shell登录"
+msgstr "拒绝无效的 shell 登录"
 
 msgid "Description"
 msgstr "描述"
@@ -803,7 +807,7 @@ msgid ""
 "Destination address can be either a network IP address (with /mask), a IP "
 "range or a plain IP address. A '!' argument before the address specification"
 " inverts the sense of the address."
-msgstr "目标地址可以是网络 IP 地址(包含/子网掩码)，IP 范围或者单个 IP 地址，地址前可以用 “!” 来反转地址的意义。"
+msgstr "目标地址可以是网络 IP 地址(包含 /子网掩码)、IP 段或单个 IP 地址。地址前可以用 “!” 来反转地址的意义。"
 
 msgid "Destination port"
 msgstr "目标端口"
@@ -845,7 +849,7 @@ msgid "Device properties"
 msgstr "设备属性"
 
 msgid "Device was used outside of design parameters in the past"
-msgstr "设备使用曾超出设计参数"
+msgstr "设备曾超出设计参数使用"
 
 msgid "Device(s)"
 msgstr "设备(可复选)"
@@ -869,13 +873,13 @@ msgid "Directory"
 msgstr "目录"
 
 msgid "Disabled"
-msgstr "关闭"
+msgstr "禁用"
 
-msgid "Disallow the user to modify his account."
-msgstr "不允许用户修改自己的账户。"
+msgid "Disallow the user to modify their account."
+msgstr "不允许用户修改其账户。"
 
 msgid "Disk usage"
-msgstr "磁盘使用"
+msgstr "磁盘用量"
 
 msgid "Disks"
 msgstr "磁盘"
@@ -910,19 +914,19 @@ msgid ""
 msgstr "确定要格式化该设备？该设备所有数据将被删除，注意创建文件系统可能需要较长时间。"
 
 msgid "Do you really want to install the selected plugin(s)?"
-msgstr "确认要安装选中插件吗？"
+msgstr "是否要安装选中的插件(可复选)？"
 
 msgid "Do you really want to leave the page?"
-msgstr "确定离开此网页？"
+msgstr "是否要离开此页面？"
 
 msgid "Do you really want to logout?"
-msgstr "确定注销？"
+msgstr "是否要退出登录？"
 
 msgid "Do you really want to put the system into standby?"
 msgstr "确定要让系统进入待机状态？"
 
 msgid "Do you really want to reboot the system?"
-msgstr "确定重启系统？"
+msgstr "是否要重启系统？"
 
 msgid ""
 "Do you really want to relocate the shared folder? The content of the shared "
@@ -1013,10 +1017,10 @@ msgid "Edit SSL certificate"
 msgstr "编辑 SSL 证书"
 
 msgid "Edit VLAN connection"
-msgstr "编辑 VLAN 链接"
+msgstr "编辑 VLAN 连接"
 
 msgid "Edit Wi-Fi connection"
-msgstr "编辑 Wi-Fi 链接"
+msgstr "编辑 Wi-Fi 连接"
 
 msgid "Edit bond connection"
 msgstr "编辑链路汇聚"
@@ -1047,9 +1051,6 @@ msgstr "编辑计划任务"
 
 msgid "Edit scheduled test"
 msgstr "编辑测试计划"
-
-msgid "Edit service"
-msgstr "编辑服务"
 
 msgid "Edit share"
 msgstr "编辑共享"
@@ -1085,7 +1086,10 @@ msgid "Enable SSL/TLS"
 msgstr "启用 SSL/TLS"
 
 msgid "Enable SSL/TLS connections"
-msgstr "启用 SSL/TLS 链接"
+msgstr "启用 SSL/TLS 连接"
+
+msgid "Enable Time Machine support for this share."
+msgstr "在这个共享文件夹启用时间胶囊 Time Machine 支持。"
 
 msgid "Enable WINS server"
 msgstr "启用 WINS 服务器"
@@ -1097,7 +1101,7 @@ msgid "Enable archive mode"
 msgstr "启用归档模式"
 
 msgid "Enable asynchronous I/O (AIO) support."
-msgstr "启用异步 I/O(AIO) 支持"
+msgstr "启用异步 I/O (AIO) 支持。"
 
 msgid "Enable chroot."
 msgstr "开启 chroot。"
@@ -1161,6 +1165,9 @@ msgstr "开启写入缓存。"
 msgid "Enabled"
 msgstr "已启动"
 
+msgid "Encryption mode"
+msgstr "加密模式"
+
 msgid "Enter your password"
 msgstr "输入密码"
 
@@ -1213,7 +1220,7 @@ msgid "Execute command"
 msgstr "执行命令"
 
 msgid "Execute cron job"
-msgstr "执行 cron 任务"
+msgstr "执行计划任务"
 
 msgid "Execute only"
 msgstr "仅执行"
@@ -1437,6 +1444,9 @@ msgstr "几内亚比绍"
 msgid "Guyana"
 msgstr "圭亚那"
 
+msgid "HTTP 404 error"
+msgstr "HTTP 404 错误"
+
 msgid "HTTP-Proxy"
 msgstr "HTTP - 代理"
 
@@ -1625,7 +1635,7 @@ msgid "Informal"
 msgstr "非正式"
 
 msgid "Information"
-msgstr "资讯"
+msgstr "信息"
 
 msgid "Inherit ACLs"
 msgstr "继承 ACLs"
@@ -1651,11 +1661,22 @@ msgstr "安装插件中 ..."
 msgid "Installing updates ..."
 msgstr "安装更新中 ..."
 
+msgid ""
+"Installs the public SSH key on a remote system as an authorized key. Make "
+"sure password authentication is enabled on that remote system."
+msgstr "将 SSH 公钥作为授权秘钥添加到远程系统。请确保远程系统启用了密码认证。"
+
 msgid "Interfaces"
 msgstr "接口"
 
+msgid "Invalid IP address."
+msgstr "无效的 IP 地址"
+
 msgid "Invalid SSH public key (RFC 4716)"
 msgstr "无效 SSH 公钥 (RFC 4716)"
+
+msgid "Invalid User-Agent."
+msgstr "无效的 User-Agent。"
 
 msgid "Invalid domain name"
 msgstr "无效域名"
@@ -1674,6 +1695,9 @@ msgstr "无效名称"
 
 msgid "Invalid user name"
 msgstr "无效用户名"
+
+msgid "Invalid user."
+msgstr "无效的用户名。"
 
 msgid "Iran"
 msgstr "伊朗"
@@ -1815,14 +1839,14 @@ msgstr "载入中，请稍等 ..."
 msgid "Local"
 msgstr "本地"
 
-msgid "Local master browser"
-msgstr "本地主机浏览"
-
 msgid "Location"
 msgstr "位置"
 
 msgid "Log level"
 msgstr "日志级别"
+
+msgid "Logging out, please wait ..."
+msgstr "注销中，请稍等 ..."
 
 msgid "Login"
 msgstr "登录"
@@ -2200,9 +2224,6 @@ msgstr "十一月"
 msgid "Num"
 msgstr "号码"
 
-msgid "Number of servers"
-msgstr "服务器数量"
-
 msgid "OK"
 msgstr "是"
 
@@ -2290,8 +2311,8 @@ msgstr "巴拉圭"
 msgid "Parent Device"
 msgstr "父设备"
 
-msgid "Parent interface"
-msgstr "父接口"
+msgid "Parent device"
+msgstr "父设备"
 
 msgid "Passive FTP"
 msgstr "被动式 FTP"
@@ -2305,11 +2326,11 @@ msgstr "密码验证"
 msgid "Passwords don't match"
 msgstr "密码不匹配"
 
-msgid "Paste a RSA certificate in X.509 PEM format here."
-msgstr "在这粘贴 X.509 格式的 RSA 证书"
+msgid "Paste a RSA or ECC certificate in X.509 PEM format here."
+msgstr "在这粘贴 X.509 格式的 RSA 或 ECC 证书。"
 
-msgid "Paste an private RSA key in X.509 PEM format here."
-msgstr "在这粘贴 X.509 格式的 RSA 私钥"
+msgid "Paste a RSA or ECC private key in X.509 PEM format here."
+msgstr "在这粘贴 X.509 格式的 RSA 或 ECC 私钥。"
 
 msgid "Path"
 msgstr "路径"
@@ -2453,8 +2474,14 @@ msgstr "保存 ACLs"
 msgid "Preserve extended attributes"
 msgstr "保留扩展属性"
 
+msgid "Preserve group"
+msgstr "保存用户组"
+
 msgid "Preserve modification times"
 msgstr "保存修改时间"
+
+msgid "Preserve owner"
+msgstr "保存拥有者"
 
 msgid "Preserve permissions"
 msgstr "保存权限"
@@ -2652,9 +2679,9 @@ msgid ""
 msgstr "自上次报告以来温度变化至少 N 度，则需报告，设置为 0 则关闭报告。"
 
 msgid ""
-"Report if the temperature is greater or equal than N degrees Celsius. Set to"
-" 0 to disable this report."
-msgstr "如果温度大于或等于 N 度则报告，设置为 0 则关闭报告。"
+"Report if the temperature is greater than or equal to N degrees Celsius. Set"
+" to 0 to disable this report."
+msgstr "如果温度大于或等于 N 摄氏度则报告，设置为 0 则关闭报告。"
 
 msgid "Repository"
 msgstr "软件源"
@@ -2766,6 +2793,9 @@ msgstr "SSL"
 msgid "SSL/TLS"
 msgstr "SSL/TLS"
 
+msgid "STARTTLS"
+msgstr "启用 TLS"
+
 msgid "Saint Helena"
 msgstr "圣赫勒拿"
 
@@ -2862,12 +2892,6 @@ msgstr "选择组名称 ..."
 msgid "Select a language ..."
 msgstr "选择一种语言..."
 
-msgid "Select a parent interface ..."
-msgstr "选择一个父接口 ..."
-
-msgid "Select a primary interface ..."
-msgstr "选择一个主接口 ..."
-
 msgid "Select a protocol ..."
 msgstr "选择协议 ..."
 
@@ -2891,6 +2915,11 @@ msgstr "选择要从 RAID 阵列中删除的设备。"
 
 msgid "Select or enter a user name ..."
 msgstr "选择或输入用户名 ..."
+
+msgid ""
+"Select the devices that will be used to create the RAID device. Devices "
+"connected via USB will not be listed (too unreliable)."
+msgstr "选择将要用于创建 RAID 的设备，通过 USB 接入的设备不会再列表中显示（USB接入不稳定）。"
 
 msgid "Self-test logs"
 msgstr "自检日志"
@@ -2931,9 +2960,6 @@ msgstr "服务器"
 msgid "Service"
 msgstr "服务"
 
-msgid "Service Discovery"
-msgstr "服务发现"
-
 msgid "Service disabled"
 msgstr "服务被禁用"
 
@@ -2958,6 +2984,15 @@ msgstr "设为只读"
 msgid ""
 "Set the destination permissions to be the same as the source permissions"
 msgstr "将目标权限与源权限设为一样"
+
+msgid ""
+"Set the group of the destination file to be the same as the source file."
+msgstr "设置目标用户组与源文件一致。"
+
+msgid ""
+"Set the owner of the destination file to be the same as the source file, but"
+" only if the receiving rsync is being run as the super-user."
+msgstr "仅超级用户运行 rsync 接受文件时，设置目标拥有者与源文件一致。"
 
 msgid "Set write only"
 msgstr "设为只写"
@@ -3086,9 +3121,6 @@ msgstr "西班牙"
 
 msgid "Special action flag"
 msgstr "特殊动作标志"
-
-msgid "Specifies how many server threads to create."
-msgstr "指定创建多少个服务器线程。"
 
 msgid "Specifies one of the bonding policies."
 msgstr "指定一个汇聚策略。"
@@ -3308,6 +3340,9 @@ msgstr "文件系统创建成功。"
 msgid "The hostname is a label that identifies the system to the network."
 msgstr "主机名可以作为网络上识别系统的标签。"
 
+msgid "The hostname of the remote system."
+msgstr "远程系统主机名"
+
 msgid ""
 "The information about available software is out-of-date. You need to reload "
 "the information about available software."
@@ -3353,6 +3388,9 @@ msgid ""
 "single share to be used flexibly by each user."
 msgstr "新文件和目录的权限一般是由创建掩码和目录掩码决定，但权限继承会复写它们。当系统有许多用户使用单一共享时这种方案会很灵活。"
 
+msgid "The port on which SSH is running on the remote system."
+msgstr "远程系统的 SSH 端口号。"
+
 msgid "The private RSA key in X.509 PEM format."
 msgstr "X.509 PEM 格式的 RSA 私钥。"
 
@@ -3364,16 +3402,13 @@ msgid ""
 "packages."
 msgstr "软件源将检查是否有删除或更新的软件包信息。"
 
+msgid "The requested page was not found."
+msgstr "未找到请求的页面。"
+
 msgid ""
 "The requirement that the SSL session from the control connection is reused "
 "for data connections is not required."
 msgstr "不要求控制连接 SSL 会话重用与数据连接。"
-
-msgid "The session IP address has been changed."
-msgstr "需要改变回话 IP 地址。"
-
-msgid "The session user no longer exists."
-msgstr "回话用户不存在。"
 
 msgid ""
 "The source remote server, e.g. [USER@]HOST:SRC, [USER@]HOST::SRC or "
@@ -3386,11 +3421,11 @@ msgstr "源共享文件夹。"
 msgid "The specified quota exceeds the max. possible value of 4TiB."
 msgstr "指定的配额过大，可能超过了 4TB。"
 
+msgid "The system must be rebooted."
+msgstr "系统必须要重启。"
+
 msgid "The system will reboot now. This may take some time ..."
 msgstr "系统将要重启，这需要一些时间 ..."
-
-msgid "The test email has been sent successfully. Please check your mailbox."
-msgstr "测试邮件已成功发送，请查收。"
 
 msgid "The volume label for the file system."
 msgstr "文件系统卷标签"
@@ -3614,6 +3649,9 @@ msgstr "该规则是如果数据包匹配则做什么。"
 msgid "This will create a recycle bin on the share."
 msgstr "在共享上创建回收站。"
 
+msgid "Threshold"
+msgstr "阈值"
+
 msgid "Thursday"
 msgstr "星期四"
 
@@ -3622,6 +3660,9 @@ msgstr "TB"
 
 msgid "Time"
 msgstr "时间"
+
+msgid "Time Machine support"
+msgstr "支持时间胶囊 Time Machine"
 
 msgid "Time interval"
 msgstr "时间间隔"
@@ -3641,9 +3682,6 @@ msgstr "时区"
 msgid "Timeout"
 msgstr "超时"
 
-msgid "Times"
-msgstr "时间"
-
 msgid "Togo"
 msgstr "多哥"
 
@@ -3659,14 +3697,16 @@ msgstr "总计"
 msgid "Transfer log"
 msgstr "传输日志"
 
+msgid ""
+"Transfer modification times along with the files and update them on the "
+"remote system."
+msgstr "传输并在远程文件系统更新文件修改时间。"
+
 msgid "Transfer time"
 msgstr "传输时间"
 
 msgid "Transfer type"
 msgstr "传输类型"
-
-msgid "Treshold"
-msgstr "临界值"
 
 msgid "Trial run"
 msgstr "试运行"
@@ -3777,11 +3817,11 @@ msgstr "更新目标扩展属性与本地一致"
 msgid "Updates"
 msgstr "更新"
 
+msgid "Updates available"
+msgstr "有更新可用"
+
 msgid "Updating ACL settings"
 msgstr "更新 ACL 设置中"
-
-msgid "Upgrade"
-msgstr "升级"
 
 msgid "Upload"
 msgstr "上传"
@@ -3806,9 +3846,6 @@ msgstr "乌拉圭"
 
 msgid "Use NTP server"
 msgstr "使用 NTP 服务器"
-
-msgid "Use SSL/TLS secure connection"
-msgstr "使用 SSL/TLS 安全连接"
 
 msgid "Use chroot"
 msgstr "使用 chroot"
@@ -4019,10 +4056,10 @@ msgid "of {0}"
 msgstr "共 {0} 页"
 
 msgid "old-age"
-msgstr "已老化"
+msgstr "old-age"
 
 msgid "prefail"
-msgstr "即将故障"
+msgstr "prefail"
 
 msgid "seconds"
 msgstr "秒"

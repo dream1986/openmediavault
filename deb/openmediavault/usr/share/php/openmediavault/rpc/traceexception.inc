@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,24 +27,24 @@ namespace OMV\Rpc;
  * @ingroup api
  */
 class TraceException extends Exception {
-    private $trace; /**< The exception stack trace. */
+	private $trace; /**< The exception stack trace. */
 
-    /**
-     * Constructor
-     * @param message The exception message to throw.
-     * @param code The exception code.
-     * @param trace The exception stack trace.
-     */
-    public function __construct($message, $code = 0, $trace = "") {
-        $this->trace = $trace;
-        parent::__construct($message, $code);
-    }
+	/**
+	 * Constructor
+	 * @param message The exception message to throw.
+	 * @param code The exception code.
+	 * @param trace The exception stack trace.
+	 */
+	public function __construct($message, int $code = 0, string $trace = "") {
+		$this->trace = $trace;
+		parent::__construct($message, $code);
+	}
 
-    /**
-     * String representation of the exception.
-     * @return Returns the string representation of the exception.
-     */
-    public function __toString() {
-        return $this->trace;
-    }
+	/**
+	 * String representation of the exception.
+	 * @return Returns the string representation of the exception.
+	 */
+	public function __toString() : string {
+		return $this->trace;
+	}
 }

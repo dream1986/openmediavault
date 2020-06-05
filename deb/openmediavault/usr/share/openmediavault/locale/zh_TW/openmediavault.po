@@ -3,14 +3,14 @@
 # This file is distributed under the same license as the openmediavault package.
 # 
 # Translators:
-# kochin <kochinc@outlook.com>, 2013-2018
+# kochin <kochinc@outlook.com>, 2013-2020
 # kochin <kochinc@outlook.com>, 2012-2013
 msgid ""
 msgstr ""
 "Project-Id-Version: openmediavault\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-01-21 11:50+0100\n"
-"PO-Revision-Date: 2018-01-26 11:18+0000\n"
+"POT-Creation-Date: 2020-04-15 19:10+0200\n"
+"PO-Revision-Date: 2020-04-20 04:11+0000\n"
 "Last-Translator: kochin <kochinc@outlook.com>\n"
 "Language-Team: Chinese (Taiwan) (http://www.transifex.com/votdev/openmediavault/language/zh_TW/)\n"
 "MIME-Version: 1.0\n"
@@ -261,12 +261,6 @@ msgstr "新增共享檔案夾"
 msgid "Add user"
 msgstr "新增用戶"
 
-msgid ""
-"Additional device settings, e.g. 'autoneg off speed 100 duplex full'. See <a"
-" href='http://linux.die.net/man/8/ethtool' target='_blank'>manual pages</a> "
-"for more details."
-msgstr "額外的裝置設定，例如：'autoneg off speed 100 duplex full'。詳情請見<a href='http://linux.die.net/man/8/ethtool' target='_blank'>手冊頁</a>。"
-
 msgid "Address"
 msgstr "網址"
 
@@ -321,11 +315,14 @@ msgid ""
 "Allow this server to advertise itself as a time server to Windows clients"
 msgstr "允許此伺服器對 Windows 客戶端宣告自己為時間伺服器"
 
-msgid "Allow this server to try and become a local master browser"
-msgstr "允許此伺服器嘗試成為本地網路的主控瀏覽器"
-
 msgid "American Samoa"
 msgstr "美屬薩摩亞"
+
+msgid ""
+"An attempt to send the test email has been made. Please check your mailbox. "
+"If the email does not arrive, check any spam folders and also check there "
+"are no Postfix related errors in the system log."
+msgstr "測試電子郵件已被試著送出。請檢查的電子郵件信箱。若是沒收到郵件，請查看垃圾郵件夾，並檢查系統日誌是否有與 Postfix 相關的錯誤。"
 
 msgid ""
 "An email message with the command output (if any produced) is send to the "
@@ -354,6 +351,9 @@ msgstr "匿名"
 
 msgid "Anonymous FTP"
 msgstr "匿名 FTP"
+
+msgid "Another user is already authenticated."
+msgstr "另外一位用戶已被驗證。"
 
 msgid "Antarctica"
 msgstr "南極洲"
@@ -393,9 +393,6 @@ msgstr "非同步 I/O"
 
 msgid "At reboot"
 msgstr "重新啟動時"
-
-msgid "Attribute name"
-msgstr "屬性名稱"
 
 msgid "Attributes"
 msgstr "屬性"
@@ -694,6 +691,12 @@ msgstr "運送自我測試"
 msgid "Cook Islands"
 msgstr "庫克群島"
 
+msgid "Copy"
+msgstr "複製"
+
+msgid "Copy public SSH key"
+msgstr "複製公開 SSH 金鑰"
+
 msgid "Copy to clipboard"
 msgstr "複製到剪貼板"
 
@@ -871,8 +874,8 @@ msgstr "檔案目錄"
 msgid "Disabled"
 msgstr "已停用"
 
-msgid "Disallow the user to modify his account."
-msgstr "不允許用戶修改自己的帳戶。"
+msgid "Disallow the user to modify their account."
+msgstr "不允許用戶變更他們的帳戶。"
 
 msgid "Disk usage"
 msgstr "磁碟使用量"
@@ -1048,9 +1051,6 @@ msgstr "編輯預定工作"
 msgid "Edit scheduled test"
 msgstr "編輯預定測試"
 
-msgid "Edit service"
-msgstr "編輯服務"
-
 msgid "Edit share"
 msgstr "編輯共享"
 
@@ -1086,6 +1086,9 @@ msgstr "啟用 SSL/TLS"
 
 msgid "Enable SSL/TLS connections"
 msgstr "啟用 SSL/TLS 連線"
+
+msgid "Enable Time Machine support for this share."
+msgstr "為此共享啟動 Time Machine 的支援。"
 
 msgid "Enable WINS server"
 msgstr "啟用 WINS 伺服器"
@@ -1160,6 +1163,9 @@ msgstr "啟用寫入緩存。"
 
 msgid "Enabled"
 msgstr "已啟用"
+
+msgid "Encryption mode"
+msgstr "加密模式"
 
 msgid "Enter your password"
 msgstr "輸入你的密碼"
@@ -1437,6 +1443,9 @@ msgstr "幾內亞比紹"
 msgid "Guyana"
 msgstr "圭亞那"
 
+msgid "HTTP 404 error"
+msgstr "HTTP 404 錯誤"
+
 msgid "HTTP-Proxy"
 msgstr "HTTP-代理"
 
@@ -1651,29 +1660,43 @@ msgstr "安裝插件中 ..."
 msgid "Installing updates ..."
 msgstr "安裝更新中 ..."
 
+msgid ""
+"Installs the public SSH key on a remote system as an authorized key. Make "
+"sure password authentication is enabled on that remote system."
+msgstr "在遠端系統上安裝公開 SSH 金鑰以成為一個授權的金鑰。請確定在那個遠端系統上，密碼驗證有被啟用。"
+
 msgid "Interfaces"
 msgstr "介面"
+
+msgid "Invalid IP address."
+msgstr "無效的 IP 地址。"
 
 msgid "Invalid SSH public key (RFC 4716)"
 msgstr "無效 SSH 公鑰 (RFC 4716)"
 
+msgid "Invalid User-Agent."
+msgstr "無效的 User-Agent。"
+
 msgid "Invalid domain name"
-msgstr "不合法的網域名稱"
+msgstr "無效的網域名稱"
 
 msgid "Invalid file system label"
-msgstr "不合法的檔案系統標籤"
+msgstr "無效的檔案系統標籤"
 
 msgid "Invalid group name"
-msgstr "不合法的群組名稱"
+msgstr "無效的群組名稱"
 
 msgid "Invalid host name"
-msgstr "不合法的主機名稱"
+msgstr "無效的主機名稱"
 
 msgid "Invalid name"
-msgstr "不合法的名稱"
+msgstr "無效的名稱"
 
 msgid "Invalid user name"
-msgstr "不合法的用戶名稱"
+msgstr "無效的用戶名稱"
+
+msgid "Invalid user."
+msgstr "無效的用戶。"
 
 msgid "Iran"
 msgstr "伊朗"
@@ -1815,14 +1838,14 @@ msgstr "載入中，請稍候 ..."
 msgid "Local"
 msgstr "本地"
 
-msgid "Local master browser"
-msgstr "本地主控瀏覽器"
-
 msgid "Location"
 msgstr "位置"
 
 msgid "Log level"
 msgstr "日誌層級"
+
+msgid "Logging out, please wait ..."
+msgstr "登出中，請稍候 ..."
 
 msgid "Login"
 msgstr "登入"
@@ -2200,9 +2223,6 @@ msgstr "十一月"
 msgid "Num"
 msgstr "號碼"
 
-msgid "Number of servers"
-msgstr "伺服器的數量"
-
 msgid "OK"
 msgstr "OK"
 
@@ -2290,8 +2310,8 @@ msgstr "巴拉圭"
 msgid "Parent Device"
 msgstr "上層裝置"
 
-msgid "Parent interface"
-msgstr "上層介面"
+msgid "Parent device"
+msgstr "上層裝置"
 
 msgid "Passive FTP"
 msgstr "被動式 FTP"
@@ -2305,11 +2325,11 @@ msgstr "密碼驗證"
 msgid "Passwords don't match"
 msgstr "密碼不相符"
 
-msgid "Paste a RSA certificate in X.509 PEM format here."
-msgstr "貼上 X.509 PEM 格式的 RSA 憑證。"
+msgid "Paste a RSA or ECC certificate in X.509 PEM format here."
+msgstr "貼上 X.509 PEM 格式的 RSA 或 ECC 憑證。"
 
-msgid "Paste an private RSA key in X.509 PEM format here."
-msgstr "貼上私人 X.509 PEM 格式的 RSA 密鑰。"
+msgid "Paste a RSA or ECC private key in X.509 PEM format here."
+msgstr "貼上私人 X.509 PEM 格式的 RSA 或 ECC 密鑰。"
 
 msgid "Path"
 msgstr "路徑"
@@ -2453,8 +2473,14 @@ msgstr "保存 ACLs"
 msgid "Preserve extended attributes"
 msgstr "保存擴展屬性"
 
+msgid "Preserve group"
+msgstr "保存群組"
+
 msgid "Preserve modification times"
 msgstr "保存修改的時間"
+
+msgid "Preserve owner"
+msgstr "保存擁有者"
 
 msgid "Preserve permissions"
 msgstr "保存權限"
@@ -2652,9 +2678,9 @@ msgid ""
 msgstr "報告如果自上次報告以來，至少有攝氏 N 度的溫度變化。將它設為 0 則停止這份報告。"
 
 msgid ""
-"Report if the temperature is greater or equal than N degrees Celsius. Set to"
-" 0 to disable this report."
-msgstr "報告如果溫度大於或等於攝氏 N 度。將它設為 0 則停止這份報告。"
+"Report if the temperature is greater than or equal to N degrees Celsius. Set"
+" to 0 to disable this report."
+msgstr "如果溫度大於或等於攝氏 N 度，會送出報告。將它設為 0 則停止這份報告。"
 
 msgid "Repository"
 msgstr "軟體套件庫"
@@ -2766,6 +2792,9 @@ msgstr "SSL"
 msgid "SSL/TLS"
 msgstr "SSL/TLS"
 
+msgid "STARTTLS"
+msgstr "STARTTLS"
+
 msgid "Saint Helena"
 msgstr "聖海倫娜"
 
@@ -2862,12 +2891,6 @@ msgstr "選擇一個群組名稱..."
 msgid "Select a language ..."
 msgstr "選擇一種語言 ..."
 
-msgid "Select a parent interface ..."
-msgstr "選擇一個上層介面 ..."
-
-msgid "Select a primary interface ..."
-msgstr "選擇一個主要介面 ..."
-
 msgid "Select a protocol ..."
 msgstr "選擇一個通訊協定 ..."
 
@@ -2891,6 +2914,11 @@ msgstr "選擇將從 RAID 裝置上移除的裝置。"
 
 msgid "Select or enter a user name ..."
 msgstr "選擇或輸入一個用戶名稱 ..."
+
+msgid ""
+"Select the devices that will be used to create the RAID device. Devices "
+"connected via USB will not be listed (too unreliable)."
+msgstr "選擇將被用來建立 RAID 的裝置。經由 USB 連接的裝置將不會被列出(太不可靠)。"
 
 msgid "Self-test logs"
 msgstr "自我測試日誌"
@@ -2931,9 +2959,6 @@ msgstr "伺服器"
 msgid "Service"
 msgstr "服務"
 
-msgid "Service Discovery"
-msgstr "服務搜索"
-
 msgid "Service disabled"
 msgstr "服務已停用"
 
@@ -2958,6 +2983,15 @@ msgstr "設為唯讀"
 msgid ""
 "Set the destination permissions to be the same as the source permissions"
 msgstr "將目的地的權限設定為與來源的權限相同"
+
+msgid ""
+"Set the group of the destination file to be the same as the source file."
+msgstr "將目的檔案的群組設定為與來源檔案相同。"
+
+msgid ""
+"Set the owner of the destination file to be the same as the source file, but"
+" only if the receiving rsync is being run as the super-user."
+msgstr "將目的檔案的擁有者設定為與來源檔案相同，但只有當接收方 rsync 是以超級用戶執行時。"
 
 msgid "Set write only"
 msgstr "設為只准寫入"
@@ -3086,9 +3120,6 @@ msgstr "西班牙"
 
 msgid "Special action flag"
 msgstr "特殊動作旗標"
-
-msgid "Specifies how many server threads to create."
-msgstr "指定創建多少個伺服器執行緒。"
 
 msgid "Specifies one of the bonding policies."
 msgstr "指定一個結合策略。"
@@ -3308,6 +3339,9 @@ msgstr "檔案系統創建已經成功地完成。"
 msgid "The hostname is a label that identifies the system to the network."
 msgstr "主機名稱是一個用以於網路上識別系統的標籤。"
 
+msgid "The hostname of the remote system."
+msgstr "遠端系統的主機名稱"
+
 msgid ""
 "The information about available software is out-of-date. You need to reload "
 "the information about available software."
@@ -3353,6 +3387,9 @@ msgid ""
 "single share to be used flexibly by each user."
 msgstr "新檔案和目錄的權限通常是由創建掩碼和目錄掩碼來控制，但繼承權限參數會蓋換它們。當系統上有許多用戶，並允許單一共享有彈性地被每一用戶使用時，這會特別有用處。"
 
+msgid "The port on which SSH is running on the remote system."
+msgstr "遠端系統 SSH 所使用的通訊埠。"
+
 msgid "The private RSA key in X.509 PEM format."
 msgstr "RSA 密鑰用的是 X.509 PEM 格式。"
 
@@ -3364,16 +3401,13 @@ msgid ""
 "packages."
 msgstr "將對軟體套件庫查看新增、已移除或已升級的軟體套件。"
 
+msgid "The requested page was not found."
+msgstr "無法找到所要求的網頁。"
+
 msgid ""
 "The requirement that the SSL session from the control connection is reused "
 "for data connections is not required."
 msgstr "從控制連線來的 SSL 作業階段須被重用做資料連線的需求將不被要求。"
-
-msgid "The session IP address has been changed."
-msgstr "該作業階段的 IP 地址已經被改變。"
-
-msgid "The session user no longer exists."
-msgstr "該作業階段的用戶不再存在。"
 
 msgid ""
 "The source remote server, e.g. [USER@]HOST:SRC, [USER@]HOST::SRC or "
@@ -3386,11 +3420,11 @@ msgstr "來源共享檔案夾。"
 msgid "The specified quota exceeds the max. possible value of 4TiB."
 msgstr "指定的配額超出了最大的可能值 4TiB。"
 
+msgid "The system must be rebooted."
+msgstr "系統必須重新啟動。"
+
 msgid "The system will reboot now. This may take some time ..."
 msgstr "系統將立即重新啟動。這可能需要一些時間 ..."
-
-msgid "The test email has been sent successfully. Please check your mailbox."
-msgstr "測試郵件已被成功地發送。請檢查您的郵箱。"
 
 msgid "The volume label for the file system."
 msgstr "該檔案系統的磁碟標籤。"
@@ -3614,6 +3648,9 @@ msgstr "這指明如果數據包符合時要做什麼。"
 msgid "This will create a recycle bin on the share."
 msgstr "這將在共享上建立一個回收筒。"
 
+msgid "Threshold"
+msgstr "定限"
+
 msgid "Thursday"
 msgstr "星期四"
 
@@ -3622,6 +3659,9 @@ msgstr "TiB"
 
 msgid "Time"
 msgstr "時間"
+
+msgid "Time Machine support"
+msgstr "支援 Time Machine"
 
 msgid "Time interval"
 msgstr "時間間隔"
@@ -3641,9 +3681,6 @@ msgstr "時區"
 msgid "Timeout"
 msgstr "逾時"
 
-msgid "Times"
-msgstr "時間"
-
 msgid "Togo"
 msgstr "托戈"
 
@@ -3659,14 +3696,16 @@ msgstr "總計"
 msgid "Transfer log"
 msgstr "傳輸日誌"
 
+msgid ""
+"Transfer modification times along with the files and update them on the "
+"remote system."
+msgstr "將變更時間與檔案一同傳送，在遠端系統上做更新。"
+
 msgid "Transfer time"
 msgstr "傳輸時間"
 
 msgid "Transfer type"
 msgstr "傳輸型式"
-
-msgid "Treshold"
-msgstr "定限值"
 
 msgid "Trial run"
 msgstr "試行"
@@ -3777,11 +3816,11 @@ msgstr "更新目的地的擴展屬性成為與本地相同"
 msgid "Updates"
 msgstr "更新"
 
+msgid "Updates available"
+msgstr "有可用的更新"
+
 msgid "Updating ACL settings"
 msgstr "正在更新存取控制表(ACL)設定中"
-
-msgid "Upgrade"
-msgstr "升級"
 
 msgid "Upload"
 msgstr "上傳"
@@ -3806,9 +3845,6 @@ msgstr "烏拉圭"
 
 msgid "Use NTP server"
 msgstr "使用 NTP 伺服器"
-
-msgid "Use SSL/TLS secure connection"
-msgstr "使用 SSL / TLS 安全連線"
 
 msgid "Use chroot"
 msgstr "使用 chroot"

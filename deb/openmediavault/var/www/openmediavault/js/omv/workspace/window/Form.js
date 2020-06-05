@@ -3,7 +3,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  */
 // require("js/omv/workspace/window/Container.js")
 // require("js/omv/form/Panel.js")
+// require("js/omv/form/field/plugin/FieldInfo.js")
 
 /**
  * @ingroup webgui
@@ -30,7 +31,8 @@
 Ext.define("OMV.workspace.window.Form", {
 	extend: "OMV.workspace.window.Container",
 	requires: [
-		"OMV.form.Panel"
+		"OMV.form.Panel",
+		"OMV.form.field.plugin.FieldInfo"
 	],
 
 	formClassName: "OMV.form.Panel",

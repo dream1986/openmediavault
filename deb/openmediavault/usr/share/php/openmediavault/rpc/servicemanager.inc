@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +67,7 @@ class ServiceManager {
 			  "The RPC service already exists (name=%s, class=%s)",
 			  $name, get_class($service));
 		}
-		$this->map[strtolower($name)] = $service;
+		$this->map[mb_strtolower($name)] = $service;
 		ksort($this->map);
 		return TRUE;
 	}
@@ -78,7 +78,7 @@ class ServiceManager {
 	 * @return The RPC service object or FALSE on failure.
 	 */
 	final public function getService($name) {
-		$name = strtolower($name);
+		$name = mb_strtolower($name);
 		if (!array_key_exists($name, $this->map))
 			return FALSE;
 		return $this->map[$name];

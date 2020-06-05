@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,41 +21,52 @@
  */
 namespace OMV\System\Net;
 
+require_once("openmediavault/functions.inc");
+
 /**
- * This class provides a interface to handle Linux bond network interfaces.
+ * This class provides a interface to handle Linux bond network
+ * interfaces.
  * @ingroup api
  */
 class NetworkInterfaceBond extends NetworkInterface {
+	public function getType() {
+		return "bond";
+	}
+
 	/**
 	 * Get the slave devices.
 	 * @return A list of device names used in the array, otherwise FALSE.
 	 */
 	public function getSlaves() {
 		$filename = sprintf("/sys/class/net/%s/bonding/slaves",
-		  $this->getDeviceName());
+			$this->getDeviceName());
 		if (!file_exists($filename))
 			return FALSE;
-		return file($filename);
+		$content = file_get_contents($filename);
+		if (FALSE === $content)
+			return [];
+		return array_map("trim", explode_safe(" ", $content));
 	}
 
 	/**
-	 * Delete a bond interface.
-	 * @return Returns TRUE on success, otherwise FALSE.
+	 * Delete the network interface.
+	 * @throw \OMV\ExecException
 	 */
 	public function delete() {
-		$filename = "/sys/class/net/bonding_masters";
-		if (!file_exists($filename))
-			return FALSE;
-		// See http://backdrift.org/manage-linux-bonding-without-ifenslave-using-sysfs
-		$content = sprintf("-%s", $this->getDeviceName());
-		return (FALSE !== file_put_contents($filename, $content)) ?
-			TRUE : FALSE;
+		parent::delete();
+		$cmdArgs = [];
+		$cmdArgs[] = "link";
+		$cmdArgs[] = "del";
+		$cmdArgs[] = "dev";
+		$cmdArgs[] = escapeshellarg($this->getDeviceName());
+		$cmd = new \OMV\System\Process("ip", $cmdArgs);
+		$cmd->setRedirect2to1();
+		$cmd->execute();
 	}
 
 	/**
 	 * Get a list of all bond network interfaces.
-	 * @return Returns an array containing the bond interface names,
-	 *   otherwise FALSE.
+	 * @return Returns an array containing the bond interface names.
 	 */
 	public static function enumerate() {
 		$filename = "/sys/class/net/bonding_masters";
@@ -63,19 +74,17 @@ class NetworkInterfaceBond extends NetworkInterface {
 			return [];
 		$content = file_get_contents($filename);
 		if (FALSE === $content)
-			return FALSE;
-		return array_map("trim", explode(" ", $content));
+			return [];
+		return array_map("trim", explode_safe(" ", $content));
 	}
 
 	/**
-	 * Get the next free device name.
-	 * @return The next free device name, or FALSE on failure.
+	 * Get the next available device name.
+	 * @return Returns a device name, or FALSE on failure.
 	 */
 	public static function getNextDeviceName() {
 		$result = FALSE;
 		$deviceNames = self::enumerate();
-		if (FALSE === $deviceNames)
-			$deviceNames = [];
 		for ($i = 0; $i <= 255; $i++) {
 			$deviceName = sprintf("bond%d", $i);
 			if (FALSE === in_array($deviceName, $deviceNames)) {

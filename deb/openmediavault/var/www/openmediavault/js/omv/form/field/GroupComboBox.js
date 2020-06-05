@@ -3,7 +3,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,7 +81,7 @@ Ext.define("OMV.form.field.GroupComboBox", {
 				}],
 				listeners: {
 					scope: me,
-					load: function(store, records, options) {
+					load: function(store, records, successful, operation, eOpts) {
 						// Switch combobox to queryMode = 'local' to do not
 						// execute an RPC on each query (e.g. typeahead).
 						if (true === me.typeAhead)

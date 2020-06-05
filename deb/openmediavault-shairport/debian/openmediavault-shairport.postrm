@@ -4,7 +4,7 @@
 #
 # @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
 # @author    Volker Theile <volker.theile@openmediavault.org>
-# @copyright Copyright (c) 2009-2018 Volker Theile
+# @copyright Copyright (c) 2009-2020 Volker Theile
 #
 # OpenMediaVault is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,8 +28,7 @@ remove_action() {
 	# Force the creation of the monit service configuration files. This
 	# way we can simply purge this service configuration file. Finally
 	# reload the monit configuration.
-	omv-mkconf monit
-	deb-systemd-invoke reload monit.service || :
+	omv-salt deploy run monit
 	# Activate trigger to purge cached files.
 	dpkg-trigger update-fixperms
 }

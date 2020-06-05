@@ -5,7 +5,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 require_once("openmediavault/autoloader.inc");
 require_once("openmediavault/globals.inc");
 
-class test_openmediavault_config_database extends \PHPUnit_Framework_TestCase {
+class test_openmediavault_config_database extends \PHPUnit\Framework\TestCase {
 	public function setUp() {
 		// Tell the database implementation to use the test database.
 		\OMV\Environment::set("OMV_CONFIG_FILE", sprintf(

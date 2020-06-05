@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,9 @@
  * You should have received a copy of the GNU General Public License
  * along with OpenMediaVault. If not, see <http://www.gnu.org/licenses/>.
  */
-class OMVRpcServiceSystem extends \OMV\Rpc\ServiceAbstract {
+namespace Engined\Rpc;
+
+class System extends \OMV\Rpc\ServiceAbstract {
 	/**
 	 * Get the RPC service name.
 	 */
@@ -42,7 +44,6 @@ class OMVRpcServiceSystem extends \OMV\Rpc\ServiceAbstract {
 		$this->registerMethod("getTimeSettings");
 		$this->registerMethod("setTimeSettings");
 		$this->registerMethod("setDate");
-		$this->registerMethod("setNtpDate");
 		$this->registerMethod("getTimeZoneList");
 		$this->registerMethod("getInformation");
 		$this->registerMethod("getDiagnosticReport");
@@ -313,27 +314,6 @@ class OMVRpcServiceSystem extends \OMV\Rpc\ServiceAbstract {
 	}
 
 	/**
-	 * Set the system date via NTP.
-	 * @param params The method parameters.
-	 * @param context The context of the caller.
-	 * @return void
-	 * @throw \OMV\ExecException
-	 */
-	public function setNtpDate($params, $context) {
-		// Validate the RPC caller context.
-		$this->validateMethodContext($context, [
-			"role" => OMV_ROLE_ADMINISTRATOR
-		]);
-		// Set the system date via NTP.
-		$cmdArgs = [];
-		$cmdArgs[] = "-g";
-		$cmdArgs[] = "-q";
-		$cmd = new \OMV\System\Process("ntpd", $cmdArgs);
-		$cmd->setRedirect2to1();
-		$cmd->execute();
-	}
-
-	/**
 	 * Get a list of time zones.
 	 * @param params The method parameters.
 	 * @param context The context of the caller.
@@ -357,81 +337,45 @@ class OMVRpcServiceSystem extends \OMV\Rpc\ServiceAbstract {
 	 * Get various system information.
 	 * @param params The method parameters.
 	 * @param context The context of the caller.
-	 * @return An array of system information.
+	 * @return array An array of system information.
 	 */
 	public function getInformation($params, $context) {
-		// Validate the RPC caller context.
-		$this->validateMethodContext($context, [
-			"role" => OMV_ROLE_ADMINISTRATOR
-		]);
-		// Get various system informations.
-		$prd = new \OMV\ProductInfo();
-		$uname = posix_uname();
-		$memStats = \OMV\System\System::getMemoryStats();
-		$memStats['wobufferscache']['percentage'] = round(
-		  ($memStats['mem']['used'] * 100) / $memStats['mem']['total']);
-		$cpuStats = \OMV\System\System::getCpuStats();
-		$index = 0;
-		return [
-			[
-				"name" => gettext("Hostname"),
-				"value" => \OMV\System\Net\Dns::getFqdn(),
-				"type" => "string",
-				"index" => $index++
-			],[
-				"name" => gettext("Version"),
-				"value" => sprintf("%s (%s)", $prd->getVersion(),
-				  $prd->getVersionName()),
-				"type" => "string",
-				"index" => $index++
-			],[
-				"name" => gettext("Processor"),
-				"value" => $cpuStats['modelname'],
-				"type" => "string",
-				"index" => $index++
-			],[
-				"name" => gettext("Kernel"),
-				"value" => sprintf("%s %s", $uname['sysname'],
-				  $uname['release']),
-				"type" => "string",
-				"index" => $index++
-			],[
-				"name" => gettext("System time"),
-				"value" => strftime("%c"),
-				"type" => "string",
-				"index" => $index++
-			],[
-				"name" => gettext("Uptime"),
-				"value" => \OMV\System\System::uptime(),
-				"type" => "string",
-				"index" => $index++
-			],[
-				"name" => gettext("Load average"),
-				"value" => \OMV\System\System::getLoadAverage(),
-				"type" => "string",
-				"index" => $index++
-			],[
-				"name" => gettext("CPU usage"),
-				"value" => [
-					"text" => sprintf("%d%%", $cpuStats['usage']),
-//					"text" => sprintf("%d%% of %s MHz", $cpuStats['usage'],
-//					  $cpuStats['cpumhz']),
-					"value" => $cpuStats['usage']
-				],
-				"type" => "progress",
-				"index" => $index++
-			],[
-				"name" => gettext("Memory usage"),
-				"value" => [
-					"text" => sprintf("%d%% of %s",
-					  $memStats['wobufferscache']['percentage'],
-					  binary_format($memStats['mem']['total'])),
-					"value" => $memStats['wobufferscache']['percentage']
-				],
-				"type" => "progress",
-				"index" => $index++
-			]
+		// The information everyone is allowed to see.
+		$result = [
+			"ts" => time(),
+			"time" => strftime("%c"),
+			"hostname" => \OMV\System\Net\Dns::getFqdn()
 		];
+		try {
+			$pkgUpgradeList = \OMV\System\System::getAptUpgradeList();
+		} catch(\Exception $e) {
+			$pkgUpgradeList = [];
+		}
+		// Append the information that is only visible to an administrator.
+		if (TRUE === $this->hasContextRole($context, OMV_ROLE_ADMINISTRATOR)) {
+			$prd = new \OMV\ProductInfo();
+			$uname = posix_uname();
+			$memStats = \OMV\System\System::getMemoryStats();
+			$cpuStats = \OMV\System\System::getCpuStats();
+			$result = array_merge($result, [
+				"version" => sprintf("%s (%s)", $prd->getVersion(),
+					$prd->getVersionName()),
+				"cpuModelName" => $cpuStats['modelname'],
+				"cpuUsage" => $cpuStats['usage'],
+				"memTotal" => $memStats['mem']['total'],
+				"memUsed" => $memStats['mem']['used'],
+				"kernel" => sprintf("%s %s", $uname['sysname'],
+					$uname['release']),
+				"uptime" => \OMV\System\System::uptime(),
+				"loadAverage" => \OMV\System\System::getLoadAverage(),
+				"configDirty" => \OMV\Rpc\Rpc::call(
+					"Config", "isDirty", NULL, $context
+				),
+				"rebootRequired" => file_exists("/run/reboot-required"),
+				"pkgUpdatesAvailable" => !empty($pkgUpgradeList)
+			]);
+		}
+		return $result;
 	}
 
 	/**
@@ -439,7 +383,7 @@ class OMVRpcServiceSystem extends \OMV\Rpc\ServiceAbstract {
 	 * @param params The method parameters.
 	 *   The method does not have any paramaters.
 	 * @param context The context of the caller.
-	 * @return A quotation from the Dune novel, which is a string.
+	 * @return string Returns the diagnostic report as plain text.
 	 */
 	public function getDiagnosticReport($params, $context) {
 		// Validate the RPC caller context.

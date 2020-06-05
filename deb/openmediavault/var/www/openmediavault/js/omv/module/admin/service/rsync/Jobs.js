@@ -3,7 +3,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -156,6 +156,18 @@ Ext.define("OMV.module.admin.service.rsync.Job", {
 						{ name: "authentication", value: "password" }
 					],
 					properties: "show"
+				},{
+					name: [
+						"optionrecursive",
+						"optionperms",
+						"optiontimes",
+						"optiongroup",
+						"optionowner"
+					],
+					conditions: [
+						{ name: "optionarchive", value: true }
+					],
+					properties: "checked"
 				}]
 			}]
 		};
@@ -395,72 +407,6 @@ Ext.define("OMV.module.admin.service.rsync.Job", {
 			value: "*"
 		},{
 			xtype: "checkbox",
-			name: "dryrun",
-			fieldLabel: _("Trial run"),
-			checked: false,
-			boxLabel: _("Perform a trial run with no changes made")
-		},{
-			xtype: "checkbox",
-			name: "recursive",
-			fieldLabel: _("Recursive"),
-			checked: true,
-			boxLabel: _("Recurse into directories")
-		},{
-			xtype: "checkbox",
-			name: "times",
-			fieldLabel: _("Times"),
-			checked: true,
-			boxLabel: _("Preserve modification times")
-		},{
-			xtype: "checkbox",
-			name: "compress",
-			fieldLabel: _("Compress"),
-			checked: false,
-			boxLabel: _("Compress file data during the transfer")
-		},{
-			xtype: "checkbox",
-			name: "archive",
-			fieldLabel: _("Archive"),
-			checked: true,
-			boxLabel: _("Enable archive mode")
-		},{
-			xtype: "checkbox",
-			name: "delete",
-			fieldLabel: _("Delete"),
-			checked: false,
-			boxLabel: _("Delete files on the receiving side that don't exist on sender")
-		},{
-			xtype: "checkbox",
-			name: "quiet",
-			fieldLabel: _("Quiet"),
-			checked: false,
-			boxLabel: _("Suppress non-error messages")
-		},{
-			xtype: "checkbox",
-			name: "perms",
-			fieldLabel: _("Preserve permissions"),
-			checked: true,
-			boxLabel: _("Set the destination permissions to be the same as the source permissions")
-		},{
-			xtype: "checkbox",
-			name: "acls",
-			fieldLabel: _("Preserve ACLs"),
-			checked: false,
-			boxLabel: _("Update the destination ACLs to be the same as the source ACLs")
-		},{
-			xtype: "checkbox",
-			name: "xattrs",
-			fieldLabel: _("Preserve extended attributes"),
-			checked: false,
-			boxLabel: _("Update the destination extended attributes to be the same as the local ones")
-		},{
-			xtype: "checkbox",
-			name: "partial",
-			fieldLabel: _("Keep partially transferred files"),
-			checked: false,
-			boxLabel: _("Enable this option to keep partially transferred files, otherwise they will be deleted if the transfer is interrupted.")
-		},{
-			xtype: "checkbox",
 			name: "sendemail",
 			fieldLabel: _("Send email"),
 			checked: false,
@@ -469,6 +415,84 @@ Ext.define("OMV.module.admin.service.rsync.Job", {
 				ptype: "fieldinfo",
 				text: _("An email message with the command output (if any produced) is send to the administrator.")
 			}]
+		},{
+			xtype: "checkbox",
+			name: "optiondryrun",
+			fieldLabel: _("Trial run"),
+			checked: false,
+			boxLabel: _("Perform a trial run with no changes made")
+		},{
+			xtype: "checkbox",
+			name: "optionquiet",
+			fieldLabel: _("Quiet"),
+			checked: false,
+			boxLabel: _("Suppress non-error messages")
+		},{
+			xtype: "checkbox",
+			name: "optionarchive",
+			fieldLabel: _("Archive"),
+			checked: true,
+			boxLabel: _("Enable archive mode")
+		},{
+			xtype: "checkbox",
+			name: "optionrecursive",
+			fieldLabel: _("Recursive"),
+			checked: true,
+			boxLabel: _("Recurse into directories")
+		},{
+			xtype: "checkbox",
+			name: "optionperms",
+			fieldLabel: _("Preserve permissions"),
+			checked: true,
+			boxLabel: _("Set the destination permissions to be the same as the source permissions")
+		},{
+			xtype: "checkbox",
+			name: "optiontimes",
+			fieldLabel: _("Preserve modification times"),
+			checked: true,
+			boxLabel: _("Transfer modification times along with the files and update them on the remote system.")
+		},{
+			xtype: "checkbox",
+			name: "optiongroup",
+			fieldLabel: _("Preserve group"),
+			checked: true,
+			boxLabel: _("Set the group of the destination file to be the same as the source file.")
+		},{
+			xtype: "checkbox",
+			name: "optionowner",
+			fieldLabel: _("Preserve owner"),
+			checked: true,
+			boxLabel: _("Set the owner of the destination file to be the same as the source file, but only if the receiving rsync is being run as the super-user.")
+		},{
+			xtype: "checkbox",
+			name: "optioncompress",
+			fieldLabel: _("Compress"),
+			checked: false,
+			boxLabel: _("Compress file data during the transfer")
+		},{
+			xtype: "checkbox",
+			name: "optionacls",
+			fieldLabel: _("Preserve ACLs"),
+			checked: false,
+			boxLabel: _("Update the destination ACLs to be the same as the source ACLs")
+		},{
+			xtype: "checkbox",
+			name: "optionxattrs",
+			fieldLabel: _("Preserve extended attributes"),
+			checked: false,
+			boxLabel: _("Update the destination extended attributes to be the same as the local ones")
+		},{
+			xtype: "checkbox",
+			name: "optionpartial",
+			fieldLabel: _("Keep partially transferred files"),
+			checked: false,
+			boxLabel: _("Enable this option to keep partially transferred files, otherwise they will be deleted if the transfer is interrupted.")
+		},{
+			xtype: "checkbox",
+			name: "optiondelete",
+			fieldLabel: _("Delete"),
+			checked: false,
+			boxLabel: _("Delete files on the receiving side that don't exist on sender")
 		},{
 			xtype: "textfield",
 			name: "extraoptions",
@@ -698,7 +722,6 @@ Ext.define("OMV.module.admin.service.rsync.Jobs", {
 
 	onAddButton: function() {
 		var me = this;
-		var record = me.getSelected();
 		Ext.create("OMV.module.admin.service.rsync.Job", {
 			title: _("Add rsync job"),
 			uuid: OMV.UUID_UNDEFINED,
@@ -744,7 +767,7 @@ Ext.define("OMV.module.admin.service.rsync.Jobs", {
 	onRunButton: function() {
 		var me = this;
 		var record = me.getSelected();
-		var wnd = Ext.create("OMV.window.Execute", {
+		Ext.create("OMV.window.Execute", {
 			title: _("Execute rsync job"),
 			rpcService: "Rsync",
 			rpcMethod: "execute",

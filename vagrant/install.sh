@@ -4,7 +4,7 @@
 #
 # @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
 # @author    Volker Theile <volker.theile@openmediavault.org>
-# @copyright Copyright (c) 2009-2018 Volker Theile
+# @copyright Copyright (c) 2009-2020 Volker Theile
 #
 # openmediavault is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,38 +25,37 @@ set -e
 # to log in via SSH.
 usermod --groups ssh --append vagrant
 
-# Install openmediavault.
-cat <<EOF >> /etc/apt/sources.list.d/openmediavault.list
-deb http://packages.openmediavault.org/public arrakis main
-# deb http://downloads.sourceforge.net/project/openmediavault/packages arrakis main
-## Uncomment the following line to add software from the proposed repository.
-# deb http://packages.openmediavault.org/public arrakis-proposed main
-# deb http://downloads.sourceforge.net/project/openmediavault/packages arrakis-proposed main
-## This software is not part of OpenMediaVault, but is offered by third-party
-## developers as a service to OpenMediaVault users.
-# deb http://packages.openmediavault.org/public arrakis partner
-# deb http://downloads.sourceforge.net/project/openmediavault/packages arrakis partner
-EOF
-
-export LANG=C
+export LANG=C.UTF-8
 export DEBIAN_FRONTEND=noninteractive
 export APT_LISTCHANGES_FRONTEND=none
-apt-get update
-apt-get --allow-unauthenticated install openmediavault-keyring
+
+# Install the openmediavault keyring manually.
+apt-get install --yes gnupg
+wget -O "/etc/apt/trusted.gpg.d/openmediavault-archive-keyring.asc" https://packages.openmediavault.org/public/archive.key
+apt-key add "/etc/apt/trusted.gpg.d/openmediavault-archive-keyring.asc"
+
+# Install openmediavault.
+cat <<EOF >> /etc/apt/sources.list.d/openmediavault.list
+deb http://packages.openmediavault.org/public usul main
+# deb http://downloads.sourceforge.net/project/openmediavault/packages usul main
+## Uncomment the following line to add software from the proposed repository.
+# deb http://packages.openmediavault.org/public usul-proposed main
+# deb http://downloads.sourceforge.net/project/openmediavault/packages usul-proposed main
+## This software is not part of OpenMediaVault, but is offered by third-party
+## developers as a service to OpenMediaVault users.
+# deb http://packages.openmediavault.org/public usul partner
+# deb http://downloads.sourceforge.net/project/openmediavault/packages usul partner
+EOF
 apt-get update
 apt-get --yes --auto-remove --show-upgraded \
 	--allow-downgrades --allow-change-held-packages \
 	--no-install-recommends \
 	--option Dpkg::Options::="--force-confdef" \
 	--option DPkg::Options::="--force-confold" \
-	install postfix openmediavault
+	install openmediavault-keyring openmediavault
 
-# Initialize the system and database.
-omv-initsystem
-
-# Rebuild configurations.
-omv-mkconf interfaces
-omv-mkconf issue
+# Populate the database.
+omv-confdbadm populate
 
 # Display the login information.
 cat /etc/issue

@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,14 +29,15 @@ require_once("openmediavault/functions.inc");
  * @ingroup api
  */
 class File {
-	private $filename = "";
-	private $fh = NULL;
+	private $filename;
+	private $fh;
 
 	/**
 	 * Constructor
 	 * @param filename The name of the file.
 	 */
 	function __construct($filename) {
+		$this->fh = NULL;
 		$this->filename = $filename;
 	}
 
@@ -45,9 +46,10 @@ class File {
 	 */
 	function __destruct() {
 		// Always ensure the file is unlocked.
-		if (!is_null($this->fh))
-        	flock($this->fh, LOCK_UN);
-    }
+		if (!is_null($this->fh)) {
+			flock($this->fh, LOCK_UN);
+		}
+	}
 
 	/**
 	 * Checks whether the file exists.
@@ -60,10 +62,15 @@ class File {
 
 	/**
 	 * Open the file.
+	 *
+	 * \note The file may be auto-created by fopen, so it will not contain
+	 * valid JSON. You're responsible to pre-fill it with valid content in
+	 * this case.
+	 *
 	 * @param accessMode The parameter specifies the type of access you
 	 *   require to the stream. Defaults to 'w+'.
 	 * @param lockMode The lock mode. Defaults to LOCK_EX.
-	 * @return The file handle.
+	 * @return resource The file handle.
 	 * @throw \OMV\Exception
 	 */
 	public function open($accessMode = "w+", $lockMode = LOCK_EX) {

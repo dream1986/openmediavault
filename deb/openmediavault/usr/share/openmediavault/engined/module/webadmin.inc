@@ -4,7 +4,7 @@
  *
  * @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
  * @author    Volker Theile <volker.theile@openmediavault.org>
- * @copyright Copyright (c) 2009-2018 Volker Theile
+ * @copyright Copyright (c) 2009-2020 Volker Theile
  *
  * OpenMediaVault is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,18 +19,18 @@
  * You should have received a copy of the GNU General Public License
  * along with OpenMediaVault. If not, see <http://www.gnu.org/licenses/>.
  */
-class OMVModuleWebadmin extends \OMV\Engine\Module\ModuleAbstract
-  implements \OMV\Engine\Notify\IListener, \OMV\Engine\Module\IZeroconf {
-	/**
-	 * Get the module name.
-	 */
+namespace Engined\Module;
+
+class Webadmin extends \OMV\Engine\Module\ModuleAbstract
+		implements \OMV\Engine\Notify\IListener {
 	public function getName() {
 		return "webadmin";
 	}
 
-	/**
-	 * Get the Zeroconf service configuration.
-	 */
+	public function deploy() {
+		// Nothing to do here.
+	}
+
 	public function getZeroconfConfig() {
 		return [
 			"id" => "webadmin",
@@ -38,18 +38,15 @@ class OMVModuleWebadmin extends \OMV\Engine\Module\ModuleAbstract
 		];
 	}
 
-	/**
-	 * Bind listeners.
-	 */
 	function bindListeners(\OMV\Engine\Notify\Dispatcher $dispatcher) {
 		$moduleMngr = \OMV\Engine\Module\Manager::getInstance();
 		$dispatcher->addListener(
-		  OMV_NOTIFY_MODIFY,
-		  "org.openmediavault.conf.webadmin",
-		  [ $moduleMngr->getModule("webserver"), "setDirty" ]);
+			OMV_NOTIFY_MODIFY,
+			"org.openmediavault.conf.webadmin",
+			[$moduleMngr->getModule("webserver"), "setDirty"]);
 		$dispatcher->addListener(
-		  OMV_NOTIFY_MODIFY,
-		  "org.openmediavault.conf.webadmin",
-		  [ $moduleMngr->getModule("monit"), "setDirty" ]);
+			OMV_NOTIFY_MODIFY,
+			"org.openmediavault.conf.webadmin",
+			[$moduleMngr->getModule("monit"), "setDirty"]);
 	}
 }

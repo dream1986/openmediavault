@@ -4,7 +4,7 @@
 #
 # @license   http://www.gnu.org/licenses/gpl.html GPL Version 3
 # @author    Volker Theile <volker.theile@openmediavault.org>
-# @copyright Copyright (c) 2009-2018 Volker Theile
+# @copyright Copyright (c) 2009-2020 Volker Theile
 #
 # OpenMediaVault is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,57 +21,65 @@
 import unittest
 import openmediavault.config.datamodel
 
+
 class DatamodelTestCase(unittest.TestCase):
-	def _get_model(self):
-		return openmediavault.config.Datamodel({
-			"type": "config",
-			"id": "conf.system.apt.distribution",
-			"queryinfo": {
-				"xpath": "//system/apt/distribution",
-				"iterable": False
-			},
-			"properties": {
-				"proposed": {
-					"type": "boolean",
-					"default": False
-				},
-				"partner": {
-					"type": "boolean",
-					"default": False
-				},
-				"integer": {
-					"type": "integer",
-					"default": 10
-				}
-			}
-		})
+    def _get_model(self):
+        return openmediavault.config.Datamodel(
+            {
+                "type": "config",
+                "id": "conf.system.apt.distribution",
+                "queryinfo": {
+                    "xpath": "//system/apt/distribution",
+                    "iterable": False,
+                },
+                "properties": {
+                    "proposed": {"type": "boolean", "default": False},
+                    "partner": {"type": "boolean", "default": False},
+                    "integer": {"type": "integer", "default": 10},
+                },
+            }
+        )
 
-	def test_schema(self):
-		datamodel = self._get_model()
-		datamodel.schema
+    def test_schema(self):
+        datamodel = self._get_model()
+        datamodel.schema
 
-	def test_queryinfo(self):
-		datamodel = self._get_model()
-		datamodel.queryinfo
+    def test_queryinfo(self):
+        datamodel = self._get_model()
+        datamodel.queryinfo
 
-	def test_notificationid(self):
-		datamodel = self._get_model()
-		datamodel.notificationid
+    def test_notificationid(self):
+        datamodel = self._get_model()
+        datamodel.notificationid
 
-	def test_property_get_default(self):
-		datamodel = self._get_model()
-		default = datamodel.property_get_default("partner")
-		self.assertEqual(default, False)
+    def test_property_get_default(self):
+        datamodel = self._get_model()
+        default = datamodel.property_get_default("partner")
+        self.assertEqual(default, False)
 
-	def test_property_exists(self):
-		datamodel = self._get_model()
-		default = datamodel.property_exists("proposed")
-		self.assertEqual(default, True)
+    def test_property_exists(self):
+        datamodel = self._get_model()
+        default = datamodel.property_exists("proposed")
+        self.assertEqual(default, True)
 
-	def test_property_convert(self):
-		datamodel = self._get_model()
-		value = datamodel.property_convert("integer", "20")
-		self.assertEqual(value, 20)
+    def test_property_convert(self):
+        datamodel = self._get_model()
+        value = datamodel.property_convert("integer", "20")
+        self.assertEqual(value, 20)
+
+    def test_validate(self):
+        datamodel = self._get_model()
+        datamodel.validate({"proposed": True, "partner": False, "integer": 20})
+
+    def test_validate_fail(self):
+        datamodel = self._get_model()
+        self.assertRaises(
+            openmediavault.json.SchemaValidationException,
+            lambda: datamodel.validate(
+                {"proposed": "foo", "partner": True, "integer": True}
+            ),
+        )
+
 
 if __name__ == "__main__":
-	unittest.main()
+    unittest.main()
